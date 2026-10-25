@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f4c81">
+<meta name="application-name" content="민방위 급수시설 점검">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="급수시설 점검">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>민방위 급수시설 점검</title>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>민방위 급수시설 점검</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap">
+<style>
+/* Layout concept: a field clipboard — one column, large touch targets, state shown as colored chips with text.
+   The report view is a separate A4 paper surface that mirrors the HWP form. */
+:root{
+  --bg:#eef2f6; --surface:#ffffff; --surface-2:#f6f8fb; --fg:#162230; --muted:#5d6c7b; --line:#d3dce6; --line-strong:#aab8c6;
+  --primary:#0f4c81; --primary-fg:#ffffff; --primary-soft:#e3eef8;
+  --good:#1a7f3c; --good-soft:#e2f3e7; --poor:#c9420a; --poor-soft:#fde9df; --na:#5b6f85; --na-soft:#e7edf3; --none:#8a97a5; --none-soft:#eef1f4;
+  --warn:#9a6700; --warn-soft:#fff4d6; --danger:#b42318; --danger-soft:#fde8e6;
+  --shadow:0 1px 2px rgba(22,34,48,.06),0 4px 14px rgba(22,34,48,.06);
+  --radius:12px; --radius-sm:8px;
+  --font-ui:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --font-report:"Noto Serif KR","Apple Myungjo","Batang","HCR Batang",serif;
+  --paper:#ffffff; --paper-fg:#000000;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f151c; --surface:#171f29; --surface-2:#1e2834; --fg:#e7ecf1; --muted:#9fadbb; --line:#2b3745; --line-strong:#3f4d5d;
+  --primary:#6aaee6; --primary-fg:#0b1a28; --primary-soft:#17304a;
+  --good:#5fcf80; --good-soft:#143322; --poor:#ff9263; --poor-soft:#3d1d0f; --na:#9fb3c8; --na-soft:#1f2b38; --none:#7f8d9b; --none-soft:#1c2531;
+  --warn:#f2c14e; --warn-soft:#3a2d08; --danger:#ff8a80; --danger-soft:#3c1512;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f151c; --surface:#171f29; --surface-2:#1e2834; --fg:#e7ecf1; --muted:#9fadbb; --line:#2b3745; --line-strong:#3f4d5d;
+  --primary:#6aaee6; --primary-fg:#0b1a28; --primary-soft:#17304a;
+  --good:#5fcf80; --good-soft:#143322; --poor:#ff9263; --poor-soft:#3d1d0f; --na:#9fb3c8; --na-soft:#1f2b38; --none:#7f8d9b; --none-soft:#1c2531;
+  --warn:#f2c14e; --warn-soft:#3a2d08; --danger:#ff8a80; --danger-soft:#3c1512;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-ui);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--primary)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0;text-wrap:balance;line-height:1.3}
+p{margin:0}
+a{color:var(--primary)}
+.sr{position:absolute;left:-9999px}
+
+/* App bar */
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--primary);color:var(--primary-fg);box-shadow:var(--shadow)}
+.appbar-in{display:flex;align-items:center;gap:10px;min-height:56px;padding-block:6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1080px;margin:0 auto}
+.appbar .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em;background:none;border:0;padding:6px 4px;cursor:pointer;color:inherit;min-width:0}
+.appbar .brand small{display:block;font-weight:500;font-size:12px;opacity:.85;letter-spacing:.02em}
+.appbar .spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap;border:1px solid transparent}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.appbar .chip{background:rgba(255,255,255,.14);color:var(--primary-fg);border-color:rgba(255,255,255,.25)}
+.appbar .chip.sync-ok .dot{background:#7ee2a0}
+.appbar .chip.sync-busy .dot{background:#ffd666;animation:pulse 1s infinite}
+.appbar .chip.sync-bad .dot{background:#ff8a80}
+.appbar .chip.sync-off .dot{background:#c7d2dc}
+.appbar .chip.sync-local .dot{background:#9ec5ff}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+.iconbtn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:inherit;border-radius:10px;min-width:44px;min-height:44px;padding:6px 10px;cursor:pointer;font-weight:600;font-size:14px}
+.iconbtn:hover{background:rgba(255,255,255,.22)}
+
+/* Page container */
+.page{max-width:1080px;margin:0 auto;padding-block:18px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page.narrow{max-width:820px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:var(--muted);font-size:14px;margin-bottom:10px}
+.crumbs button{background:none;border:0;padding:4px 2px;color:var(--primary);cursor:pointer;font-weight:600;min-height:32px}
+.pagehead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.pagehead h1{font-size:24px;font-weight:700}
+.pagehead .sub{color:var(--muted);font-size:14px;margin-top:4px}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.card+.card{margin-top:14px}
+.card h2{font-size:17px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .count{font-size:13px;color:var(--muted);font-weight:600}
+.stack{display:grid;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.mono{font-variant-numeric:tabular-nums}
+hr.sep{border:0;border-top:1px solid var(--line);margin:14px 0}
+
+/* Stat tiles */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:grid;gap:4px;cursor:pointer;text-align:left}
+.stat .lbl{font-size:13px;color:var(--muted);font-weight:600}
+.stat .val{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .val small{font-size:14px;color:var(--muted);font-weight:600;margin-left:4px}
+.stat.poor .val{color:var(--poor)} .stat.warn .val{color:var(--warn)} .stat.good .val{color:var(--good)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);font-weight:600;font-size:16px;cursor:pointer;text-decoration:none;line-height:1.2}
+.btn:hover{background:var(--surface-2)}
+.btn:focus-visible,.seg button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.iconbtn:focus-visible,.stat:focus-visible,.listitem:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-fg)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.sm{min-height:40px;padding:6px 12px;font-size:14px}
+.btn.lg{min-height:56px;font-size:18px;padding:12px 22px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn .ico{font-size:18px;line-height:1}
+
+/* Forms */
+.field{display:grid;gap:6px}
+.field>label{font-size:14px;font-weight:600;color:var(--muted)}
+.field .req{color:var(--poor)}
+input[type=text],input[type=search],input[type=number],input[type=date],input[type=tel],select,textarea{width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--radius-sm);background:var(--surface);font-size:16px}
+textarea{min-height:88px;resize:vertical;line-height:1.5}
+input.invalid,textarea.invalid{border-color:var(--poor);box-shadow:0 0 0 2px var(--poor-soft)}
+.help{font-size:13px;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{flex:1 1 auto;min-height:48px;padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);background:var(--surface);font-weight:600;font-size:16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-fg)}
+.check{display:flex;align-items:center;gap:10px;min-height:44px;font-size:16px;cursor:pointer}
+.check input{width:22px;height:22px;margin:0}
+
+/* Lists */
+.list{display:grid;gap:8px}
+.listitem{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;cursor:pointer;color:inherit}
+.listitem:hover{border-color:var(--line-strong)}
+.listitem .main{flex:1;min-width:0}
+.listitem .title{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listitem .meta{font-size:13px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.listitem .right{display:grid;gap:4px;justify-items:end;flex:none}
+.tag{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+.tag.good{background:var(--good-soft);color:var(--good)} .tag.poor{background:var(--poor-soft);color:var(--poor)} .tag.na{background:var(--na-soft);color:var(--na)} .tag.none{background:var(--none-soft);color:var(--none)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.info{background:var(--primary-soft);color:var(--primary)} .tag.test{background:var(--warn-soft);color:var(--warn);border:1px dashed var(--warn)}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line-strong);border-radius:var(--radius);background:var(--surface)}
+.empty b{display:block;color:var(--fg);margin-bottom:6px;font-size:16px}
+
+/* Filters */
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:10px 0}
+.searchbar{display:flex;gap:8px}
+.searchbar input{flex:1;min-width:0}
+
+/* Step bar */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:14px}
+.steps button{display:grid;gap:4px;justify-items:center;padding:8px 4px;border:0;background:var(--surface);border-bottom:3px solid var(--line);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);border-radius:8px 8px 0 0;min-height:56px}
+.steps button .n{width:24px;height:24px;border-radius:50%;background:var(--none-soft);color:var(--none);display:grid;place-items:center;font-size:12px;font-weight:700}
+.steps button[aria-current="step"]{color:var(--primary);border-bottom-color:var(--primary)}
+.steps button[aria-current="step"] .n{background:var(--primary);color:var(--primary-fg)}
+.steps button.done .n{background:var(--good);color:#fff}
+.steps button.partial .n{background:var(--warn);color:#fff}
+@media (max-width:480px){ .steps button{font-size:11px;padding:6px 2px} }
+@media (max-width:560px){ .appbar .brand{font-size:15px} .appbar .brand small{display:none} .appbar .chip{font-size:12px;padding:3px 8px;max-width:150px} .appbar .chip span:last-child{overflow:hidden;text-overflow:ellipsis} .iconbtn{min-width:40px;padding:6px 8px;font-size:13px} }
+
+/* Progress */
+.progress{height:10px;background:var(--none-soft);border-radius:999px;overflow:hidden}
+.progress>i{display:block;height:100%;background:var(--primary);border-radius:999px;transition:width .3s}
+.counts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.counts .tag{font-size:13px;padding:4px 10px}
+
+/* Checklist item */
+.item{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--none);border-radius:var(--radius);padding:14px 16px;display:grid;gap:10px}
+.item.good{border-left-color:var(--good)} .item.poor{border-left-color:var(--poor)} .item.na{border-left-color:var(--na)}
+.item .ihead{display:flex;gap:10px;align-items:flex-start}
+.item .ihead .num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:15px}
+.item .ihead .t{flex:1;min-width:0}
+.item .ihead .t h3{font-size:17px;font-weight:700}
+.item .ihead .t .note{font-size:14px;color:var(--muted);margin-top:3px}
+.item .state{flex:none}
+.item .seg button{min-height:52px;font-size:17px}
+.item .seg button.good[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:#fff}
+.item .seg button.poor[aria-pressed="true"]{background:var(--poor);border-color:var(--poor);color:#fff}
+.item .seg button.na[aria-pressed="true"]{background:var(--na);border-color:var(--na);color:#fff}
+.item .auto{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--na-soft);color:var(--na);border-radius:8px;padding:8px 12px;font-size:14px;font-weight:600}
+.item .photorow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.item .photorow .thumbs{display:flex;gap:6px;flex-wrap:wrap}
+.timer{display:grid;gap:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px}
+.timer .clock{font-size:40px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em;text-align:center}
+.timer .clock.done{color:var(--good)}
+.timer .clock.running{color:var(--primary)}
+.timer .tbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.timer .tbtns .btn{flex:1 1 90px}
+.timer .log{font-size:13px;color:var(--muted);text-align:center}
+
+/* Photos */
+.pcat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:grid;gap:10px}
+.pcat .phead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pcat .phead h3{font-size:17px;font-weight:700;flex:1}
+.pcat .phead .n{font-size:13px;color:var(--muted);font-weight:600}
+.pbtns{display:flex;gap:8px;flex-wrap:wrap}
+.pbtns .btn{flex:1 1 140px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.thumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);padding:0;cursor:pointer}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.r90 img{transform:rotate(90deg)} .thumb.r180 img{transform:rotate(180deg)} .thumb.r270 img{transform:rotate(270deg)}
+.thumb .badge{position:absolute;left:4px;top:4px;font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px;background:rgba(0,0,0,.6);color:#fff}
+.thumb .badge.cover{background:var(--primary);color:var(--primary-fg)}
+.thumb .badge.pend{background:var(--warn);color:#fff;left:auto;right:4px}
+.thumb .badge.fail{background:var(--danger);color:#fff;left:auto;right:4px}
+.thumb .cap{position:absolute;left:0;right:0;bottom:0;font-size:11px;padding:3px 6px;background:rgba(0,0,0,.55);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.thumb.sm{width:56px;height:56px;aspect-ratio:auto;border-radius:8px}
+.noimg{display:grid;place-items:center;height:100%;color:var(--muted);font-size:12px;padding:6px;text-align:center}
+
+/* Lightbox */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,16,24,.72);display:flex;align-items:center;justify-content:center;padding:12px;padding-top:max(12px,env(safe-area-inset-top,0px));padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+.modal .box{background:var(--surface);color:var(--fg);border-radius:14px;max-width:720px;width:100%;max-height:100%;overflow:auto;padding:16px;display:grid;gap:12px}
+.modal .box.wide{max-width:980px}
+.modal .viewer{background:#0b1016;border-radius:10px;display:grid;place-items:center;min-height:240px;max-height:60vh;overflow:hidden}
+.modal .viewer img{max-width:100%;max-height:60vh;object-fit:contain;display:block}
+.modal .viewer.r90 img,.modal .viewer.r270 img{max-width:60vh;max-height:100%}
+.modal .viewer.r90 img{transform:rotate(90deg)} .modal .viewer.r180 img{transform:rotate(180deg)} .modal .viewer.r270 img{transform:rotate(270deg)}
+.modal h2{font-size:18px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px}
+.toolbar .btn{flex:1 1 110px}
+
+/* Review */
+.review-list{display:grid;gap:8px}
+.review-row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2)}
+.review-row .t{flex:1;min-width:0}
+.review-row .t b{display:block;font-size:15px}
+.review-row .t span{display:block;font-size:14px;color:var(--muted);white-space:pre-wrap}
+.alert{padding:12px 14px;border-radius:var(--radius-sm);font-size:15px;display:flex;gap:10px;align-items:flex-start}
+.alert.warn{background:var(--warn-soft);color:var(--warn)} .alert.poor{background:var(--poor-soft);color:var(--poor)} .alert.good{background:var(--good-soft);color:var(--good)} .alert.info{background:var(--primary-soft);color:var(--primary)} .alert.na{background:var(--na-soft);color:var(--na)}
+.alert.warn b,.alert.poor b,.alert.good b,.alert.info b{color:inherit}
+
+/* Bottom nav */
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.08)}
+.bottombar-in{display:flex;gap:10px;max-width:820px;margin:0 auto;padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bottombar .btn{flex:1}
+.bottombar .savestate{flex:0 0 auto;display:grid;align-content:center;justify-items:center;font-size:12px;color:var(--muted);min-width:70px;font-weight:600}
+.savestate.saving{color:var(--warn)} .savestate.saved{color:var(--good)} .savestate.failed{color:var(--danger)} .savestate.queued{color:var(--na)}
+
+/* Toasts */
+.toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;display:grid;gap:8px;width:min(92vw,480px)}
+.toast{background:var(--fg);color:var(--bg);padding:12px 14px;border-radius:10px;font-size:15px;font-weight:600;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center}
+.toast.err{background:var(--danger);color:#fff}
+.toast .btn{min-height:36px;padding:4px 10px;font-size:14px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4);color:inherit}
+
+/* Tables (settings/user) */
+table.tbl{width:100%;border-collapse:collapse;font-size:14px}
+table.tbl th,table.tbl td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+.scrollx{overflow-x:auto}
+
+/* ===== REPORT (A4) ===== */
+.report-wrap{display:grid;gap:18px;justify-items:center;background:var(--none-soft);padding:16px 0;border-radius:var(--radius);overflow-x:auto}
+.paper{width:210mm;height:297mm;background:var(--paper);color:var(--paper-fg);padding:15mm 20mm;font-family:var(--font-report);font-size:10pt;line-height:1.4;position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.18);flex:none;color-scheme:light}
+.paper *{box-sizing:border-box}
+.paper .ttl{font-weight:700;font-size:14pt;margin:0 0 2.5mm}
+.paper .ttl.sq::before{content:"□ "}
+.paper table{width:100%;border-collapse:collapse;table-layout:fixed}
+.paper td,.paper th{border:1px solid #000;padding:0.9mm 1.8mm;vertical-align:middle;font-weight:400;word-break:keep-all;overflow-wrap:anywhere}
+.paper th{background:#eef0f3;font-weight:700;text-align:center}
+.paper .box-fac td{font-size:9.5pt;line-height:1.35}
+.paper .box-fac .lab{width:20mm;text-align:center;font-weight:700;background:#eef0f3}
+.paper .chk{font-family:var(--font-report)}
+.paper .chklist{font-size:9.5pt;line-height:1.3}
+.paper .chklist th.c1{width:62mm}.paper .chklist th.c2{width:30mm}.paper .chklist th.c3{}
+.paper .chklist td.sec{background:#f4f5f7;font-weight:700}
+.paper .chklist td.res{text-align:center;white-space:nowrap}
+.paper .chklist td.note{font-size:9pt;line-height:1.3}
+.paper .chklist td.note .clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.paper .chklist td .ref{display:block;font-size:8pt;color:#333;line-height:1.25}
+.paper .meta{display:flex;justify-content:space-between;gap:4mm;font-size:9pt;margin-bottom:1.5mm}
+.paper .foot{position:absolute;left:20mm;right:20mm;bottom:8mm;font-size:8.5pt;color:#444;display:flex;justify-content:space-between}
+.paper .opinion td{vertical-align:top;height:auto}
+.paper .opinion .lab{width:30mm;background:#eef0f3;font-weight:700;text-align:center}
+.paper .opinion .body{white-space:pre-wrap;min-height:22mm;font-size:10pt}
+.paper .photos td{padding:0}
+.paper .photos td.cap{padding:1.2mm 2mm;text-align:center;font-weight:700;height:8mm}
+.paper .photos td.cap small{font-weight:400;font-size:8.5pt;display:block;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paper .photos .pc{width:100%;height:60mm;display:grid;place-items:center;background:#fafafa}
+.paper .photos .pc canvas,.paper .photos .pc img{max-width:100%;max-height:100%;display:block}
+.paper .photos .pc .nop{color:#555;font-size:9.5pt;text-align:center;padding:4mm}
+.paper .photos .pc .nop b{display:block;font-size:11pt;margin-bottom:1mm}
+.paper .sig{display:flex;justify-content:flex-end;gap:6mm;margin-top:6mm;font-size:10.5pt}
+.paper .sig span{border-bottom:1px solid #000;min-width:40mm;display:inline-block;text-align:center;padding:0 2mm}
+.paper .guide{font-size:9pt;color:#333;margin-top:2mm}
+.paper .lede{font-size:10pt;margin:2mm 0 3mm;border:1px solid #000;padding:2mm 3mm;background:#fafbfc}
+@media (max-width:860px){ .report-wrap{justify-items:start} }
+.report-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.report-actions .btn{flex:1 1 160px}
+@media print{ @page{size:A4;margin:0} body{background:#fff} body::before,.appbar,.crumbs,.pagehead,.report-actions,.alert,#pdfStatus,.bottombar,.toasts,#modalRoot{display:none!important} .page{padding:0!important;max-width:none!important} .report-wrap{display:block;background:none;padding:0;zoom:1!important;overflow:visible} .paper{box-shadow:none;margin:0;break-after:page;page-break-after:always} .paper:last-child{break-after:auto;page-break-after:auto} }
+</style>
+<header class="appbar">
+  <div class="appbar-in">
+    <button class="brand" id="brandBtn" type="button" aria-label="홈으로">
+      <span>민방위 급수시설 점검<small>서울시 · 자치구 현장점검</small></span>
+    </button>
+    <span class="spacer"></span>
+    <span class="chip sync-local" id="syncChip" role="status" aria-live="polite"><span class="dot"></span><span id="syncText">준비 중</span></span>
+    <button class="iconbtn" id="userBtn" type="button" title="사용자·설정">사용자</button>
+  </div>
+</header>
+<main id="view" class="page"></main>
+<div id="bottombar"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
+<div id="fileInputs" hidden></div>
+<script>
+'use strict';
+/* ===================== 상수 ===================== */
+const GU_LIST = ['종로구','중구','용산구','성동구','광진구','동대문구','중랑구','성북구','강북구','도봉구','노원구','은평구','서대문구','마포구','양천구','강서구','구로구','금천구','영등포구','동작구','관악구','서초구','강남구','송파구','강동구'];
+const FAC_TYPES = {gov:'정부지원', local:'지자체', public:'공공용'};
+const WATER_USES = {drink:'음용수', living:'생활용수'};
+const RESULT_LABEL = {good:'양호', poor:'미흡', na:'해당 없음', '':'미점검'};
+const PHOTO_CATS = [
+  {id:'sign', label:'안내표지판'},
+  {id:'exterior', label:'시설 외관'},
+  {id:'generator', label:'비상발전기', naKey:'generator', naLabel:'비상발전기 미보유'},
+  {id:'purifier', label:'정수장치', naKey:'purifier', naLabel:'정수장치 미보유'},
+  {id:'pump', label:'양수 확인'},
+  {id:'docs', label:'서류 배치(점검일지, 수질검사서 등)', short:'서류 배치'},
+];
+const CAT_BY_ID = Object.fromEntries(PHOTO_CATS.map(c=>[c.id,c]));
+const DEFAULT_STANDARDS = {
+  year:'2025',
+  drinking:'연 4회',
+  living:'3년 1회',
+  diary:'반기, 분기, 월(개방시설에 한함)',
+  notice:'첨부 양식(2025년 기준)에 적힌 값입니다. 최신 기준은 관리자가 확인 후 수정하세요.',
+};
+function buildItems(st){
+  st = Object.assign({}, DEFAULT_STANDARDS, st||{});
+  return [
+    {id:'W1', sec:'written', num:'①', title:'수질검사 내역 확인', note:`※ (음용수) ${st.drinking} (생활용수) ${st.living}`},
+    {id:'W2', sec:'written', num:'②', title:'점검대상 시설관리카드 출력', note:'※ 현장점검 시, 현장과 내용 일치 확인'},
+    {id:'W3', sec:'written', num:'③', title:'시군구 계획 확인', note:'※ 용수 확보율 미충족시, 충족 위한 계획 반영 여부'},
+    {id:'W4', sec:'written', num:'④', title:'비상급수계획 확인', note:'※ 관할구역 시설 현황, 이동급수계획, 민방위대 활용 계획 반영 여부 등'},
+    {id:'W5', sec:'written', num:'⑤', title:'점검 거부 시, 허위시설 여부 확인', note:'※ 서면점검 후 점검대상 무작위 선정'},
+    {id:'F1', sec:'field', num:'①', title:'시설내 점검일지 비치 및 내역', note:`※ 주기 : ${st.diary}`, photo:'docs'},
+    {id:'F2', sec:'field', num:'②', title:'시설 비치 점검일지 항목에 따른 시설관리 상태 확인', note:'', photo:'docs'},
+    {id:'F3', sec:'field', num:'③', title:'시설관리카드와의 정보 일치', note:'※ 관리카드 = 안내표지판 = 안전디딤돌'},
+    {id:'F4', sec:'field', num:'④', title:'안내표지판 관리상태', note:'※ 수질검사 게시, 운영중지 안내문, 훼손 등', photo:'sign'},
+    {id:'F5', sec:'field', num:'⑤', title:'시설 내·외부 관리상태', note:'※ 도장상태, 시설물 훼손, 청결, 기본 작동 등', photo:'exterior'},
+    {id:'F6', sec:'field', num:'⑥', title:'상전 차단 후, 비상발전기 운영', note:'※ 발전기 운영 역량 확인(보유시설만 해당)', photo:'generator', generatorOnly:true},
+    {id:'F7', sec:'field', num:'⑦', title:'상전 차단 후, 비상발전기 가동을 통한 양수작업(3분 이상) 확인', note:'※ 발전기 운영 역량 확인(보유시설만 해당)', photo:'pump', generatorOnly:true, timer:true},
+    {id:'F8', sec:'field', num:'⑧', title:'지하수시설 확인', note:'※ 양수장, 계곡, 표층수 등 혼합 금지'},
+  ];
+}
+const ITEM_IDS = ['W1','W2','W3','W4','W5','F1','F2','F3','F4','F5','F6','F7','F8'];
+const PUMP_SECONDS = 180;
+
+/* ===================== 유틸 ===================== */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uuid(){ if (crypto.randomUUID) return crypto.randomUUID().replace(/-/g,'').slice(0,20); return Array.from(crypto.getRandomValues(new Uint8Array(10))).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtDate(d){ d = d instanceof Date ? d : new Date(d); if (isNaN(d)) return ''; return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function fmtDT(ts){ if(!ts) return ''; const d=new Date(ts); if(isNaN(d)) return ''; return `${fmtDate(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function fmtDTS(ts){ if(!ts) return ''; const d=new Date(ts); if(isNaN(d)) return ''; return `${fmtDate(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
+function fmtTime(ts){ const d=new Date(ts); return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
+function fmtKDate(s){ if(!s) return ''; const [y,m,d]=s.split('-'); return `${y}. ${Number(m)}. ${Number(d)}.`; }
+function todayStr(){ return fmtDate(new Date()); }
+function nowIso(){ return new Date().toISOString(); }
+function deepEq(a,b){ if(a===b) return true; if(typeof a!=='object'||typeof b!=='object'||!a||!b) return false; if(Array.isArray(a)!==Array.isArray(b)) return false; const ka=Object.keys(a), kb=Object.keys(b); if(ka.length!==kb.length) return false; for(const k of ka){ if(!deepEq(a[k],b[k])) return false; } return true; }
+function isObj(v){ return v && typeof v==='object' && !Array.isArray(v); }
+function clone(v){ return v==null? v : JSON.parse(JSON.stringify(v)); }
+function debounce(fn, ms){ let t; const f=(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; f.flush=(...a)=>{ clearTimeout(t); fn(...a); }; return f; }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function toast(msg, opts={}){ const root=$('#toasts'); while(root.children.length>=3) root.firstElementChild.remove(); const el=document.createElement('div'); el.className='toast'+(opts.err?' err':''); el.innerHTML=`<span style="flex:1">${esc(msg)}</span>`; if(opts.action){ const b=document.createElement('button'); b.className='btn sm'; b.textContent=opts.action.label; b.onclick=()=>{ opts.action.fn(); el.remove(); }; el.appendChild(b); } root.appendChild(el); setTimeout(()=>el.remove(), opts.ms|| (opts.action?8000:3500)); }
+
+/* ---- EXIF DateTimeOriginal ---- */
+async function readExifDate(file){
+  try{
+    const buf = await file.slice(0, 256*1024).arrayBuffer();
+    const v = new DataView(buf);
+    if (v.getUint16(0)!==0xFFD8) return null;
+    let off=2;
+    while (off+4 < v.byteLength){
+      const marker=v.getUint16(off); const len=v.getUint16(off+2);
+      if (marker===0xFFE1){
+        const start=off+4;
+        if (v.getUint32(start)!==0x45786966) return null; // "Exif"
+        const tiff=start+6; const little = v.getUint16(tiff)===0x4949;
+        const g16=(p)=>v.getUint16(p,little), g32=(p)=>v.getUint32(p,little);
+        const ifd0=tiff+g32(tiff+4);
+        const readIFD=(p, want)=>{ const n=g16(p); for(let i=0;i<n;i++){ const e=p+2+i*12; const tag=g16(e); if(tag===want) return e; } return null; };
+        const exifPtrE = readIFD(ifd0, 0x8769);
+        let dateE=null;
+        if (exifPtrE){ const exifIfd=tiff+g32(exifPtrE+8); dateE=readIFD(exifIfd,0x9003); }
+        if (!dateE) dateE=readIFD(ifd0,0x0132);
+        if (!dateE) return null;
+        const cnt=g32(dateE+4); const valOff=tiff+g32(dateE+8);
+        if (valOff+cnt>v.byteLength) return null;
+        let s=''; for(let i=0;i<cnt-1;i++) s+=String.fromCharCode(v.getUint8(valOff+i));
+        const m=s.match(/(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
+        if(!m) return null;
+        const d=new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]);
+        return isNaN(d)?null:d.toISOString();
+      }
+      if ((marker & 0xFF00)!==0xFF00) break;
+      off += 2+len;
+    }
+  }catch(e){}
+  return null;
+}
+/* ---- 이미지 축소(EXIF 방향 반영, JPEG 재인코딩) ---- */
+async function processImage(file, maxSide=1600){
+  let bmp=null;
+  try{ bmp = await createImageBitmap(file, {imageOrientation:'from-image'}); }catch(e){}
+  if(!bmp){
+    bmp = await new Promise((res,rej)=>{ const url=URL.createObjectURL(file); const im=new Image(); im.onload=()=>{URL.revokeObjectURL(url);res(im)}; im.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('이미지를 열 수 없습니다'))}; im.src=url; });
+  }
+  const w=bmp.width||bmp.naturalWidth, h=bmp.height||bmp.naturalHeight;
+  const scale=Math.min(1, maxSide/Math.max(w,h));
+  const cw=Math.max(1,Math.round(w*scale)), ch=Math.max(1,Math.round(h*scale));
+  const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+  c.getContext('2d').drawImage(bmp,0,0,cw,ch);
+  if (bmp.close) bmp.close();
+  const blob = await new Promise(r=>c.toBlob(r,'image/jpeg',0.86));
+  if(!blob) throw new Error('이미지 변환 실패');
+  return {blob, w:cw, h:ch};
+}
+/* 회전을 반영해 캔버스에 contain 방식으로 그리기 (보고서용) */
+function drawContain(canvas, img, rotation, boxW, boxH, dpr=2){
+  canvas.width=Math.round(boxW*dpr); canvas.height=Math.round(boxH*dpr);
+  canvas.style.width=boxW+'px'; canvas.style.height=boxH+'px';
+  const ctx=canvas.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
+  const rot=((rotation||0)%360+360)%360;
+  const rw = (rot===90||rot===270)? ih: iw, rh=(rot===90||rot===270)? iw: ih;
+  const s=Math.min(canvas.width/rw, canvas.height/rh);
+  ctx.save(); ctx.translate(canvas.width/2, canvas.height/2); ctx.rotate(rot*Math.PI/180);
+  ctx.drawImage(img, -iw*s/2, -ih*s/2, iw*s, ih*s); ctx.restore();
+}
+function loadImg(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>rej(new Error('load fail')); im.src=src; }); }
+
+/* ===================== IndexedDB (임시 보관) ===================== */
+const IDB = {
+  db:null, mem:{docs:new Map(), blobs:new Map(), meta:new Map()}, ok:false,
+  async open(){
+    try{
+      this.db = await new Promise((res,rej)=>{ const r=indexedDB.open('mbw-inspect-v1',1);
+        r.onupgradeneeded=e=>{ const d=e.target.result; if(!d.objectStoreNames.contains('docs')) d.createObjectStore('docs',{keyPath:'path'}); if(!d.objectStoreNames.contains('blobs')) d.createObjectStore('blobs'); if(!d.objectStoreNames.contains('meta')) d.createObjectStore('meta'); };
+        r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); r.onblocked=()=>rej(new Error('blocked')); });
+      this.ok=true;
+    }catch(e){ this.ok=false; }
+  },
+  _req(store, mode, fn){ return new Promise((res,rej)=>{ try{ const tx=this.db.transaction(store,mode); const st=tx.objectStore(store); const r=fn(st); tx.oncomplete=()=>res(r&&r.result!==undefined?r.result:undefined); tx.onerror=()=>rej(tx.error); tx.onabort=()=>rej(tx.error); }catch(e){ rej(e); } }); },
+  async get(store,key){ if(!this.ok) return this.mem[store].get(key); try{ return await this._req(store,'readonly',st=>st.get(key)); }catch(e){ return this.mem[store].get(key); } },
+  async put(store,val,key){ if(!this.ok){ this.mem[store].set(key!==undefined?key:val.path,val); return; } try{ await this._req(store,'readwrite',st=> key!==undefined? st.put(val,key): st.put(val)); }catch(e){ this.mem[store].set(key!==undefined?key:val.path,val); } },
+  async del(store,key){ if(!this.ok){ this.mem[store].delete(key); return; } try{ await this._req(store,'readwrite',st=>st.delete(key)); }catch(e){} },
+  async all(store){ if(!this.ok) return Array.from(this.mem[store].values()); try{ return await this._req(store,'readonly',st=>st.getAll()); }catch(e){ return Array.from(this.mem[store].values()); } },
+  async keys(store){ if(!this.ok) return Array.from(this.mem[store].keys()); try{ return await this._req(store,'readonly',st=>st.getAllKeys()); }catch(e){ return []; } },
+};
+
+/* ===================== 런타임(캐퍼빌리티) ===================== */
+const RT = { mode:'local', standalone: !(window.claude && typeof window.claude.use==='function'), signedOut:false, db:null, assets:null, user:null, downloads:null, sample:null, sampleImages:null, me:{id:null,name:'',isOwner:false,canEdit:false}, canWrite:null, online:navigator.onLine!==false, assetUrls:{} };
+async function initRuntime(){
+  if (!(window.claude && typeof window.claude.use==='function')) { RT.mode='local'; return; }
+  RT.mode='cloud';
+  const names=['db','user','assets','downloads','sample'];
+  const got = await Promise.all(names.map(n=>Promise.resolve().then(()=>window.claude.use(n)).catch(()=>null)));
+  names.forEach((n,i)=>RT[n]=got[i]);
+  if (RT.user){
+    try{ RT.me = await RT.user.me(); }catch(e){}
+    try{ RT.canWrite = await RT.user.can('data.write'); }catch(e){ RT.canWrite=null; }
+  }
+  if (RT.sample){ try{ const lim=await RT.sample.limits(); RT.sampleImages = lim && lim.images ? lim.images : null; }catch(e){ RT.sampleImages=null; } }
+  if (!RT.db){ RT.mode='local'; RT.signedOut=true; }
+}
+function assetUrl(id){ if(!id) return ''; return RT.assetUrls[id] || ('/_blob/'+id); }
+function isAdmin(){ return RT.mode==='local' || !!(RT.me && (RT.me.canEdit || RT.me.isOwner)); }
+function myId(){ return (RT.me && RT.me.id) || 'local'; }
+function myName(){ return (RT.me && RT.me.name) || Store.localName || ''; }
+
+/* ===================== 저장소 + 동기화 ===================== */
+const Store = {
+  recs:new Map(),           // path -> {path,data,base,dirty,deleted,needsAsset,ver,err,attempts}
+  facilities:new Map(), inspections:new Map(), photos:new Map(), settings:{standards:null, access:null},
+  blobUrls:new Map(),       // photoId -> objectURL
+  listeners:new Set(), flushing:false, flushTimer:null, backoff:0, lastSavedAt:null, conflicts:[],
+  localName:'', unsubs:[], photoSubInspection:null, photoUnsub:null, ready:false,
+  on(fn){ this.listeners.add(fn); return ()=>this.listeners.delete(fn); },
+  emit(what){ for(const fn of this.listeners){ try{ fn(what); }catch(e){ console.error(e); } } },
+  split(path){ const i=path.indexOf('/'); return [path.slice(0,i), path.slice(i+1)]; },
+  applyToMaps(path, data){
+    const [col,id]=this.split(path);
+    const map = col==='facilities'?this.facilities: col==='inspections'?this.inspections: col==='photos'?this.photos: null;
+    if (map){ if(data) map.set(id, data); else map.delete(id); }
+    else if (col==='settings'){ this.settings[id]=data; }
+  },
+  async loadLocal(){
+    try{ const nm=await IDB.get('meta','localName'); if(nm) this.localName=nm; }catch(e){}
+    const all = await IDB.all('docs');
+    for (const r of all){ this.recs.set(r.path, r); if(!r.deleted) this.applyToMaps(r.path, r.data); }
+    // 로컬 블롭 URL 준비
+    const keys = await IDB.keys('blobs');
+    for (const k of keys){ const b=await IDB.get('blobs',k); if(b) this.blobUrls.set(k, URL.createObjectURL(b)); }
+    this.ready=true; this.emit('load');
+  },
+  async persist(rec){ await IDB.put('docs', {path:rec.path,data:rec.data,base:rec.base,dirty:rec.dirty,deleted:!!rec.deleted,needsAsset:!!rec.needsAsset,ver:rec.ver||0}); },
+  get(path){ const r=this.recs.get(path); return r && !r.deleted ? r.data : null; },
+  /** 저장(즉시 로컬 임시저장 → 동기화 큐) */
+  async save(path, data, opts={}){
+    let rec=this.recs.get(path);
+    if(!rec){ rec={path, data:null, base:null, dirty:false, ver:0}; this.recs.set(path,rec); }
+    if (Object.isFrozen(data)) data = clone(data);
+    if(!opts.silent){ data.updatedAt = nowIso(); data.updatedBy = myId(); }
+    rec.data=data; rec.dirty=true; rec.deleted=false; rec.ver=(rec.ver||0)+1; rec.err=null;
+    if (opts.needsAsset!==undefined) rec.needsAsset=opts.needsAsset;
+    this.applyToMaps(path, data);
+    this.emit('change:'+path);
+    SyncUI.update();
+    await this.persist(rec);
+    this.scheduleFlush(0);
+  },
+  async remove(path){
+    let rec=this.recs.get(path); if(!rec){ rec={path,data:null,base:null,ver:0}; this.recs.set(path,rec); }
+    rec.deleted=true; rec.dirty=true; rec.ver=(rec.ver||0)+1; rec.needsAsset=false;
+    this.applyToMaps(path,null); this.emit('change:'+path); SyncUI.update();
+    await this.persist(rec); this.scheduleFlush(0);
+  },
+  pendingCount(){ let n=0; for(const r of this.recs.values()) if(r.dirty && !r.needsAsset) n++; return n; },
+  failedCount(){ let n=0; for(const r of this.recs.values()) if(r.dirty && r.err && !r.needsAsset) n++; return n; },
+  scheduleFlush(ms){ clearTimeout(this.flushTimer); this.flushTimer=setTimeout(()=>this.flush(), ms); },
+  async flush(){
+    if (this.flushing) { this.scheduleFlush(500); return; }
+    this.flushing=true; SyncUI.update();
+    try{
+      const dirty=[...this.recs.values()].filter(r=>r.dirty && !r.needsAsset);
+      if (RT.mode==='local'){ for(const r of dirty){ r.err=null; } if(dirty.length) this.lastSavedAt=Date.now(); }
+      else if (!RT.db || RT.canWrite===false){ /* 로그인/쓰기 권한 없음: 대기 */ }
+      else {
+        let anyFail=false;
+        for (const r of dirty){
+          const verAtStart=r.ver;
+          try{
+            const ref=RT.db.doc(r.path);
+            if (r.deleted){ await ref.delete(); }
+            else {
+              const snap=await ref.get(); const serverNow=snap.exists? snap.data(): null;
+              const {out,conflicts}=merge3(r.base, r.data, serverNow);
+              out.rev = Math.max((serverNow&&serverNow.rev)||0, r.data.rev||0)+1;
+              await ref.set(out);
+              if (r.ver===verAtStart){ Object.keys(r.data).forEach(k=>{ if(!(k in out)) delete r.data[k]; }); Object.assign(r.data, out); this.applyToMaps(r.path,r.data); }
+              r.base=clone(out);
+              if (conflicts.length){ this.conflicts.push({path:r.path, fields:conflicts, at:Date.now()}); toast(`다른 기기의 수정과 충돌해 내 입력을 유지했습니다 (${conflicts.slice(0,3).join(', ')})`, {ms:6000}); }
+            }
+            if (r.ver===verAtStart){ r.dirty=false; r.err=null; r.attempts=0; }
+            this.lastSavedAt=Date.now(); RT.online=true;
+            await this.persist(r);
+            this.emit('synced:'+r.path);
+          }catch(e){
+            anyFail=true; r.err=(e&&e.code)||'error'; r.attempts=(r.attempts||0)+1; await this.persist(r);
+            if (r.err==='invalid_argument' || r.err==='quota_exceeded'){ console.warn('save rejected', r.path, e); }
+            else if (r.err==='unavailable' || r.err==='error') RT.online = navigator.onLine!==false ? RT.online : false;
+          }
+        }
+        if (anyFail){ this.backoff=Math.min(60000, (this.backoff||3000)*2); this.scheduleFlush(this.backoff); }
+        else this.backoff=0;
+      }
+    } finally { this.flushing=false; SyncUI.update(); }
+    Uploads.run();
+  },
+  /* 서버 변경 수신 */
+  handleServer(path, data){
+    let rec=this.recs.get(path);
+    if(!rec){ rec={path,data:clone(data),base:clone(data),dirty:false,ver:0}; this.recs.set(path,rec); }
+    else if(rec.dirty){ return; /* 플러시 때 3-way 병합 */ }
+    else { if (deepEq(rec.base, data)) return; rec.data=clone(data); rec.base=clone(data); rec.deleted=false; }
+    this.applyToMaps(path,rec.data); this.persist(rec); this.emit('change:'+path);
+  },
+  handleServerDelete(path){
+    const rec=this.recs.get(path); if(rec && rec.dirty) return;
+    this.recs.delete(path); IDB.del('docs',path); this.applyToMaps(path,null); this.emit('change:'+path);
+  },
+  subscribeCloud(){
+    if (!RT.db) return;
+    const sub=(q)=>q.onSnapshot(snap=>{
+      for (const ch of snap.docChanges()){
+        const path=ch.doc.ref? ch.doc.ref.path : null;
+        const p = path || (q.path+'/'+ch.doc.id);
+        if (ch.type==='removed') this.handleServerDelete(p); else this.handleServer(p, ch.doc.data());
+      }
+      if (!this.cloudLoaded){ this.cloudLoaded=true; this.emit('load'); }
+    }, err=>{ console.warn('subscribe error', err); if(err && err.code==='revoked'){ toast('접근 권한이 변경되어 실시간 동기화가 중단되었습니다. 새로고침해 주세요.',{err:true,ms:8000}); } });
+    this.unsubs.push(sub(RT.db.collection('facilities')));
+    this.unsubs.push(sub(RT.db.collection('inspections')));
+    this.unsubs.push(sub(RT.db.collection('settings')));
+  },
+  subscribePhotos(inspectionId){
+    if (!RT.db || this.photoSubInspection===inspectionId) return;
+    if (this.photoUnsub){ this.photoUnsub(); this.photoUnsub=null; }
+    this.photoSubInspection=inspectionId;
+    if(!inspectionId) return;
+    const q=RT.db.collection('photos').where('inspectionId','==',inspectionId);
+    this.photoUnsub=q.onSnapshot(snap=>{
+      for (const ch of snap.docChanges()){ const p='photos/'+ch.doc.id; if(ch.type==='removed') this.handleServerDelete(p); else this.handleServer(p, ch.doc.data()); }
+    }, err=>console.warn('photo sub', err));
+  },
+  async fetchPhotos(inspectionId){
+    if (!RT.db) return;
+    try{ const snap=await RT.db.collection('photos').where('inspectionId','==',inspectionId).get(); for(const d of snap.docs) this.handleServer('photos/'+d.id, d.data()); }catch(e){ console.warn(e); }
+  },
+  photosOf(inspectionId, cat){ const arr=[...this.photos.values()].filter(p=>p.inspectionId===inspectionId && (!cat || p.category===cat)); arr.sort((a,b)=>(a.order||0)-(b.order||0) || (a.createdAt||'').localeCompare(b.createdAt||'')); return arr; },
+  inspectionsOf(facilityId){ return [...this.inspections.values()].filter(i=>i.facilityId===facilityId).sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.createdAt||'').localeCompare(a.createdAt||'')); },
+};
+function merge3(base, local, server){
+  if (!server) return {out:clone(local), conflicts:[]};
+  if (!base) return {out:Object.assign({}, server, local), conflicts:[]};
+  const IGN=new Set(['rev','updatedAt','updatedBy']);
+  const out={}, conflicts=[];
+  const keys=new Set([...Object.keys(base),...Object.keys(local),...Object.keys(server)]);
+  for (const k of keys){
+    const b=base[k], l=local[k], s=server[k];
+    const lc=!deepEq(l,b), sc=!deepEq(s,b);
+    if (!lc){ if (k in server) out[k]=s; else if (!sc && k in local) out[k]=l; }
+    else if (!sc){ if (k in local) out[k]=l; }
+    else if (k==='editLog' && Array.isArray(l) && Array.isArray(s)){ const seen=new Set(); out[k]=[...s,...l].filter(e=>{ const key=e.at+'|'+e.by; if(seen.has(key)) return false; seen.add(key); return true; }).sort((a,b)=>(a.at||'').localeCompare(b.at||'')).slice(-50); }
+    else if (isObj(l)&&isObj(s)&&isObj(b)){ const m=merge3(b,l,s); out[k]=m.out; conflicts.push(...m.conflicts.map(c=>k+'.'+c)); }
+    else { if (k in local) out[k]=l; if (!deepEq(l,s) && !IGN.has(k)) conflicts.push(k); }
+  }
+  return {out, conflicts};
+}
+
+/* ===================== 사진 업로드 큐 ===================== */
+const Uploads = {
+  running:false, uploading:new Set(), nextTry:{}, attempts:{},
+  pending(){ return [...Store.photos.values()].filter(p=>!p.assetId && p.status!=='local'); },
+  async run(){
+    if (this.running) return; this.running=true;
+    try{
+      for (const p of this.pending()){
+        if (this.uploading.has(p.id)) continue;
+        const path='photos/'+p.id; const rec=Store.recs.get(path); if(!rec||rec.deleted) continue;
+        const blob=await IDB.get('blobs', p.id);
+        if (!blob){ if(p.status!=='missing'){ p.status='missing'; rec.data=p; await Store.persist(rec); Store.emit('change:'+path);} continue; }
+        if (RT.mode==='local'){ p.status='local'; rec.needsAsset=false; await Store.save(path, p, {silent:true}); continue; }
+        if (!RT.assets){ if(p.status!=='noperm'){ p.status='noperm'; rec.data=p; await Store.persist(rec); Store.emit('change:'+path); SyncUI.update(); } continue; }
+        if (!RT.online && navigator.onLine===false) continue;
+        if (this.nextTry[p.id] && this.nextTry[p.id]>Date.now()) continue;
+        this.uploading.add(p.id); p.status='uploading'; Store.emit('change:'+path); SyncUI.update();
+        try{
+          const r=await RT.assets.upload(blob, {type:'image/jpeg'});
+          RT.assetUrls[r.id]=r.url;
+          p.assetId=r.id; p.status='done'; p.err=null; rec.needsAsset=false; delete this.nextTry[p.id]; this.attempts[p.id]=0;
+          await Store.save(path, p, {silent:true});
+          RT.online=true;
+        }catch(e){
+          p.status='failed'; p.err=(e&&e.code)||'error'; rec.data=p; await Store.persist(rec); Store.emit('change:'+path);
+          this.attempts[p.id]=(this.attempts[p.id]||0)+1; this.nextTry[p.id]=Date.now()+Math.min(60000, 4000*Math.pow(2, this.attempts[p.id]-1));
+          if (p.err==='store_unavailable' || p.err==='upstream_error' || p.err==='rate_limited') { RT.online = navigator.onLine!==false; }
+        } finally { this.uploading.delete(p.id); SyncUI.update(); }
+      }
+    } finally { this.running=false; }
+    // 업로드 완료된 문서 플러시 후 로컬 블롭 정리
+    for (const [pid,url] of Store.blobUrls){ const p=Store.photos.get(pid); const rec=Store.recs.get('photos/'+pid); if (p && p.assetId && rec && !rec.dirty && RT.mode==='cloud'){ await IDB.del('blobs',pid); URL.revokeObjectURL(url); Store.blobUrls.delete(pid); } }
+  },
+  retry(pid){ const p=Store.photos.get(pid); if(!p) return; p.status='pending'; p.err=null; delete this.nextTry[pid]; Store.emit('change:photos/'+pid); this.run(); },
+  retryAll(){ this.nextTry={}; for(const p of this.pending()){ if(p.status==='failed') p.status='pending'; } this.run(); },
+  countPending(){ return this.pending().filter(p=>p.status!=='noperm').length; },
+  countFailed(){ return this.pending().filter(p=>p.status==='failed'||p.status==='missing').length; },
+};
+function photoSrc(p){ if(!p) return ''; const u=Store.blobUrls.get(p.id); if(u) return u; if(p.assetId) return assetUrl(p.assetId); return ''; }
+
+/* ===================== 동기화 상태 표시 ===================== */
+const SyncUI = {
+  update(){
+    const chip=$('#syncChip'), txt=$('#syncText'); if(!chip) return;
+    let cls='sync-ok', t='동기화 완료';
+    const pend=Store.pendingCount(), fail=Store.failedCount(), up=Uploads.countPending(), upFail=Uploads.countFailed();
+    if (RT.mode==='local'){ cls='sync-local'; t= RT.signedOut? '비로그인 · 이 기기에 저장됨' : '이 기기에 저장됨'; }
+    else if (!RT.db){ cls='sync-off'; t='로그인 필요 · 읽기 전용'; }
+    else if (RT.canWrite===false){ cls='sync-off'; t='읽기 전용 권한'; }
+    else if (navigator.onLine===false){ cls='sync-off'; t=`오프라인 · 임시 보관 ${pend+up}건`; }
+    else if (fail||upFail){ cls='sync-bad'; t=`동기화 실패 ${fail+upFail}건 · 재시도 중`; }
+    else if (Store.flushing || pend || up){ cls='sync-busy'; t=`동기화 중 ${pend+up}건`; }
+    else { cls='sync-ok'; t= Store.lastSavedAt? `동기화 완료 ${new Date(Store.lastSavedAt).toTimeString().slice(0,5)}` : '동기화 완료'; }
+    chip.className='chip '+cls; txt.textContent=t;
+    const ss=$('#saveState'); if(ss){ ss.className='savestate '+(RT.mode==='local'? 'saved' : fail||upFail?'failed': (pend||up||Store.flushing)? 'saving' : 'saved'); ss.innerHTML = RT.mode==='local'? '기기 저장됨' : fail||upFail? '저장 실패<br>재시도 중' : (pend||up||Store.flushing)? '저장 중…' : '저장 완료'; }
+  }
+};
+window.addEventListener('online', ()=>{ RT.online=true; SyncUI.update(); Store.backoff=0; Uploads.nextTry={}; Store.scheduleFlush(300); toast('연결이 복구되어 동기화를 시작합니다'); });
+window.addEventListener('offline', ()=>{ RT.online=false; SyncUI.update(); toast('오프라인 상태입니다. 입력과 사진은 이 기기에 임시 보관됩니다'); });
+setInterval(()=>{ if (RT.mode==='cloud' && (Store.pendingCount()||Uploads.countPending())) { Store.scheduleFlush(0); } }, 20000);
+/* ===================== 앱 상태 / 라우팅 ===================== */
+const App = {
+  route:{name:'home'}, filters:{q:'', gu:'', type:'', water:'', status:''}, pickMode:false,
+  go(route, opts={}){ this.route=route; try{ sessionStorage.setItem('mbw-route', JSON.stringify(route)); }catch(e){} render(); if(!opts.keepScroll) window.scrollTo(0,0); },
+  restore(){ try{ const r=JSON.parse(sessionStorage.getItem('mbw-route')||'null'); if(r && r.name) this.route=r; }catch(e){} },
+};
+function access(){ return Store.settings.access || {defaultAll:true, assignments:{}}; }
+function myGus(){ const a=access(); const mine=a.assignments && a.assignments[myId()]; return mine && Array.isArray(mine.gus) ? mine.gus : null; }
+function canSeeGu(gu){ if (isAdmin()) return true; const gus=myGus(); if (gus && gus.length) return gus.includes(gu); return access().defaultAll!==false; }
+function visibleFacilities(){ return [...Store.facilities.values()].filter(f=>!f.deleted && canSeeGu(f.gu)); }
+function noAccessAtAll(){ if (isAdmin()) return false; const gus=myGus(); return !(gus&&gus.length) && access().defaultAll===false; }
+function readOnly(){ return RT.mode==='cloud' && (!RT.db || RT.canWrite===false); }
+
+function latestInspection(facId){ const arr=Store.inspectionsOf(facId); return arr[0]||null; }
+function inspStats(insp){ let good=0,poor=0,na=0,none=0, missingNote=0; for(const id of ITEM_IDS){ const v=(insp.items||{})[id]||{r:''}; if(v.r==='good') good++; else if(v.r==='poor'){ poor++; if(!(v.note||'').trim()) missingNote++; } else if(v.r==='na'){ na++; if(!(v.note||'').trim()) missingNote++; } else none++; } return {good,poor,na,none,missingNote,total:ITEM_IDS.length,done:good+poor+na}; }
+function facStatusTag(facId){ const li=latestInspection(facId); if(!li) return `<span class="tag none">미점검</span>`; if(li.status==='done'){ const s=inspStats(li); return s.poor? `<span class="tag poor">미흡 ${s.poor}</span>` : `<span class="tag good">점검 완료</span>`; } return `<span class="tag warn">작성 중</span>`; }
+function facStatusKey(facId){ const li=latestInspection(facId); if(!li) return 'none'; if(li.status==='done') return inspStats(li).poor? 'poor':'done'; return 'draft'; }
+
+/* ===================== 렌더 진입 ===================== */
+let renderScheduled=false;
+function render(){ renderScheduled=false; const r=App.route; const view=$('#view'); const bb=$('#bottombar'); bb.innerHTML=''; view.className='page'+(['inspect','facilityEdit','report'].includes(r.name)?' narrow':'');
+  try{
+    switch(r.name){
+      case 'home': view.innerHTML=homeHtml(); bindHome(); break;
+      case 'facilities': view.innerHTML=facilitiesHtml(); bindFacilities(); break;
+      case 'facilityEdit': view.innerHTML=facilityEditHtml(r.id); bindFacilityEdit(r.id); break;
+      case 'facility': view.innerHTML=facilityHtml(r.id); bindFacility(r.id); break;
+      case 'inspect': renderInspect(r); break;
+      case 'report': renderReport(r); break;
+      case 'settings': view.innerHTML=settingsHtml(); bindSettings(); break;
+      default: view.innerHTML=homeHtml(); bindHome();
+    }
+  }catch(e){ console.error(e); view.innerHTML=`<div class="alert poor"><b>화면을 표시하는 중 오류가 났습니다.</b> ${esc(e.message)}</div><p style="margin-top:10px"><button class="btn" onclick="App.go({name:'home'})">홈으로</button></p>`; }
+  SyncUI.update();
+}
+function scheduleRender(){ if(renderScheduled) return; renderScheduled=true; requestAnimationFrame(render); }
+
+/* ===================== 홈 ===================== */
+function homeHtml(){
+  const facs=visibleFacilities(); const facIds=new Set(facs.map(f=>f.id));
+  const year=new Date().getFullYear();
+  const insps=[...Store.inspections.values()].filter(i=>facIds.has(i.facilityId));
+  const doneThisYear=insps.filter(i=>i.status==='done' && (i.date||'').startsWith(String(year)));
+  const poorFacs=new Set(); for(const f of facs){ const li=latestInspection(f.id); if(li&&li.status==='done'&&inspStats(li).poor) poorFacs.add(f.id); }
+  const actionOpen=insps.filter(i=>i.status==='done' && (i.actions||'').trim() && !i.actionDone).length;
+  const testCount=facs.filter(f=>f.isTest).length;
+  const recent=insps.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,6);
+  const ro=readOnly();
+  return `
+  <div class="pagehead"><div><h1>현장점검</h1><p class="sub">민방위 비상급수시설 관리실태 점검 · ${year}년</p></div>
+    <div class="row">${isAdmin()?`<button class="btn sm" data-go="settings">관리자 설정</button>`:''}<button class="btn sm" id="xlsAllBtn">엑셀 내려받기</button></div></div>
+  ${noAccessAtAll()? `<div class="alert warn" style="margin-bottom:14px"><b>배정된 자치구가 없습니다.</b> 관리자에게 담당 자치구 배정을 요청하세요.</div>`:''}
+  ${ro? `<div class="alert info" style="margin-bottom:14px">읽기 전용 권한입니다. 점검 결과를 저장하려면 관리자에게 Contributor(기여자) 이상 권한을 요청하세요.</div>`:''}
+  ${RT.signedOut? `<div class="alert na small" style="margin-bottom:14px"><span>로그인 없이 사용 중 — 입력한 자료와 사진은 이 기기에만 저장됩니다. 끝나면 ‘사용자 → 전체 내보내기(ZIP)’로 담당자에게 보내세요.</span></div>`:''}
+  <div class="card">
+    <div class="searchbar"><input type="search" id="homeSearch" placeholder="시설명 또는 주소 검색" value="${esc(App.filters.q)}" aria-label="시설 검색"><button class="btn primary" id="homeSearchBtn">검색</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary lg" id="newInspBtn" style="flex:1 1 200px" ${ro?'disabled':''}>새 점검 시작</button><button class="btn lg" data-go="facilities" style="flex:1 1 140px">시설 목록</button><button class="btn lg" id="newFacBtn" style="flex:1 1 140px" ${ro?'disabled':''}>시설 등록</button></div>
+  </div>
+  <div class="stats" style="margin-top:14px">
+    <button class="stat" data-go="facilities" data-status=""><span class="lbl">전체 시설 수</span><span class="val">${facs.length}${testCount?`<small>테스트 ${testCount} 포함</small>`:''}</span></button>
+    <button class="stat good" data-go="facilities" data-status="done"><span class="lbl">점검 완료 (${year})</span><span class="val">${doneThisYear.length}</span></button>
+    <button class="stat poor" data-go="facilities" data-status="poor"><span class="lbl">미흡 시설 수</span><span class="val">${poorFacs.size}</span></button>
+    <button class="stat warn" data-go="facilities" data-status="action"><span class="lbl">조치 미완료</span><span class="val">${actionOpen}</span></button>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>최근 점검 <span class="count">${insps.length}건</span></h2>
+    ${recent.length? `<div class="list">${recent.map(i=>inspListItem(i)).join('')}</div>` : `<div class="empty"><b>아직 점검 기록이 없습니다</b>시설을 등록하고 ‘새 점검 시작’을 누르면 여기에 표시됩니다.</div>`}
+  </div>`;
+}
+function inspListItem(i){ const f=Store.facilities.get(i.facilityId)||i.facility||{}; const s=inspStats(i); const st = i.status==='done'? (s.poor?`<span class="tag poor">미흡 ${s.poor}</span>`:`<span class="tag good">점검 완료</span>`) : `<span class="tag warn">작성 중 ${Math.round(s.done/s.total*100)}%</span>`;
+  return `<button class="listitem" data-insp="${i.id}"><div class="main"><div class="title">${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name||'(시설명 없음)')}</div><div class="meta">${esc(f.gu||'')} · ${fmtKDate(i.date)} · ${esc(i.inspector||'점검자 미입력')}</div></div><div class="right">${st}${i.status==='done'&&(i.actions||'').trim()? (i.actionDone?'<span class="tag good">조치 완료</span>':'<span class="tag warn">조치 필요</span>'):''}</div></button>`; }
+function bindHome(){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>{ if(b.dataset.status!==undefined){ App.filters.status=b.dataset.status; } App.go({name:b.dataset.go}); });
+  const go=()=>{ App.filters.q=$('#homeSearch').value.trim(); App.go({name:'facilities'}); };
+  $('#homeSearchBtn').onclick=go; $('#homeSearch').onkeydown=e=>{ if(e.key==='Enter') go(); };
+  $('#newInspBtn').onclick=()=>{ App.pickMode=true; App.filters.q=''; App.go({name:'facilities'}); };
+  $('#newFacBtn').onclick=()=>App.go({name:'facilityEdit', id:null});
+  $('#xlsAllBtn').onclick=()=>exportExcel([...Store.inspections.values()].filter(i=>canSeeGu((Store.facilities.get(i.facilityId)||i.facility||{}).gu)), '민방위급수시설_점검결과_전체');
+  $$('#view [data-insp]').forEach(b=>b.onclick=()=>openInspection(b.dataset.insp));
+}
+function openInspection(id){ const i=Store.inspections.get(id); if(!i) return; App.go({name:'inspect', id, step: i.status==='done'? 5 : (i.lastStep||1)}); }
+
+/* ===================== 시설 목록 ===================== */
+function facilitiesHtml(){
+  const f=App.filters; let facs=visibleFacilities();
+  const q=f.q.toLowerCase(); if(q) facs=facs.filter(x=>(x.name||'').toLowerCase().includes(q)||(x.address||'').toLowerCase().includes(q));
+  if(f.gu) facs=facs.filter(x=>x.gu===f.gu); if(f.type) facs=facs.filter(x=>x.type===f.type); if(f.water) facs=facs.filter(x=>x.waterUse===f.water);
+  if(f.status){ facs=facs.filter(x=>{ const k=facStatusKey(x.id); if(f.status==='action'){ return Store.inspectionsOf(x.id).some(i=>i.status==='done'&&(i.actions||'').trim()&&!i.actionDone); } return k===f.status; }); }
+  facs.sort((a,b)=>(a.gu||'').localeCompare(b.gu)||(a.name||'').localeCompare(b.name));
+  const ro=readOnly();
+  return `
+  <div class="crumbs"><button data-go="home">홈</button><span>›</span><span>시설 목록</span></div>
+  <div class="pagehead"><div><h1>${App.pickMode?'점검할 시설 선택':'시설 목록'}</h1><p class="sub">${App.pickMode?'시설을 누르면 새 점검이 시작됩니다. 없으면 먼저 등록하세요.':`${facs.length}개 시설`}</p></div>
+    <div class="row">${App.pickMode?`<button class="btn sm" id="pickCancel">선택 취소</button>`:''}<button class="btn primary" id="addFacBtn" ${ro?'disabled':''}>시설 등록</button></div></div>
+  <div class="card">
+    <div class="searchbar"><input type="search" id="facSearch" placeholder="시설명 또는 주소" value="${esc(f.q)}" aria-label="시설 검색"></div>
+    <div class="filters">
+      <select id="fGu" aria-label="자치구"><option value="">자치구 전체</option>${GU_LIST.map(g=>`<option ${f.gu===g?'selected':''}>${g}</option>`).join('')}</select>
+      <select id="fType" aria-label="시설종류"><option value="">시설종류 전체</option>${Object.entries(FAC_TYPES).map(([k,v])=>`<option value="${k}" ${f.type===k?'selected':''}>${v}</option>`).join('')}</select>
+      <select id="fWater" aria-label="용수 구분"><option value="">용수 구분 전체</option>${Object.entries(WATER_USES).map(([k,v])=>`<option value="${k}" ${f.water===k?'selected':''}>${v}</option>`).join('')}</select>
+      <select id="fStatus" aria-label="점검 상태"><option value="">점검 상태 전체</option><option value="none" ${f.status==='none'?'selected':''}>미점검</option><option value="draft" ${f.status==='draft'?'selected':''}>작성 중</option><option value="done" ${f.status==='done'?'selected':''}>점검 완료(양호)</option><option value="poor" ${f.status==='poor'?'selected':''}>점검 완료(미흡)</option><option value="action" ${f.status==='action'?'selected':''}>조치 미완료</option></select>
+    </div>
+  </div>
+  <div class="list" style="margin-top:14px">
+    ${facs.length? facs.map(x=>`<button class="listitem" data-fac="${x.id}"><div class="main"><div class="title">${x.isTest?'<span class="tag test">테스트</span> ':''}${esc(x.name)}</div><div class="meta">${esc(x.gu)} · ${esc(x.address||'주소 없음')} · ${FAC_TYPES[x.type]||''} · ${WATER_USES[x.waterUse]||''}${x.generator?' · 발전기':''}${x.purifier?' · 정수장치':''}</div></div><div class="right">${facStatusTag(x.id)}<span class="small muted">${Store.inspectionsOf(x.id).length}회</span></div></button>`).join('')
+    : `<div class="empty"><b>조건에 맞는 시설이 없습니다</b>검색어나 필터를 바꾸거나 새 시설을 등록하세요.</div>`}
+  </div>`;
+}
+function bindFacilities(){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  const apply=debounce(()=>{ App.filters.q=$('#facSearch').value.trim(); App.filters.gu=$('#fGu').value; App.filters.type=$('#fType').value; App.filters.water=$('#fWater').value; App.filters.status=$('#fStatus').value; const pos=window.scrollY; render(); window.scrollTo(0,pos); $('#facSearch').focus(); const inp=$('#facSearch'); inp.setSelectionRange(inp.value.length, inp.value.length); },250);
+  $('#facSearch').oninput=apply; ['fGu','fType','fWater','fStatus'].forEach(id=>$('#'+id).onchange=()=>apply.flush());
+  $('#addFacBtn').onclick=()=>App.go({name:'facilityEdit', id:null});
+  const pc=$('#pickCancel'); if(pc) pc.onclick=()=>{ App.pickMode=false; render(); };
+  $$('#view [data-fac]').forEach(b=>b.onclick=()=>{ if(App.pickMode){ App.pickMode=false; startInspection(b.dataset.fac); } else App.go({name:'facility', id:b.dataset.fac}); });
+}
+
+/* ===================== 시설 등록/수정 ===================== */
+function facilityEditHtml(id){
+  const f = id? (Store.facilities.get(id)||{}) : {gu: (myGus()&&myGus()[0])||'', type:'local', waterUse:'drink', generator:false, purifier:false, open:true, isTest:false};
+  const seg=(name,opts,val)=>`<div class="seg" data-seg="${name}">${opts.map(([k,v])=>`<button type="button" data-val="${k}" aria-pressed="${String(val)===String(k)}">${v}</button>`).join('')}</div>`;
+  return `
+  <div class="crumbs"><button data-go="home">홈</button><span>›</span><button data-go="facilities">시설 목록</button><span>›</span><span>${id?'시설 수정':'시설 등록'}</span></div>
+  <div class="pagehead"><h1>${id?'시설정보 수정':'새 시설 등록'}</h1></div>
+  <form id="facForm" class="card stack" autocomplete="off">
+    <div class="grid2">
+      <div class="field"><label for="f_gu">자치구 <span class="req">*</span></label><select id="f_gu" required><option value="">선택</option>${GU_LIST.map(g=>`<option ${f.gu===g?'selected':''}>${g}</option>`).join('')}</select></div>
+      <div class="field"><label for="f_name">시설명 <span class="req">*</span></label><input id="f_name" type="text" required value="${esc(f.name||'')}" placeholder="예: ○○아파트 비상급수시설"></div>
+    </div>
+    <div class="field"><label for="f_addr">주소</label><input id="f_addr" type="text" value="${esc(f.address||'')}" placeholder="도로명 주소"></div>
+    <div class="grid2">
+      <div class="field"><label>시설종류</label>${seg('type', Object.entries(FAC_TYPES), f.type||'local')}</div>
+      <div class="field"><label>용수 구분</label>${seg('waterUse', Object.entries(WATER_USES), f.waterUse||'drink')}</div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label for="f_cap">생산량 (톤/일)</label><input id="f_cap" type="number" inputmode="decimal" step="0.1" min="0" value="${f.capacity!=null?esc(f.capacity):''}"></div>
+      <div class="field"><label>비상발전기</label>${seg('generator', [['true','유'],['false','무']], !!f.generator)}</div>
+      <div class="field"><label>정수장치</label>${seg('purifier', [['true','유'],['false','무']], !!f.purifier)}</div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>개방 여부</label>${seg('open', [['true','개방'],['false','비개방']], f.open!==false)}</div>
+      <div class="field"><label for="f_mgr">시설 관리 담당자</label><input id="f_mgr" type="text" value="${esc(f.manager||'')}" placeholder="이름 / 소속"></div>
+    </div>
+    <div class="field"><label for="f_tel">담당자 연락처</label><input id="f_tel" type="tel" value="${esc(f.phone||'')}" placeholder="02-000-0000"></div>
+    <div class="field"><label for="f_note">기타 참고사항</label><textarea id="f_note">${esc(f.note||'')}</textarea></div>
+    <label class="check"><input type="checkbox" id="f_test" ${f.isTest?'checked':''}> 테스트 시설(예시 데이터)로 표시</label>
+    <div class="help">시설정보를 수정해도 이미 작성된 점검보고서의 시설정보는 점검 당시 기록으로 유지됩니다.</div>
+    <div class="row"><button class="btn primary lg" type="submit" style="flex:1">${id?'수정 저장':'등록'}</button><button class="btn lg" type="button" id="facCancel">취소</button>${id && Store.inspectionsOf(id).length===0? `<button class="btn lg danger" type="button" id="facDelete">삭제</button>`:''}</div>
+  </form>`;
+}
+function bindSeg(root){ $$('[data-seg]', root).forEach(seg=>{ seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return; $$('button',seg).forEach(x=>x.setAttribute('aria-pressed', String(x===b))); seg.dispatchEvent(new CustomEvent('segchange',{bubbles:true, detail:{name:seg.dataset.seg, value:b.dataset.val}})); }; }); }
+function segVal(root,name){ const b=$(`[data-seg="${name}"] button[aria-pressed="true"]`, root); return b? b.dataset.val : ''; }
+function bindFacilityEdit(id){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  const form=$('#facForm'); bindSeg(form);
+  $('#facCancel').onclick=()=>App.go(id?{name:'facility',id}:{name:'facilities'});
+  const del=$('#facDelete'); if(del) del.onclick=()=>{ if(del.dataset.arm){ Store.remove('facilities/'+id); toast('시설을 삭제했습니다'); App.go({name:'facilities'}); } else { del.dataset.arm='1'; del.textContent='삭제 확인'; setTimeout(()=>{ delete del.dataset.arm; del.textContent='삭제'; },3000); } };
+  form.onsubmit=async e=>{ e.preventDefault();
+    if (readOnly()){ toast('읽기 전용 권한이라 저장할 수 없습니다',{err:true}); return; }
+    const gu=$('#f_gu').value, name=$('#f_name').value.trim(); if(!gu||!name){ toast('자치구와 시설명은 필수입니다',{err:true}); return; }
+    const prev = id? Store.facilities.get(id): null;
+    const fac=Object.assign({}, prev||{}, { id: id||uuid(), gu, name, address:$('#f_addr').value.trim(), type:segVal(form,'type'), waterUse:segVal(form,'waterUse'), capacity: $('#f_cap').value===''? null: Number($('#f_cap').value), generator: segVal(form,'generator')==='true', purifier: segVal(form,'purifier')==='true', open: segVal(form,'open')==='true', manager:$('#f_mgr').value.trim(), phone:$('#f_tel').value.trim(), note:$('#f_note').value.trim(), isTest:$('#f_test').checked, createdAt: (prev&&prev.createdAt)||nowIso(), createdBy:(prev&&prev.createdBy)||myId() });
+    await Store.save('facilities/'+fac.id, fac);
+    toast(id?'시설정보를 수정했습니다':'시설을 등록했습니다');
+    App.go({name:'facility', id:fac.id});
+  };
+}
+
+/* ===================== 시설 상세 ===================== */
+function facInfoRows(f){ return `
+  <div class="grid2 small" style="gap:6px 14px">
+    <div><span class="muted">자치구</span> · ${esc(f.gu)}</div><div><span class="muted">시설종류</span> · ${FAC_TYPES[f.type]||'-'}</div>
+    <div><span class="muted">주소</span> · ${esc(f.address||'-')}</div><div><span class="muted">용수 구분</span> · ${WATER_USES[f.waterUse]||'-'}</div>
+    <div><span class="muted">생산량</span> · ${f.capacity!=null&&f.capacity!==''? esc(f.capacity)+' 톤/일':'-'}</div><div><span class="muted">비상발전기</span> · ${f.generator?'유':'무'} &nbsp; <span class="muted">정수장치</span> · ${f.purifier?'유':'무'} &nbsp; <span class="muted">개방</span> · ${f.open!==false?'개방':'비개방'}</div>
+    <div><span class="muted">관리 담당자</span> · ${esc(f.manager||'-')}</div><div><span class="muted">연락처</span> · ${esc(f.phone||'-')}</div>
+    ${f.note?`<div style="grid-column:1/-1"><span class="muted">참고</span> · ${esc(f.note)}</div>`:''}
+  </div>`; }
+function facilityHtml(id){
+  const f=Store.facilities.get(id); if(!f) return `<div class="empty"><b>시설을 찾을 수 없습니다</b><button class="btn" data-go="facilities">시설 목록</button></div>`;
+  const insps=Store.inspectionsOf(id); const ro=readOnly();
+  return `
+  <div class="crumbs"><button data-go="home">홈</button><span>›</span><button data-go="facilities">시설 목록</button><span>›</span><span>${esc(f.name)}</span></div>
+  <div class="pagehead"><div><h1>${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name)}</h1><p class="sub">${esc(f.gu)} · ${esc(f.address||'주소 없음')}</p></div><div class="row">${facStatusTag(id)}<button class="btn sm" id="facEditBtn" ${ro?'disabled':''}>시설정보 수정</button></div></div>
+  <div class="card"><h2>시설 기본정보</h2>${facInfoRows(f)}</div>
+  <div class="card"><div class="row between"><h2 style="margin:0">점검 기록 <span class="count">${insps.length}건</span></h2><div class="row"><button class="btn sm" id="facXls" ${insps.length?'':'disabled'}>엑셀</button><button class="btn sm" id="facZip">ZIP</button><button class="btn primary" id="facNewInsp" ${ro?'disabled':''}>새 점검 시작</button></div></div>
+    <div class="list" style="margin-top:12px">${insps.length? insps.map(i=>inspListItem(i)).join(''): `<div class="empty"><b>점검 기록이 없습니다</b>‘새 점검 시작’을 눌러 첫 점검을 시작하세요.</div>`}</div>
+  </div>`;
+}
+function bindFacility(id){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  const e=$('#facEditBtn'); if(e) e.onclick=()=>App.go({name:'facilityEdit', id});
+  const n=$('#facNewInsp'); if(n) n.onclick=()=>startInspection(id);
+  const x=$('#facXls'); if(x) x.onclick=()=>exportExcel(Store.inspectionsOf(id), `점검결과_${(Store.facilities.get(id)||{}).name||id}`);
+  const z=$('#facZip'); if(z) z.onclick=()=>exportPackage({facilityId:id});
+  $$('#view [data-insp]').forEach(b=>b.onclick=()=>openInspection(b.dataset.insp));
+}
+
+/* ===================== 점검 생성 ===================== */
+function newInspectionDoc(fac){
+  const items={}; for(const id of ITEM_IDS) items[id]={r:'',note:'',auto:false};
+  if (!fac.generator){ items.F6={r:'na',note:'비상발전기 미보유',auto:true}; items.F7={r:'na',note:'비상발전기 미보유',auto:true}; }
+  return { id:uuid(), facilityId:fac.id, facility:clone(fac), date:todayStr(), inspector:myName(), inspectorOrg:'', companions:'', status:'draft', overall:'', actions:'', actionDue:'', actionDone:false, actionDoneDate:'', items, pump:{startedAt:null,endedAt:null,elapsed:0}, photoNA:{generator:!fac.generator, purifier:!fac.purifier}, photoNAauto:{generator:!fac.generator, purifier:!fac.purifier}, photoReason:{}, lastStep:1, editLog:[], createdAt:nowIso(), createdBy:myId(), rev:0 };
+}
+function startInspection(facId){
+  const fac=Store.facilities.get(facId); if(!fac) return;
+  if (readOnly()){ toast('읽기 전용 권한이라 점검을 시작할 수 없습니다',{err:true}); return; }
+  const drafts=Store.inspectionsOf(facId).filter(i=>i.status==='draft');
+  const create=async()=>{ const insp=newInspectionDoc(fac); await Store.save('inspections/'+insp.id, insp); App.go({name:'inspect', id:insp.id, step:1}); };
+  if (drafts.length){
+    openModal(`<h2>작성 중인 점검이 있습니다</h2><p class="muted">${esc(fac.name)} · ${fmtKDate(drafts[0].date)} 점검이 작성 중입니다.</p><div class="toolbar"><button class="btn primary" id="mContinue">이어서 작성</button><button class="btn" id="mNew">새로 시작</button><button class="btn ghost" id="mClose">취소</button></div>`);
+    $('#mContinue').onclick=()=>{ closeModal(); App.go({name:'inspect', id:drafts[0].id, step:drafts[0].lastStep||1}); };
+    $('#mNew').onclick=()=>{ closeModal(); create(); }; $('#mClose').onclick=closeModal;
+  } else create();
+}
+
+/* ===================== 모달 ===================== */
+function openModal(html, opts={}){ const root=$('#modalRoot'); root.innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="box ${opts.wide?'wide':''}">${html}</div></div>`; root.firstElementChild.onclick=e=>{ if(e.target===root.firstElementChild && !opts.sticky) closeModal(); }; document.body.style.overflow='hidden'; }
+function closeModal(){ const root=$('#modalRoot'); root.innerHTML=''; document.body.style.overflow=''; if (typeof onModalClose==='function'){ const f=onModalClose; onModalClose=null; f(); } }
+let onModalClose=null;
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && $('#modalRoot').firstElementChild) closeModal(); });
+
+/* ===================== 사용자 패널 ===================== */
+function userPanel(){
+  const role = RT.mode==='local'? (RT.signedOut? '비로그인(기기 저장 모드)' : '설치형 앱(기기 저장 모드)') : isAdmin()? '관리자' : readOnly()? '읽기 전용' : '담당자';
+  const gus=myGus();
+  const dirty=[...Store.recs.values()].filter(r=>r.dirty && !r.needsAsset);
+  const failed=dirty.filter(r=>r.err); const upFailed=Uploads.pending().filter(p=>p.status==='failed'||p.status==='missing');
+  openModal(`
+    <h2>사용자 · 동기화</h2>
+    <div class="stack">
+      <div class="review-row"><div class="t"><b>${esc(myName()||'(이름 없음)')}</b><span>${role}${gus&&gus.length?` · 담당: ${esc(gus.join(', '))}`:''}</span></div>${RT.mode==='cloud' && RT.me && RT.me.avatarUrl? `<img src="${esc(RT.me.avatarUrl)}" alt="" width="36" height="36" style="border-radius:50%">`:''}</div>
+      ${RT.mode==='local'? `<div class="field"><label for="localName">점검자 이름(이 기기)</label><input id="localName" type="text" value="${esc(Store.localName)}" placeholder="이름을 입력하면 새 점검의 점검자로 자동 입력됩니다"></div><div class="alert na">${RT.signedOut? '로그인하지 않은 상태입니다. 모든 점검 자료와 사진은 이 기기(브라우저)에만 저장됩니다. 자료를 전달하려면 ‘전체 내보내기(ZIP)’를 쓰고, 같은 브라우저에서 나중에 로그인하면 저장된 자료가 공용 DB로 올라갑니다.' : '설치형 앱은 로그인 정보가 없어 모든 데이터가 이 기기(브라우저)에만 저장됩니다. 자료를 전달하려면 ‘전체 내보내기(ZIP)’를 쓰세요.'}</div>`
+        : `<div class="alert ${!RT.db?'warn':'info'}">${!RT.db? '로그인되지 않아 저장과 동기화를 할 수 없습니다.' : RT.canWrite===false? '읽기 전용 권한입니다(Viewer/Commenter). 저장하려면 Contributor 이상이 필요합니다.' : '서울시 계정으로 접속 중입니다. 입력 내용은 자동 저장되어 팀과 공유됩니다.'}</div>`}
+      ${RT.mode==='local'? `<div class="review-row"><div class="t"><b>이 기기에 저장된 기록 · 시설 ${Store.facilities.size} · 점검 ${Store.inspections.size} · 사진 ${Store.photos.size}</b><span>${RT.signedOut?'같은 브라우저에서 로그인하면 자동으로 공용 DB에 올라갑니다.':'ZIP으로 내보내 전달하세요.'}</span></div></div>` : `<div class="review-row"><div class="t"><b>동기화 대기 ${dirty.length}건 · 사진 업로드 대기 ${Uploads.countPending()}장</b><span>${failed.length||upFailed.length? `실패 ${failed.length+upFailed.length}건 — 연결을 확인한 뒤 재시도하세요.` : (Store.lastSavedAt? `마지막 동기화 ${fmtDTS(Store.lastSavedAt)}`:'아직 동기화 기록 없음')}</span></div><button class="btn sm" id="syncNow">지금 동기화</button></div>`}
+      ${failed.length? `<div class="small muted">실패 항목: ${failed.map(r=>esc(r.path)+'('+esc(r.err)+')').join(', ')}</div>`:''}
+      ${upFailed.length? `<div class="small muted">업로드 실패 사진: ${upFailed.length}장 (사진 화면에서 ‘재시도’)</div>`:''}
+      ${Store.conflicts.length? `<div class="small muted">충돌 처리 기록: ${Store.conflicts.slice(-3).map(c=>fmtDT(c.at)+' '+esc(c.fields.join(','))).join(' / ')}</div>`:''}
+      <div class="review-row"><div class="t"><b>자료 내보내기·가져오기</b><span>시설·점검·사진을 ZIP 한 파일로 묶어 다른 기기나 담당자에게 전달하고, 받은 파일을 합칠 수 있습니다.</span></div></div>
+      <div class="toolbar"><button class="btn" id="exportAll">전체 내보내기(ZIP)</button><button class="btn" id="importZip" ${readOnly()?'disabled':''}>가져오기(ZIP)</button></div>
+      <div class="toolbar">${isAdmin()?`<button class="btn" id="goSettings">관리자 설정</button>`:''}<button class="btn primary" id="mClose">닫기</button></div>
+    </div>`);
+  $('#mClose').onclick=closeModal; const sn=$('#syncNow'); if(sn) sn.onclick=()=>{ Store.backoff=0; Store.scheduleFlush(0); Uploads.retryAll(); toast('동기화를 시작합니다'); };
+  const gs=$('#goSettings'); if(gs) gs.onclick=()=>{ closeModal(); App.go({name:'settings'}); };
+  $('#exportAll').onclick=()=>{ closeModal(); exportPackage({}); }; $('#importZip').onclick=()=>{ closeModal(); pickImportFile(); };
+  const ln=$('#localName'); if(ln) ln.onchange=async()=>{ Store.localName=ln.value.trim(); await IDB.put('meta', Store.localName, 'localName'); toast('이름을 저장했습니다'); };
+}
+
+/* ===================== 관리자 설정 ===================== */
+function settingsHtml(){
+  if(!isAdmin()) return `<div class="empty"><b>관리자만 접근할 수 있습니다</b></div>`;
+  const st=Object.assign({}, DEFAULT_STANDARDS, Store.settings.standards||{}); const ac=access();
+  const ids=Object.keys(ac.assignments||{});
+  return `
+  <div class="crumbs"><button data-go="home">홈</button><span>›</span><span>관리자 설정</span></div>
+  <div class="pagehead"><h1>관리자 설정</h1></div>
+  <div class="card stack"><h2>점검 기준 문구</h2>
+    <div class="alert warn small">첨부 양식(2025년 기준)에 적힌 값으로 초기 설정되어 있습니다. 최신 기준으로 확정된 값이 아니므로, 지침을 확인한 뒤 적용연도와 문구를 수정하세요. 수정한 문구는 점검표와 보고서의 안내 문구에 바로 반영됩니다.</div>
+    <div class="grid2">
+      <div class="field"><label for="s_year">적용연도</label><input id="s_year" type="text" value="${esc(st.year)}"></div>
+      <div class="field"><label for="s_drink">수질검사 주기 — 음용수</label><input id="s_drink" type="text" value="${esc(st.drinking)}"></div>
+      <div class="field"><label for="s_living">수질검사 주기 — 생활용수</label><input id="s_living" type="text" value="${esc(st.living)}"></div>
+      <div class="field"><label for="s_diary">점검일지 주기</label><input id="s_diary" type="text" value="${esc(st.diary)}"></div>
+    </div>
+    <div class="field"><label for="s_notice">점검자에게 보이는 안내 문구</label><textarea id="s_notice">${esc(st.notice)}</textarea></div>
+    <div class="row"><button class="btn primary" id="saveStd">기준 문구 저장</button><button class="btn" id="resetStd">양식 기본값으로</button></div>
+  </div>
+  <div class="card stack"><h2>담당자 권한(자치구 배정)</h2>
+    <p class="small muted">관리자(아티팩트 Editor/Owner)는 전체 현황을 봅니다. 담당자(Contributor)는 배정된 자치구의 시설만 봅니다. 서버 권한(열람/저장 가능 여부)은 아티팩트 공유 설정에서 정하고, 여기서는 자치구 범위를 정합니다.</p>
+    <label class="check"><input type="checkbox" id="ac_default" ${ac.defaultAll!==false?'checked':''}> 배정되지 않은 담당자도 전체 시설을 볼 수 있음</label>
+    ${RT.mode==='cloud' && RT.user? `<div class="field"><label for="userQ">담당자 검색(조직 내 이름)</label><input id="userQ" type="search" placeholder="이름 입력"><div id="userHits" class="list"></div></div>` : `<div class="help">사용자 검색은 게시된 앱(로그인 환경)에서만 가능합니다.</div>`}
+    <div id="assignList" class="list">${ids.length? ids.map(uid=>`<div class="review-row" data-uid="${esc(uid)}"><div class="t"><b class="uname" data-uid="${esc(uid)}">…</b><span>${esc((ac.assignments[uid].gus||[]).join(', ')||'배정 없음')}</span></div><div class="row"><button class="btn sm" data-edit="${esc(uid)}">자치구 변경</button><button class="btn sm danger" data-del="${esc(uid)}">해제</button></div></div>`).join('') : `<div class="help">배정된 담당자가 없습니다.</div>`}</div>
+  </div>
+  <div class="card stack"><h2>테스트 데이터</h2>
+    <p class="small muted">예시 데이터는 ‘테스트 시설’로 표시되어 실제 시설과 구분됩니다.</p>
+    <div class="row"><button class="btn" id="seedTest">테스트 시설 추가</button><button class="btn danger" id="purgeTest">테스트 시설·점검 모두 삭제</button></div>
+  </div>
+  <div class="card stack"><h2>출력 지원 범위</h2>
+    <ul class="small" style="margin:0;padding-left:18px;color:var(--muted)"><li>PDF: 보고서 화면에서 생성·저장(인쇄는 저장한 PDF로)</li><li>엑셀(.xlsx): 점검 결과·미흡 내용·사진 목록</li><li>HWPX: 원본 서식을 그대로 보존한 파일 생성은 현재 지원하지 않습니다. 보고서는 원본 양식의 제목·항목 순서·체크표·사진대지 배치를 따릅니다.</li></ul>
+  </div>`;
+}
+async function resolveNames(root){ const els=$$('.uname',root); if(!els.length) return; const ids=[...new Set(els.map(e=>e.dataset.uid))]; let ps={}; if(RT.user){ try{ ps=await RT.user.profiles(ids); }catch(e){} } els.forEach(e=>{ const p=ps[e.dataset.uid]; e.textContent = (p&&p.name) || (e.dataset.uid==='local'?'로컬 사용자':'이름 미확인'); }); }
+function bindSettings(){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  if(!isAdmin()) return;
+  $('#saveStd').onclick=()=>{ const s={year:$('#s_year').value.trim(), drinking:$('#s_drink').value.trim(), living:$('#s_living').value.trim(), diary:$('#s_diary').value.trim(), notice:$('#s_notice').value.trim()}; Store.save('settings/standards', s); toast('기준 문구를 저장했습니다'); };
+  $('#resetStd').onclick=()=>{ Store.save('settings/standards', Object.assign({}, DEFAULT_STANDARDS)); toast('양식 기본값으로 되돌렸습니다'); render(); };
+  $('#ac_default').onchange=e=>{ const ac=clone(access()); ac.defaultAll=e.target.checked; Store.save('settings/access', ac); };
+  const uq=$('#userQ'); if(uq){ uq.oninput=async()=>{ let hits=[]; try{ hits=await RT.user.search(uq.value); }catch(e){} $('#userHits').innerHTML=hits.map(h=>`<button class="listitem" data-pick="${esc(h.id)}" data-name="${esc(h.name)}"><img src="${esc(h.avatarUrl)}" alt="" width="32" height="32" style="border-radius:50%"><div class="main"><div class="title"></div></div></button>`).join(''); $$('#userHits [data-pick]').forEach((b,i)=>{ $('.title',b).textContent=hits[i].name; b.onclick=()=>editAssignment(b.dataset.pick, b.dataset.name); }); }; uq.onfocus=()=>uq.oninput(); }
+  $$('#assignList [data-edit]').forEach(b=>b.onclick=()=>editAssignment(b.dataset.edit, $(`.uname[data-uid="${b.dataset.edit}"]`).textContent));
+  $$('#assignList [data-del]').forEach(b=>b.onclick=()=>{ const ac=clone(access()); delete ac.assignments[b.dataset.del]; Store.save('settings/access', ac); render(); });
+  resolveNames($('#view'));
+  $('#seedTest').onclick=seedTestData; $('#purgeTest').onclick=()=>{ const b=$('#purgeTest'); if(b.dataset.arm){ purgeTestData(); } else { b.dataset.arm='1'; b.textContent='정말 삭제(확인)'; setTimeout(()=>{ delete b.dataset.arm; b.textContent='테스트 시설·점검 모두 삭제'; },3000); } };
+}
+function editAssignment(uid, name){
+  const ac=clone(access()); ac.assignments=ac.assignments||{}; const cur=(ac.assignments[uid]&&ac.assignments[uid].gus)||[];
+  openModal(`<h2>${esc(name||'담당자')} · 담당 자치구</h2><div class="seg" id="guPick" style="gap:6px">${GU_LIST.map(g=>`<button type="button" data-g="${g}" aria-pressed="${cur.includes(g)}" style="flex:1 1 90px;min-height:44px;font-size:14px">${g}</button>`).join('')}</div><div class="toolbar"><button class="btn primary" id="mSave">저장</button><button class="btn" id="mClose">취소</button></div>`, {wide:true});
+  $('#guPick').onclick=e=>{ const b=e.target.closest('button'); if(b) b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed')!=='true')); };
+  $('#mClose').onclick=closeModal;
+  $('#mSave').onclick=()=>{ const gus=$$('#guPick button[aria-pressed="true"]').map(b=>b.dataset.g); ac.assignments[uid]={gus}; Store.save('settings/access', ac); closeModal(); render(); toast('배정을 저장했습니다'); };
+}
+async function seedTestData(){
+  const base=nowIso();
+  const f1={id:'test-'+uuid().slice(0,8), gu:'금천구', name:'[테스트] 시흥동 ○○아파트 비상급수시설', address:'서울특별시 금천구 시흥대로 000', type:'local', waterUse:'drink', capacity:120, generator:true, purifier:true, open:true, manager:'관리사무소 홍길동', phone:'02-000-0000', note:'예시 데이터입니다.', isTest:true, createdAt:base, createdBy:myId()};
+  const f2={id:'test-'+uuid().slice(0,8), gu:'관악구', name:'[테스트] 신림동 ○○공원 비상급수시설', address:'서울특별시 관악구 신림로 000', type:'public', waterUse:'living', capacity:60, generator:false, purifier:false, open:false, manager:'공원녹지과', phone:'02-000-0001', note:'비상발전기·정수장치 없는 시설 예시', isTest:true, createdAt:base, createdBy:myId()};
+  await Store.save('facilities/'+f1.id, f1); await Store.save('facilities/'+f2.id, f2);
+  const i1=newInspectionDoc(f1); i1.date=fmtDate(new Date(Date.now()-7*86400000)); i1.inspector='테스트 점검자'; i1.inspectorOrg='서울시 ○○과'; i1.status='done'; i1.completedAt=base; i1.lastStep=5;
+  for(const id of ITEM_IDS) i1.items[id]={r:'good',note:'',auto:false}; i1.items.F4={r:'poor',note:'안내표지판 수질검사 결과 게시가 2분기 이후 누락됨', auto:false}; i1.items.W5={r:'na', note:'서면점검 대상 무작위 선정에 포함되지 않음', auto:false};
+  i1.overall='전반적으로 양호하나 안내표지판 게시물 갱신이 필요함.'; i1.actions='안내표지판 수질검사 결과 최신본 게시'; i1.actionDue=fmtDate(new Date(Date.now()+14*86400000));
+  i1.photoReason={sign:'테스트 데이터(사진 없음)', exterior:'테스트 데이터(사진 없음)', generator:'테스트 데이터(사진 없음)', purifier:'테스트 데이터(사진 없음)', pump:'테스트 데이터(사진 없음)', docs:'테스트 데이터(사진 없음)'};
+  await Store.save('inspections/'+i1.id, i1);
+  toast('테스트 시설 2곳과 완료된 점검 1건을 추가했습니다'); render();
+}
+async function purgeTestData(){
+  const facs=[...Store.facilities.values()].filter(f=>f.isTest);
+  for(const f of facs){ for(const i of Store.inspectionsOf(f.id)){ for(const p of Store.photosOf(i.id)) await deletePhoto(p.id, {silent:true}); await Store.remove('inspections/'+i.id); } await Store.remove('facilities/'+f.id); }
+  toast(`테스트 시설 ${facs.length}곳과 관련 점검을 삭제했습니다`); render();
+}
+/* ===================== 점검 편집기 ===================== */
+const Editor = {
+  id:null, changed:new Set(), timer:null, tick:null,
+  cur(){ return Store.inspections.get(this.id); },
+  touch(field, immediate){ this.changed.add(field); const ss=$('#saveState'); if(ss&&RT.mode==='cloud'){ ss.className='savestate saving'; ss.textContent='저장 중…'; } clearTimeout(this.timer); if(immediate) this.commit(); else this.timer=setTimeout(()=>this.commit(), 500); },
+  async commit(){ clearTimeout(this.timer); const insp=this.cur(); if(!insp) return; const fields=[...this.changed]; this.changed.clear(); if(!fields.length) return; if(insp.status==='done') pushEditLog(insp, fields); await Store.save('inspections/'+insp.id, insp); },
+};
+function pushEditLog(insp, fields){ insp.editLog=insp.editLog||[]; const last=insp.editLog[insp.editLog.length-1]; const now=nowIso(); if(last && last.by===myId() && (Date.now()-new Date(last.at).getTime())<10*60*1000){ last.at2=now; last.fields=[...new Set([...(last.fields||[]),...fields])]; } else insp.editLog.push({at:now, by:myId(), fields:[...new Set(fields)]}); if(insp.editLog.length>50) insp.editLog=insp.editLog.slice(-50); }
+function setPath(obj, path, val){ const ks=path.split('.'); let o=obj; for(let i=0;i<ks.length-1;i++){ if(!isObj(o[ks[i]])) o[ks[i]]={}; o=o[ks[i]]; } o[ks[ks.length-1]]=val; }
+function getPath(obj, path){ return path.split('.').reduce((o,k)=>o==null?undefined:o[k], obj); }
+const FIELD_LABELS = {date:'점검일', inspector:'점검자', inspectorOrg:'소속', companions:'동행자', overall:'종합 의견', actions:'조치 필요사항', actionDue:'조치기한', actionDone:'조치 완료 여부', actionDoneDate:'조치 완료일', photoNA:'사진 미보유 표시', photoReason:'사진 누락 사유', pump:'양수 타이머', photos:'사진'};
+function fieldLabel(f){ if(FIELD_LABELS[f]) return FIELD_LABELS[f]; const m=f.match(/^items\.([WF]\d)/); if(m){ const it=buildItems().find(x=>x.id===m[1]); return it? `${it.sec==='written'?'서면':'현장'}${it.num} ${it.title}`: f; } const k=f.split('.')[0]; return FIELD_LABELS[k]||f; }
+
+const STEP_NAMES=['기본정보','서면점검','현장점검','사진','최종 검토'];
+function stepState(insp, n){ const s=inspStats(insp); if(n===1) return (insp.date&&insp.inspector)?'done':'partial'; if(n===2){ const arr=['W1','W2','W3','W4','W5'].map(id=>(insp.items[id]||{}).r); return arr.every(Boolean)?'done': arr.some(Boolean)?'partial':''; } if(n===3){ const arr=['F1','F2','F3','F4','F5','F6','F7','F8'].map(id=>(insp.items[id]||{}).r); return arr.every(Boolean)?'done': arr.some(Boolean)?'partial':''; } if(n===4){ const cov=photoCoverage(insp); return cov.every(c=>c.ok)?'done': cov.some(c=>c.count)?'partial':''; } if(n===5) return insp.status==='done'?'done':''; return ''; }
+function photoCoverage(insp){ return PHOTO_CATS.map(c=>{ const ps=Store.photosOf(insp.id,c.id); const na=c.naKey && insp.photoNA && insp.photoNA[c.naKey]; const reason=(insp.photoReason||{})[c.id]||''; return {cat:c, count:ps.length, na:!!na, reason, cover:ps.find(p=>p.isCover)||ps[0]||null, ok: ps.length>0 || !!na || !!reason.trim()}; }); }
+
+function renderInspect(route){
+  const insp=Store.inspections.get(route.id); const view=$('#view');
+  if(!insp){ view.innerHTML=`<div class="empty"><b>점검 기록을 찾을 수 없습니다</b><button class="btn" onclick="App.go({name:'home'})">홈으로</button></div>`; return; }
+  Editor.id=insp.id; Store.subscribePhotos(insp.id);
+  const step=Math.min(5,Math.max(1, route.step||1));
+  if(insp.lastStep!==step && insp.status!=='done'){ insp.lastStep=step; Store.save('inspections/'+insp.id, insp, {silent:true}); }
+  const f=insp.facility||{}; const s=inspStats(insp); const ro=readOnly();
+  view.innerHTML=`
+  <div class="crumbs"><button data-go="home">홈</button><span>›</span><button data-fac="${insp.facilityId}">${esc(f.name||'시설')}</button><span>›</span><span>${fmtKDate(insp.date)} 점검</span></div>
+  <div class="pagehead" style="margin-bottom:10px"><div><h1 style="font-size:20px">${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name||'')}</h1><p class="sub">${esc(f.gu||'')} · ${esc(f.address||'')}</p></div>
+    <div class="row">${insp.status==='done'? `<span class="tag good" style="font-size:13px;padding:4px 10px">점검 완료</span>`:`<span class="tag warn" style="font-size:13px;padding:4px 10px">작성 중</span>`}<button class="btn sm" id="toReport">보고서</button></div></div>
+  ${insp.status==='done'? `<div class="alert info small" style="margin-bottom:10px">점검 완료된 기록입니다. 내용을 수정하면 수정일시와 수정자가 기록됩니다.${(insp.editLog||[]).length? ` 최근 수정: ${fmtDT((insp.editLog[insp.editLog.length-1].at2||insp.editLog[insp.editLog.length-1].at))}`:''}</div>`:''}
+  ${ro? `<div class="alert warn small" style="margin-bottom:10px">읽기 전용 권한입니다. 입력 내용은 저장되지 않습니다.</div>`:''}
+  <div class="progress" aria-label="점검 진행률"><i style="width:${Math.round(s.done/s.total*100)}%"></i></div>
+  <div class="steps" role="tablist" style="margin-top:10px">${STEP_NAMES.map((n,i)=>`<button type="button" data-step="${i+1}" class="${stepState(insp,i+1)}" ${step===i+1?'aria-current="step"':''}><span class="n">${i+1}</span>${n}</button>`).join('')}</div>
+  <div id="stepBody">${stepHtml(insp, step)}</div>`;
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  $$('#view [data-fac]').forEach(b=>b.onclick=()=>App.go({name:'facility', id:b.dataset.fac}));
+  $$('#view [data-step]').forEach(b=>b.onclick=()=>{ Editor.commit(); App.go({name:'inspect', id:insp.id, step:+b.dataset.step}); });
+  $('#toReport').onclick=()=>{ Editor.commit(); App.go({name:'report', id:insp.id}); };
+  bindStep(insp, step);
+  renderBottomBar(insp, step);
+  if (route.focusItem){ const el=$('#item-'+route.focusItem); if(el){ el.scrollIntoView({block:'center'}); el.querySelector('textarea,input,button')?.focus(); } route.focusItem=null; }
+}
+function renderBottomBar(insp, step){
+  const done=insp.status==='done';
+  $('#bottombar').innerHTML=`<div class="bottombar"><div class="bottombar-in">
+    <button class="btn" id="prevStep" ${step===1?'disabled':''}>이전</button>
+    <div class="savestate" id="saveState">저장됨</div>
+    ${step<5? `<button class="btn primary" id="nextStep">다음</button>` : done? `<button class="btn primary" id="viewReport">보고서 보기</button>` : `<button class="btn primary" id="completeBtn">점검 완료</button>`}
+  </div></div>`;
+  $('#prevStep').onclick=()=>{ Editor.commit(); App.go({name:'inspect', id:insp.id, step:step-1}); };
+  const nx=$('#nextStep'); if(nx) nx.onclick=()=>{ Editor.commit(); App.go({name:'inspect', id:insp.id, step:step+1}); };
+  const vr=$('#viewReport'); if(vr) vr.onclick=()=>{ Editor.commit(); App.go({name:'report', id:insp.id}); };
+  const cb=$('#completeBtn'); if(cb) cb.onclick=()=>completeInspection(insp.id);
+  SyncUI.update();
+}
+
+function stepHtml(insp, step){
+  switch(step){ case 1: return basicHtml(insp); case 2: return checklistHtml(insp,'written'); case 3: return checklistHtml(insp,'field'); case 4: return photosHtml(insp); case 5: return reviewHtml(insp); } return '';
+}
+/* ---- 1. 기본정보 ---- */
+function basicHtml(insp){ const f=insp.facility||{}; const live=Store.facilities.get(insp.facilityId); const changed = live && !deepEq(stripMeta(live), stripMeta(f));
+  return `
+  <div class="card"><h2>점검 대상 시설 <span class="count">점검 당시 기록</span></h2>${facInfoRows(f)}
+    ${changed? `<div class="alert warn small" style="margin-top:10px"><span>시설정보가 등록 당시와 달라졌습니다. 이 점검에 최신 시설정보를 반영하려면 누르세요.</span><button class="btn sm" data-act="refresh-fac">최신 정보 반영</button></div>`:''}
+  </div>
+  <div class="card stack"><h2>점검 기본정보</h2>
+    <div class="grid2">
+      <div class="field"><label for="i_date">점검일 <span class="req">*</span></label><input id="i_date" type="date" data-field="date" value="${esc(insp.date||'')}"></div>
+      <div class="field"><label for="i_insp">점검자 <span class="req">*</span></label><input id="i_insp" type="text" data-field="inspector" value="${esc(insp.inspector||'')}" placeholder="이름"></div>
+      <div class="field"><label for="i_org">소속</label><input id="i_org" type="text" data-field="inspectorOrg" value="${esc(insp.inspectorOrg||'')}" placeholder="예: 서울시 ○○과 / ○○구 ○○과"></div>
+      <div class="field"><label for="i_comp">동행자</label><input id="i_comp" type="text" data-field="companions" value="${esc(insp.companions||'')}" placeholder="이름(소속), 이름(소속)"></div>
+    </div>
+    <div class="help">입력 중인 내용은 자동으로 임시저장됩니다. 종합 의견과 조치 필요사항은 ‘최종 검토’ 단계에서 작성합니다.</div>
+  </div>`; }
+function stripMeta(o){ const c=Object.assign({},o); delete c.updatedAt; delete c.updatedBy; delete c.rev; return c; }
+
+/* ---- 2·3. 점검표 ---- */
+function checklistHtml(insp, sec){ const st=Object.assign({}, DEFAULT_STANDARDS, Store.settings.standards||{}); const items=buildItems(st).filter(i=>i.sec===sec);
+  return `
+  ${sec==='written'? `<div class="alert na small" style="margin-bottom:12px"><span>수질검사 주기 등 기준: ${esc(st.year)}년 기준 · ${esc(st.notice)}</span></div>` : `<div class="alert na small" style="margin-bottom:12px"><span>체크 → 미흡 내용 입력 → 사진 촬영 순서로 이어서 작업할 수 있습니다. 미흡은 사유 입력이 필수입니다.</span></div>`}
+  <h2 style="font-size:17px;margin-bottom:10px">[${sec==='written'?'서면점검':'현장점검'}] 시설 점검 및 관리</h2>
+  <div class="stack">${items.map(it=>itemHtml(insp,it)).join('')}</div>`; }
+function itemHtml(insp, it){ const v=insp.items[it.id]||{r:'',note:'',auto:false}; const r=v.r||'';
+  return `<section class="item ${r}" data-item="${it.id}" id="item-${it.id}">
+    <div class="ihead"><span class="num">${it.num}</span><div class="t"><h3>${esc(it.title)}</h3>${it.note?`<p class="note">${esc(it.note)}</p>`:''}</div><span class="state tag ${r||'none'}">${RESULT_LABEL[r]}</span></div>
+    ${v.auto? `<div class="auto">자동 설정 · ${esc(v.note)} <span class="small" style="font-weight:500">(시설정보 기준, 변경 가능)</span></div>`:''}
+    <div class="seg" role="group" aria-label="${esc(it.title)} 점검 결과">
+      <button type="button" class="good" data-act="result" data-val="good" aria-pressed="${r==='good'}">양호</button>
+      <button type="button" class="poor" data-act="result" data-val="poor" aria-pressed="${r==='poor'}">미흡</button>
+      <button type="button" class="na" data-act="result" data-val="na" aria-pressed="${r==='na'}">해당 없음</button>
+    </div>
+    ${r==='poor'? `<div class="field"><label>미흡 내용 <span class="req">*필수</span></label><textarea data-field="items.${it.id}.note" class="${(v.note||'').trim()?'':'invalid'}" placeholder="미흡한 내용을 구체적으로 적어 주세요 (보고서의 ‘미흡 내용’란에 출력)">${esc(v.note||'')}</textarea></div>`:''}
+    ${r==='na'? `<div class="field"><label>해당 없음 사유 <span class="req">*필수</span></label><input type="text" data-field="items.${it.id}.note" value="${esc(v.note||'')}" class="${(v.note||'').trim()?'':'invalid'}" placeholder="예: 비상발전기 미보유 (보고서 비고에 표시)"></div>`:''}
+    ${it.timer? timerHtml(insp): ''}
+    ${it.photo? photoRowHtml(insp, it.photo): ''}
+  </section>`; }
+function timerHtml(insp){ const t=insp.pump||{}; const running=t.startedAt && !t.endedAt; const elapsed = t.endedAt? Math.round((new Date(t.endedAt)-new Date(t.startedAt))/1000) : running? Math.round((Date.now()-new Date(t.startedAt))/1000) : 0; const remain=Math.max(0, PUMP_SECONDS-elapsed);
+  return `<div class="timer" id="pumpTimer"><div class="small muted" style="text-align:center">양수작업 3분 타이머 · 종료되어도 결과는 직접 선택합니다</div>
+    <div class="clock ${running?'running':''} ${elapsed>=PUMP_SECONDS?'done':''}" id="pumpClock">${pad(Math.floor(remain/60))}:${pad(remain%60)}</div>
+    <div class="tbtns">${running? `<button class="btn" data-act="timer-stop">정지</button>` : `<button class="btn primary" data-act="timer-start" ${t.endedAt?'disabled':''}>시작</button>`}<button class="btn" data-act="timer-reset" ${t.startedAt?'':'disabled'}>초기화</button></div>
+    <div class="log" id="pumpLog">${t.startedAt? `시작 ${fmtTime(t.startedAt)}${t.endedAt? ` · 정지 ${fmtTime(t.endedAt)} · 실제 확인시간 ${Math.floor(elapsed/60)}분 ${elapsed%60}초${elapsed>=PUMP_SECONDS?' (3분 이상 확인)':' (3분 미만)'}`:' · 진행 중'}`:'기록 없음'}</div></div>`; }
+function photoRowHtml(insp, cat){ const c=CAT_BY_ID[cat]; const ps=Store.photosOf(insp.id, cat); const na=c.naKey && insp.photoNA && insp.photoNA[c.naKey];
+  return `<div class="photorow"><span class="small muted" style="flex:1 1 100%">관련 사진 → <b>${esc(c.short||c.label)}</b> ${ps.length?`(${ps.length}장)`:''}${na?' · <span class="tag na">미보유</span>':''}</span>
+    ${na?'':`<button class="btn sm" data-act="photo-camera" data-cat="${cat}">📷 촬영</button><button class="btn sm" data-act="photo-album" data-cat="${cat}">앨범</button>`}
+    <div class="thumbs" style="display:flex">${ps.slice(0,6).map(p=>thumbHtml(p,{sm:true})).join('')}</div></div>`; }
+function thumbHtml(p, opts={}){ const src=photoSrc(p); const rot=((p.rotation||0)%360+360)%360; const cls='thumb'+(opts.sm?' sm':'')+(rot?` r${rot}`:'');
+  const st = (p.status==='failed'||p.status==='missing')? '<span class="badge fail">실패</span>' : (p.status==='noperm'&&RT.mode==='cloud')? '<span class="badge fail">권한</span>' : ((p.status==='pending'||p.status==='uploading')&&RT.mode==='cloud')? '<span class="badge pend">대기</span>' : '';
+  return `<button type="button" class="${cls}" data-act="photo-open" data-pid="${p.id}" aria-label="사진 보기">${src?`<img src="${esc(src)}" alt="" loading="lazy">`:'<div class="noimg">이미지 없음</div>'}${p.isCover&&!opts.sm?'<span class="badge cover">대표</span>':''}${st}${!opts.sm&&p.caption?`<span class="cap">${esc(p.caption)}</span>`:''}</button>`; }
+
+/* ---- 4. 사진 ---- */
+function photosHtml(insp){ const unclassified=Store.photosOf(insp.id,'none');
+  return `
+  <div class="alert na small" style="margin-bottom:12px"><span>구분별 ‘촬영’ 버튼으로 찍으면 이 점검의 해당 칸에 바로 들어갑니다. 여러 장을 올려 나중에 구분할 수도 있습니다.</span></div>
+  <div class="stack">
+  ${PHOTO_CATS.map((c,idx)=>{ const ps=Store.photosOf(insp.id,c.id); const na=c.naKey && insp.photoNA && insp.photoNA[c.naKey]; const auto=c.naKey && insp.photoNAauto && insp.photoNAauto[c.naKey] && na;
+    return `<section class="pcat" id="pcat-${c.id}"><div class="phead"><h3>${'①②③④⑤⑥'[idx]} ${esc(c.label)}</h3><span class="n">${ps.length}장</span>
+      ${c.naKey? `<label class="check small"><input type="checkbox" data-act="photo-na" data-key="${c.naKey}" ${na?'checked':''}> 미보유</label>`:''}</div>
+      ${auto? `<div class="auto small">시설정보(${c.naKey==='generator'?'비상발전기':'정수장치'} 무)에 따라 ‘미보유’로 자동 표시됨 · 변경 가능</div>`:''}
+      ${na? `<div class="help">보고서 사진대지에 ‘${esc(c.naLabel)}’로 표시됩니다.</div>` : `<div class="pbtns"><button class="btn primary" data-act="photo-camera" data-cat="${c.id}">📷 사진 촬영</button><button class="btn" data-act="photo-album" data-cat="${c.id}">앨범에서 선택</button></div>
+      ${ps.length? `<div class="thumbs">${ps.map(p=>thumbHtml(p)).join('')}</div>` : `<div class="field"><label for="reason-${c.id}">사진이 없다면 사유(선택)</label><input id="reason-${c.id}" type="text" data-field="photoReason.${c.id}" value="${esc((insp.photoReason||{})[c.id]||'')}" placeholder="예: 촬영 불가(잠금), 야간 점검"></div>`}`}
+    </section>`; }).join('')}
+  <section class="pcat"><div class="phead"><h3>여러 장 한 번에 올리기</h3><span class="n">미분류 ${unclassified.length}장</span></div>
+    <div class="pbtns"><button class="btn" data-act="photo-bulk">여러 장 선택</button>${RT.sample && RT.sampleImages? `<button class="btn" data-act="ai-classify" ${unclassified.length?'':'disabled'}>AI로 구분 추천</button>`:''}</div>
+    ${RT.sample && RT.sampleImages? `<div class="help">AI 추천은 참고용입니다. 추천 결과를 확인하고 ‘적용’을 눌러야 구분이 정해집니다. 확신이 낮으면 ‘미분류’로 남습니다.</div>` : `<div class="help">이 환경에서는 AI 이미지 분류를 사용할 수 없어 수동 분류만 가능합니다.</div>`}
+    <div id="aiStatus" class="small muted"></div>
+    ${unclassified.length? `<div class="list">${unclassified.map(p=>`<div class="review-row" data-unc="${p.id}"><div style="width:72px;flex:none">${thumbHtml(p,{sm:true})}</div><div class="t"><b class="small">${fmtDT(p.takenAt)} <span class="muted">(${p.takenSrc==='camera'?'촬영':p.takenSrc==='exif'?'EXIF':'파일 일시'})</span></b><span id="ai-${p.id}" class="small">${p.aiSuggest? `AI 추천: ${esc(CAT_BY_ID[p.aiSuggest]?CAT_BY_ID[p.aiSuggest].label:'미분류')} (${Math.round((p.aiConf||0)*100)}%)`:''}</span></div>
+      <select data-act="assign-cat" data-pid="${p.id}" aria-label="구분 선택"><option value="none">미분류</option>${PHOTO_CATS.map(c=>`<option value="${c.id}" ${p.aiSuggest===c.id?'selected':''}>${esc(c.short||c.label)}</option>`).join('')}</select>
+      <button class="btn sm" data-act="apply-cat" data-pid="${p.id}">적용</button></div>`).join('')}</div>`:''}
+  </section>
+  </div>`; }
+
+/* ---- 5. 최종 검토 ---- */
+function reviewHtml(insp){ const s=inspStats(insp); const items=buildItems(Store.settings.standards); const f=insp.facility||{};
+  const poorItems=items.filter(it=>(insp.items[it.id]||{}).r==='poor'); const noneItems=items.filter(it=>!(insp.items[it.id]||{}).r); const missing=items.filter(it=>{ const v=insp.items[it.id]||{}; return (v.r==='poor'||v.r==='na') && !(v.note||'').trim(); });
+  const cov=photoCoverage(insp); const unc=Store.photosOf(insp.id,'none').length; const pendingUp=Store.photosOf(insp.id).filter(p=>!p.assetId && p.status!=='local').length;
+  const blocking=noneItems.length+missing.length;
+  return `
+  <div class="card"><h2>시설 기본정보</h2>${facInfoRows(f)}<hr class="sep"><div class="small">점검일 <b>${fmtKDate(insp.date)||'<span class="tag poor">미입력</span>'}</b> · 점검자 <b>${esc(insp.inspector)||'<span class="tag poor">미입력</span>'}</b>${insp.inspectorOrg?` (${esc(insp.inspectorOrg)})`:''}${insp.companions?` · 동행 ${esc(insp.companions)}`:''} <button class="btn sm ghost" data-jump="1">수정</button></div></div>
+  <div class="card"><h2>전체 점검 진행률 <span class="count">${s.done}/${s.total}</span></h2><div class="progress"><i style="width:${Math.round(s.done/s.total*100)}%"></i></div>
+    <div class="counts"><span class="tag good">양호 ${s.good}</span><span class="tag poor">미흡 ${s.poor}</span><span class="tag na">해당 없음 ${s.na}</span><span class="tag none">미점검 ${s.none}</span></div></div>
+  ${blocking? `<div class="card"><h2 style="color:var(--poor)">완료 전 확인 필요 <span class="count">${blocking}건</span></h2><div class="review-list">
+    ${noneItems.map(it=>`<div class="review-row"><div class="t"><b>${it.sec==='written'?'서면':'현장'} ${it.num} ${esc(it.title)}</b><span>미점검 상태입니다</span></div><button class="btn sm" data-jump="${it.sec==='written'?2:3}" data-focus="${it.id}">이동</button></div>`).join('')}
+    ${missing.map(it=>`<div class="review-row"><div class="t"><b>${it.sec==='written'?'서면':'현장'} ${it.num} ${esc(it.title)}</b><span>${(insp.items[it.id]||{}).r==='poor'?'미흡 내용이 비어 있습니다':'해당 없음 사유가 비어 있습니다'}</span></div><button class="btn sm" data-jump="${it.sec==='written'?2:3}" data-focus="${it.id}">이동</button></div>`).join('')}
+  </div></div>` : `<div class="alert good" style="margin-top:14px"><b>점검표 입력이 모두 끝났습니다.</b></div>`}
+  <div class="card"><h2>미흡 항목 <span class="count">${poorItems.length}건</span></h2>
+    ${poorItems.length? `<div class="review-list">${poorItems.map(it=>`<div class="review-row"><div class="t"><b>${it.sec==='written'?'서면':'현장'} ${it.num} ${esc(it.title)}</b><span>${esc((insp.items[it.id]||{}).note||'(내용 없음)')}</span></div><button class="btn sm" data-jump="${it.sec==='written'?2:3}" data-focus="${it.id}">수정</button></div>`).join('')}</div>` : `<p class="muted small">미흡으로 체크된 항목이 없습니다.</p>`}
+  </div>
+  <div class="card"><h2>사진 구분별 첨부 현황</h2><div class="review-list">
+    ${cov.map(c=>`<div class="review-row"><div style="width:56px;flex:none">${c.cover? thumbHtml(c.cover,{sm:true}): `<div class="thumb sm"><div class="noimg">${c.na?'미보유':'없음'}</div></div>`}</div><div class="t"><b>${esc(c.cat.label)} ${c.na?'<span class="tag na">미보유</span>': c.count? `<span class="tag good">${c.count}장</span>`:'<span class="tag warn">사진 없음</span>'}</b>
+      ${!c.na && !c.count? `<input type="text" data-field="photoReason.${c.cat.id}" value="${esc(c.reason)}" placeholder="미보유 또는 촬영 불가 사유 입력(보고서에 표시)" style="margin-top:6px">`: (c.reason&&!c.count?`<span>사유: ${esc(c.reason)}</span>`:'')}</div><button class="btn sm" data-jump="4">사진</button></div>`).join('')}
+    ${unc? `<div class="alert warn small"><span>미분류 사진 ${unc}장이 있습니다. 구분을 정하지 않으면 보고서에 실리지 않습니다.</span><button class="btn sm" data-jump="4">분류</button></div>`:''}
+    ${pendingUp && RT.mode==='cloud'? `<div class="alert warn small"><span>업로드가 끝나지 않은 사진 ${pendingUp}장이 있습니다. 연결 상태를 확인하세요. 완료 처리는 가능하지만 다른 기기에서는 아직 보이지 않습니다.</span></div>`:''}
+  </div></div>
+  <div class="card stack"><h2>종합 의견과 조치 필요사항</h2>
+    <div class="field"><label for="i_overall">종합 의견</label><textarea id="i_overall" data-field="overall" placeholder="시설 전반에 대한 의견">${esc(insp.overall||'')}</textarea></div>
+    <div class="field"><label for="i_actions">조치 필요사항</label><textarea id="i_actions" data-field="actions" placeholder="미흡 항목에 대한 조치 요구 내용">${esc(insp.actions||'')}</textarea></div>
+    <div class="grid2"><div class="field"><label for="i_due">조치기한</label><input id="i_due" type="date" data-field="actionDue" value="${esc(insp.actionDue||'')}"></div>
+      <div class="field"><label>조치 완료 여부</label><label class="check"><input type="checkbox" data-field="actionDone" ${insp.actionDone?'checked':''}> 조치 완료</label>${insp.actionDone? `<input type="date" data-field="actionDoneDate" value="${esc(insp.actionDoneDate||'')}" aria-label="조치 완료일">`:''}</div></div>
+  </div>
+  ${insp.status==='done'? `<div class="card"><h2>완료·수정 이력</h2><p class="small">점검 완료 ${fmtDT(insp.completedAt)} · <span class="uname" data-uid="${esc(insp.completedBy||'')}">…</span></p>${(insp.editLog||[]).length? `<div class="scrollx"><table class="tbl"><thead><tr><th>수정일시</th><th>수정자</th><th>수정 항목</th></tr></thead><tbody>${insp.editLog.slice().reverse().map(e=>`<tr><td class="mono">${fmtDT(e.at)}${e.at2?`<br>~ ${fmtDT(e.at2)}`:''}</td><td><span class="uname" data-uid="${esc(e.by)}">…</span></td><td>${(e.fields||[]).map(fieldLabel).map(esc).join(', ')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted small">완료 후 수정 기록이 없습니다.</p>'}</div>`:''}`; }
+
+/* ---- 이벤트 바인딩 ---- */
+function bindStep(insp, step){
+  const body=$('#stepBody'); if(!body) return;
+  body.addEventListener('input', e=>{ const el=e.target; const f=el.dataset.field; if(!f) return; const cur=Editor.cur(); if(!cur) return; let v = el.type==='checkbox'? el.checked : el.value; setPath(cur, f, v); if(el.classList.contains('invalid') && String(v).trim()) el.classList.remove('invalid'); Editor.touch(f, el.type==='checkbox'||el.type==='date');
+    if (f.startsWith('items.')){ const id=f.split('.')[1]; const sec=$('#item-'+id); if(sec){ const tag=$('.state',sec); } }
+    if (f==='actionDone'){ scheduleRender(); }
+    if (f.startsWith('photoReason.')) { /* no rerender */ }
+  });
+  body.addEventListener('change', e=>{ const el=e.target; if(el.dataset.act==='photo-na'){ const cur=Editor.cur(); cur.photoNA=cur.photoNA||{}; cur.photoNA[el.dataset.key]=el.checked; cur.photoNAauto=cur.photoNAauto||{}; cur.photoNAauto[el.dataset.key]=false; Editor.touch('photoNA', true); render(); } });
+  body.addEventListener('click', async e=>{ const b=e.target.closest('[data-act],[data-jump]'); if(!b) return; const cur=Editor.cur(); if(!cur) return;
+    if (b.dataset.jump){ Editor.commit(); App.go({name:'inspect', id:cur.id, step:+b.dataset.jump, focusItem:b.dataset.focus||null}); return; }
+    const act=b.dataset.act;
+    if (act==='result'){ const sec=b.closest('[data-item]'); const id=sec.dataset.item; const v=cur.items[id]||(cur.items[id]={r:'',note:'',auto:false}); if (readOnly()){ toast('읽기 전용 권한입니다',{err:true}); return; } v.r = v.r===b.dataset.val? '' : b.dataset.val; v.auto=false; Editor.touch('items.'+id, true); const it=buildItems(Store.settings.standards).find(x=>x.id===id); sec.outerHTML=itemHtml(cur,it); const nb=$('#item-'+id); const ta=$('textarea,input[type=text]',nb); if(ta && v.r!=='good') ta.focus(); updateStepsBar(cur); return; }
+    if (act==='refresh-fac'){ const live=Store.facilities.get(cur.facilityId); if(live){ cur.facility=clone(live); if(!live.generator){ for(const id of ['F6','F7']){ const v=cur.items[id]; if(!v.r||v.auto){ cur.items[id]={r:'na',note:'비상발전기 미보유',auto:true}; } } } Editor.touch('facility', true); toast('최신 시설정보를 반영했습니다'); render(); } return; }
+    if (act==='photo-camera'||act==='photo-album'){ if (readOnly()){ toast('읽기 전용 권한입니다',{err:true}); return; } pickFiles(cur.id, b.dataset.cat, act==='photo-camera'?'camera':'album'); return; }
+    if (act==='photo-bulk'){ if (readOnly()){ toast('읽기 전용 권한입니다',{err:true}); return; } pickFiles(cur.id, 'none', 'album', true); return; }
+    if (act==='photo-open'){ openPhoto(b.dataset.pid); return; }
+    if (act==='timer-start'){ cur.pump={startedAt:nowIso(), endedAt:null, elapsed:0}; Editor.touch('pump', true); refreshTimer(true); return; }
+    if (act==='timer-stop'){ cur.pump.endedAt=nowIso(); cur.pump.elapsed=Math.round((new Date(cur.pump.endedAt)-new Date(cur.pump.startedAt))/1000); Editor.touch('pump', true); refreshTimer(true); return; }
+    if (act==='timer-reset'){ if(b.dataset.arm){ cur.pump={startedAt:null,endedAt:null,elapsed:0}; Editor.touch('pump', true); refreshTimer(true); } else { b.dataset.arm='1'; b.textContent='초기화 확인'; setTimeout(()=>{ delete b.dataset.arm; b.textContent='초기화'; },3000); } return; }
+    if (act==='apply-cat'){ const sel=$(`select[data-pid="${b.dataset.pid}"]`, body); const p=Store.photos.get(b.dataset.pid); if(p&&sel){ p.category=sel.value; delete p.aiSuggest; delete p.aiConf; p.order=Store.photosOf(cur.id, sel.value).length; p.isCover = p.order===0; await Store.save('photos/'+p.id, p); toast(sel.value==='none'?'미분류로 두었습니다':`‘${CAT_BY_ID[sel.value].short||CAT_BY_ID[sel.value].label}’로 분류했습니다`); render(); } return; }
+    if (act==='ai-classify'){ aiClassify(cur.id); return; }
+  });
+  if (step===3){ clearInterval(Editor.tick); Editor.tick=setInterval(refreshTimer, 1000); } else clearInterval(Editor.tick);
+  resolveNames(body);
+}
+function updateStepsBar(insp){ $$('#view [data-step]').forEach(b=>{ b.className=stepState(insp,+b.dataset.step); }); const s=inspStats(insp); const pr=$('#view .progress>i'); if(pr) pr.style.width=Math.round(s.done/s.total*100)+'%'; }
+let timerToasted=false;
+function refreshTimer(full){ const cur=Editor.cur(); const box=$('#pumpTimer'); if(!cur||!box) return; const t=cur.pump||{}; const running=t.startedAt && !t.endedAt; if (full===true){ timerToasted=false; box.outerHTML=timerHtml(cur); return; } if (running){ const elapsed=Math.round((Date.now()-new Date(t.startedAt))/1000); const remain=Math.max(0,PUMP_SECONDS-elapsed); const c=$('#pumpClock'); if(c){ c.textContent=`${pad(Math.floor(remain/60))}:${pad(remain%60)}`; c.classList.toggle('done', elapsed>=PUMP_SECONDS); } const lg=$('#pumpLog'); if(lg) lg.textContent=`시작 ${fmtTime(t.startedAt)} · 진행 중 ${Math.floor(elapsed/60)}분 ${elapsed%60}초`; if(elapsed>=PUMP_SECONDS && !timerToasted){ timerToasted=true; toast('3분이 지났습니다. 양수 상태를 확인하고 결과를 직접 선택하세요.'); } }
+  else { timerToasted=false; box.outerHTML=timerHtml(cur); } }
+
+/* ---- 사진 선택/추가 ---- */
+function pickFiles(inspectionId, cat, mode, multiple){
+  const key=`${cat}|${mode}|${multiple?'m':'s'}`; let inp=$(`#fileInputs input[data-key="${key}"]`);
+  if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.dataset.key=key; if(mode==='camera') inp.setAttribute('capture','environment'); if(multiple||mode==='album') inp.multiple=true; $('#fileInputs').appendChild(inp); }
+  inp.onchange=async()=>{ const files=Array.from(inp.files||[]); inp.value=''; if(!files.length) return; await addPhotos(files, {inspectionId, category:cat, source:mode}); };
+  inp.click();
+}
+async function addPhotos(files, ctx){
+  const insp=Store.inspections.get(ctx.inspectionId); if(!insp){ toast('점검 기록을 찾을 수 없습니다',{err:true}); return; }
+  const existing=Store.photosOf(insp.id); let added=0;
+  if (files.length>1) toast(`사진 ${files.length}장을 처리하는 중…`);
+  for (const f of files){
+    const sig=`${f.name}|${f.size}|${f.lastModified}`;
+    if (ctx.source!=='camera' && existing.some(p=>p.fileSig===sig)){ toast(`이미 추가된 사진은 건너뜁니다: ${f.name}`); continue; }
+    let pr; try{ pr=await processImage(f); }catch(e){ toast(`이미지를 처리할 수 없습니다: ${f.name}`,{err:true}); continue; }
+    let takenAt, takenSrc; if (ctx.source==='camera'){ takenAt=nowIso(); takenSrc='camera'; } else { const ex=await readExifDate(f); if(ex){ takenAt=ex; takenSrc='exif'; } else { takenAt=new Date(f.lastModified||Date.now()).toISOString(); takenSrc='file'; } }
+    const id=uuid(); await IDB.put('blobs', pr.blob, id); Store.blobUrls.set(id, URL.createObjectURL(pr.blob));
+    const order=Store.photosOf(insp.id, ctx.category).length;
+    const p={id, facilityId:insp.facilityId, inspectionId:insp.id, category:ctx.category||'none', assetId:null, status:'pending', caption:'', takenAt, takenSrc, rotation:0, order, isCover: ctx.category!=='none' && order===0, w:pr.w, h:pr.h, sizeBytes:pr.blob.size, fileSig:sig, createdAt:nowIso(), createdBy:myId()};
+    await Store.save('photos/'+id, p, {needsAsset:true}); added++;
+  }
+  if (added){ const c=CAT_BY_ID[ctx.category]; toast(`${added}장을 ${c? '‘'+(c.short||c.label)+'’에' : '미분류로'} 추가했습니다`); if(insp.status==='done'){ pushEditLog(insp,['photos']); Store.save('inspections/'+insp.id, insp); } }
+  Uploads.run(); render();
+}
+async function deletePhoto(pid, opts={}){ const p=Store.photos.get(pid); if(!p) return; const url=Store.blobUrls.get(pid); if(url){ URL.revokeObjectURL(url); Store.blobUrls.delete(pid); } await IDB.del('blobs',pid); await Store.remove('photos/'+pid); if (p.assetId && RT.assets){ RT.assets.delete(p.assetId).catch(()=>{}); } if(p.isCover){ const rest=Store.photosOf(p.inspectionId,p.category); if(rest[0]){ rest[0].isCover=true; await Store.save('photos/'+rest[0].id, rest[0]); } } if(!opts.silent){ const insp=Store.inspections.get(p.inspectionId); if(insp&&insp.status==='done'){ pushEditLog(insp,['photos']); Store.save('inspections/'+insp.id, insp); } } }
+
+/* ---- 사진 확대 보기 ---- */
+function openPhoto(pid){
+  const p=Store.photos.get(pid); if(!p) return; const list=Store.photosOf(p.inspectionId, p.category); const idx=list.findIndex(x=>x.id===pid); const rot=((p.rotation||0)%360+360)%360; const c=CAT_BY_ID[p.category];
+  const stText = p.status==='failed'? `업로드 실패(${esc(p.err||'')}) — 재시도하세요` : p.status==='missing'? '원본이 이 기기에 없고 업로드도 되지 않았습니다(다른 기기에서 촬영)' : p.status==='noperm'? '업로드 권한이 없어 이 기기에만 저장됨' : p.status==='uploading'? '업로드 중…' : p.status==='pending'? (RT.mode==='cloud'?'업로드 대기(연결 시 자동 업로드)':'이 기기에 저장됨') : p.status==='local'? '이 기기에 저장됨' : '저장 완료';
+  openModal(`
+    <div class="row between"><h2>${esc(c?c.label:'미분류')} ${list.length>1?`<span class="small muted">${idx+1}/${list.length}</span>`:''}</h2><button class="btn sm" id="mClose">닫기</button></div>
+    <div class="viewer ${rot?'r'+rot:''}">${photoSrc(p)?`<img src="${esc(photoSrc(p))}" alt="">`:'<div class="noimg" style="color:#fff">이미지를 불러올 수 없습니다</div>'}</div>
+    <div class="small muted">촬영일시 ${fmtDTS(p.takenAt)} <span class="tag ${p.takenSrc==='camera'?'good':p.takenSrc==='exif'?'info':'none'}">${p.takenSrc==='camera'?'직접 촬영':p.takenSrc==='exif'?'사진 EXIF':'파일 수정일시'}</span> · ${stText}</div>
+    <div class="field"><label for="pcap">사진 설명</label><input id="pcap" type="text" value="${esc(p.caption||'')}" placeholder="보고서에 함께 출력됩니다"></div>
+    <div class="toolbar">
+      <button class="btn" id="pPrev" ${idx<=0?'disabled':''}>◀ 이전</button><button class="btn" id="pNext" ${idx>=list.length-1?'disabled':''}>다음 ▶</button>
+      <button class="btn" id="pRot">↻ 회전</button><button class="btn ${p.isCover?'primary':''}" id="pCover">${p.isCover?'대표사진 ✓':'대표사진으로'}</button>
+      <button class="btn" id="pUp" ${idx<=0?'disabled':''}>순서 ▲</button><button class="btn" id="pDown" ${idx>=list.length-1?'disabled':''}>순서 ▼</button>
+    </div>
+    <div class="row"><label class="small muted" for="pMove">다른 구분으로 이동</label><select id="pMove" style="flex:1;min-width:160px"><option value="none" ${p.category==='none'?'selected':''}>미분류</option>${PHOTO_CATS.map(x=>`<option value="${x.id}" ${x.id===p.category?'selected':''}>${esc(x.short||x.label)}</option>`).join('')}</select>
+      ${p.status==='failed'||p.status==='noperm'? `<button class="btn" id="pRetry">업로드 재시도</button>`:''}<button class="btn danger" id="pDel">삭제</button></div>`, {wide:true});
+  const save=debounce(async()=>{ const q=Store.photos.get(pid); if(!q) return; await Store.save('photos/'+pid, q); },400);
+  $('#mClose').onclick=()=>{ closeModal(); render(); };
+  $('#pcap').oninput=e=>{ p.caption=e.target.value; save(); };
+  $('#pPrev').onclick=()=>openPhoto(list[idx-1].id); $('#pNext').onclick=()=>openPhoto(list[idx+1].id);
+  $('#pRot').onclick=async()=>{ p.rotation=(rot+90)%360; await Store.save('photos/'+pid,p); openPhoto(pid); };
+  $('#pCover').onclick=async()=>{ for(const q of list){ if(q.isCover && q.id!==pid){ q.isCover=false; await Store.save('photos/'+q.id,q); } } p.isCover=true; await Store.save('photos/'+pid,p); toast('대표사진으로 지정했습니다'); openPhoto(pid); };
+  const swap=async(j)=>{ const other=list[j]; const a=p.order||idx, b=other.order||j; p.order=j; other.order=idx; list.forEach((q,k)=>{ if(q!==p&&q!==other) q.order=k; }); await Store.save('photos/'+other.id, other); await Store.save('photos/'+pid, p); for(const q of list){ if(q!==p&&q!==other) await Store.save('photos/'+q.id,q,{silent:true}); } openPhoto(pid); };
+  $('#pUp').onclick=()=>swap(idx-1); $('#pDown').onclick=()=>swap(idx+1);
+  $('#pMove').onchange=async e=>{ const to=e.target.value; if(to===p.category) return; const wasCover=p.isCover; p.category=to; p.order=Store.photosOf(p.inspectionId,to).length; p.isCover = to!=='none' && p.order===0; await Store.save('photos/'+pid,p); if(wasCover){ const rest=Store.photosOf(p.inspectionId, list[0].category).filter(q=>q.id!==pid); if(rest[0]){ rest[0].isCover=true; await Store.save('photos/'+rest[0].id, rest[0]); } } toast('사진 구분을 이동했습니다'); closeModal(); render(); };
+  const rt=$('#pRetry'); if(rt) rt.onclick=()=>{ Uploads.retry(pid); toast('업로드를 다시 시도합니다'); openPhoto(pid); };
+  $('#pDel').onclick=async()=>{ const b=$('#pDel'); if(b.dataset.arm){ await deletePhoto(pid); toast('사진을 삭제했습니다'); closeModal(); render(); } else { b.dataset.arm='1'; b.textContent='삭제 확인'; setTimeout(()=>{ delete b.dataset.arm; b.textContent='삭제'; },3000); } };
+}
+
+/* ---- AI 분류 추천 ---- */
+async function aiClassify(inspectionId){
+  const st=$('#aiStatus'); const unc=Store.photosOf(inspectionId,'none'); if(!unc.length) return;
+  if(!RT.sample || !RT.sampleImages){ if(st) st.textContent='이 환경에서는 AI 분류를 사용할 수 없습니다.'; return; }
+  const batch=unc.slice(0, Math.max(1, Math.min(RT.sampleImages.maxCount||4, 8)));
+  const blobs=[]; const used=[];
+  for (const p of batch){ let b=await IDB.get('blobs',p.id); if(!b && p.assetId){ try{ const r=await fetch(assetUrl(p.assetId)); if(r.ok) b=await r.blob(); }catch(e){} } if(b){ blobs.push(b); used.push(p); } }
+  if(!blobs.length){ if(st) st.textContent='분류할 이미지를 읽을 수 없습니다.'; return; }
+  if(st) st.textContent=`AI가 ${blobs.length}장을 확인하는 중… (첫 사용 시 허용 여부를 묻습니다)`;
+  const prompt=`다음 ${blobs.length}장의 사진은 서울시 민방위 비상급수시설 현장점검 사진입니다. 각 사진을 아래 구분 중 하나로 분류하세요.
+- sign: 안내표지판(급수시설 안내 표지판, 게시물, 수질검사 게시)
+- exterior: 시설 외관(건물·시설물의 외부 전경, 출입문, 펌프실 외부)
+- generator: 비상발전기(발전기 장비, 제어반)
+- purifier: 정수장치(정수·여과 장비, 필터, 배관)
+- pump: 양수 확인(물이 나오는 장면, 수도꼭지·호스에서 물 배출, 양수 작업)
+- docs: 서류 배치(점검일지, 수질검사서, 관리카드 등 문서)
+확신이 없으면 "unknown"으로 답하세요. 사진 순서대로 JSON 배열만 출력하세요. 예: [{"index":0,"category":"sign","confidence":0.9}]`;
+  try{
+    const res=await RT.sample.json(prompt, {images:blobs, modelTier:'quick'});
+    const arr=Array.isArray(res)?res:[];
+    let n=0; for (let i=0;i<used.length;i++){ const r=arr.find(x=>Number(x.index)===i)||arr[i]; const p=used[i]; const cat=r && CAT_BY_ID[String(r.category)]? String(r.category): null; const conf=r? Number(r.confidence)||0 : 0; if(cat && conf>=0.6){ p.aiSuggest=cat; p.aiConf=conf; n++; } else { delete p.aiSuggest; p.aiConf=conf; } const rec=Store.recs.get('photos/'+p.id); if(rec){ rec.data=p; await Store.persist(rec); } }
+    toast(`AI가 ${n}장의 구분을 추천했습니다. 확인 후 ‘적용’을 누르세요.`); render();
+  }catch(e){ const code=e&&e.code; const msg = code==='not_granted'? 'AI 사용이 허용되지 않아 수동으로 분류해 주세요.' : code==='rate_limited'? '요청이 많아 잠시 후 다시 시도해 주세요.' : code==='image_rejected'? '이미지 형식 문제로 분류하지 못했습니다.' : code==='invalid_json'? 'AI 응답을 해석하지 못했습니다. 다시 시도해 주세요.' : 'AI 분류에 실패했습니다. 수동으로 분류해 주세요.'; if(st) st.textContent=msg; toast(msg,{err:true}); }
+}
+
+/* ---- 점검 완료 ---- */
+async function completeInspection(id){
+  const insp=Store.inspections.get(id); if(!insp) return; await Editor.commit();
+  const s=inspStats(insp); const problems=[]; if(s.none) problems.push(`미점검 ${s.none}건`); if(s.missingNote) problems.push(`미흡 내용/사유 누락 ${s.missingNote}건`); if(!insp.date) problems.push('점검일 미입력'); if(!(insp.inspector||'').trim()) problems.push('점검자 미입력');
+  if (problems.length){ toast('완료할 수 없습니다: '+problems.join(', '),{err:true}); return; }
+  if (readOnly()){ toast('읽기 전용 권한이라 완료 처리할 수 없습니다',{err:true}); return; }
+  const cov=photoCoverage(insp); const missingPhotos=cov.filter(c=>!c.ok).map(c=>c.cat.short||c.cat.label);
+  const go=async()=>{ insp.status='done'; insp.completedAt=nowIso(); insp.completedBy=myId(); insp.lastStep=5; await Store.save('inspections/'+insp.id, insp); toast('점검을 완료했습니다. 보고서를 확인하세요.'); App.go({name:'report', id:insp.id}); };
+  if (missingPhotos.length){ openModal(`<h2>사진이 없는 구분이 있습니다</h2><p>${esc(missingPhotos.join(', '))} — 사진도 사유도 없습니다. 보고서의 해당 칸은 비워진 채 출력됩니다.</p><div class="toolbar"><button class="btn" id="mBack">사진 보완</button><button class="btn primary" id="mGo">그대로 완료</button></div>`); $('#mBack').onclick=()=>{ closeModal(); App.go({name:'inspect', id, step:4}); }; $('#mGo').onclick=()=>{ closeModal(); go(); }; }
+  else go();
+}
+/* ===================== 보고서 ===================== */
+const CDN={ html2canvas:'lib/html2canvas.min.js', jspdf:'lib/jspdf.umd.min.js', xlsx:'lib/xlsx.full.min.js', jszip:'lib/jszip.min.js' };
+const loadedScripts={};
+function loadScript(url){ if(loadedScripts[url]) return loadedScripts[url]; loadedScripts[url]=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=url; s.onload=()=>res(); s.onerror=()=>{ delete loadedScripts[url]; rej(new Error('라이브러리를 불러오지 못했습니다')); }; document.head.appendChild(s); }); return loadedScripts[url]; }
+let Exporting=false;
+const MM=96/25.4;
+
+function chk(on){ return on? '■' : '□'; }
+function reportPagesHtml(insp){
+  const f=insp.facility||{}; const items=buildItems(insp.standards||Store.settings.standards); const st=Object.assign({},DEFAULT_STANDARDS,insp.standards||Store.settings.standards||{});
+  const facTitle=`${f.gu||''} ${f.name||''}`.trim();
+  const rowsFor=(sec)=>items.filter(i=>i.sec===sec).map(it=>{ const v=insp.items[it.id]||{r:''}; const r=v.r||''; let note=''; if(r==='poor') note=esc(v.note||''); else if(r==='na') note=`<span style="color:#333">[해당 없음] ${esc(v.note||'')}</span>`; else if(!r) note='<span style="color:#777">미점검</span>';
+    return `<tr><td>${it.num} ${esc(it.title)}${it.note?`<span class="ref">${esc(it.note)}</span>`:''}${it.timer && insp.pump && insp.pump.startedAt? `<span class="ref">양수 확인시간: ${fmtTime(insp.pump.startedAt)}${insp.pump.endedAt? ` ~ ${fmtTime(insp.pump.endedAt)} (${Math.floor((insp.pump.elapsed||0)/60)}분 ${(insp.pump.elapsed||0)%60}초)`:''}</span>`:''}</td><td class="res">양호 ${chk(r==='good')} 미흡 ${chk(r==='poor')}</td><td class="note"><div class="clamp">${note}</div></td></tr>`; }).join('');
+  const poorList=items.filter(it=>(insp.items[it.id]||{}).r==='poor').map(it=>`${it.sec==='written'?'[서면]':'[현장]'} ${it.num} ${it.title} : ${(insp.items[it.id]||{}).note||''}`).join('\n');
+  const naList=items.filter(it=>(insp.items[it.id]||{}).r==='na').map(it=>`${it.sec==='written'?'[서면]':'[현장]'} ${it.num} ${it.title} : ${(insp.items[it.id]||{}).note||''}`).join('\n');
+  const cov=photoCoverage(insp);
+  const extra=[]; for(const c of cov){ const ps=Store.photosOf(insp.id,c.cat.id); const cover=c.cover; for(const p of ps){ if(p!==cover) extra.push({p, cat:c.cat}); } }
+  const extraPages=[]; for(let i=0;i<extra.length;i+=6) extraPages.push(extra.slice(i,i+6));
+  const total=3+extraPages.length;
+  const foot=(n)=>`<div class="foot"><span>민방위 비상급수시설 점검 · ${esc(facTitle)}</span><span>${n} / ${total}</span></div>`;
+  const page1=`<div class="paper">
+    <div class="meta"><span>서울시 민방위 급수시설 관리실태 점검</span><span>점검일 ${fmtKDate(insp.date)}</span></div>
+    <h1 class="ttl sq">민방위 비상급수시설 점검표</h1>
+    <table class="box-fac"><tr><td class="lab">점검시설</td><td>
+      (시설종류) 정부지원 ${chk(f.type==='gov')} &nbsp; 지자체 ${chk(f.type==='local')} &nbsp; 공공용 ${chk(f.type==='public')}<br>
+      (시설특성) 생산량 ${f.capacity!=null&&f.capacity!==''?esc(f.capacity):'　　'} 톤/일, 비상발전기 (${f.generator?'유':'무'}), 정수장치 (${f.purifier?'유':'무'}), 개방여부 (${f.open!==false?'개방':'비개방'}), 용수 구분 (${WATER_USES[f.waterUse]||''})<br>
+      (명칭) ${esc(f.name||'')} &nbsp; (주소) ${esc(f.address||'')}</td></tr></table>
+    <table class="box-fac" style="margin-top:1.5mm"><tr><td class="lab">점검정보</td><td>점검일 ${fmtKDate(insp.date)} · 점검자 ${esc(insp.inspector||'')}${insp.inspectorOrg?` (${esc(insp.inspectorOrg)})`:''}${insp.companions?` · 동행자 ${esc(insp.companions)}`:''} · 점검 상태 ${insp.status==='done'?'점검 완료':'작성 중'}${f.manager?`<br>시설 관리 담당자 ${esc(f.manager)}${f.phone?` (${esc(f.phone)})`:''}`:''}</td></tr></table>
+    <table class="chklist" style="margin-top:2.5mm"><thead><tr><th class="c1">검 열 항 목</th><th class="c2">점검 결과</th><th class="c3">미흡 내용 (미흡 체크시)</th></tr></thead><tbody>
+      <tr><td class="sec">[서면점검] 시설 점검 및 관리</td><td class="sec"></td><td class="sec"></td></tr>${rowsFor('written')}
+      <tr><td class="sec">[현장점검] 시설 점검 및 관리</td><td class="sec"></td><td class="sec"></td></tr>${rowsFor('field')}
+    </tbody></table>
+    <p class="guide">※ ‘해당 없음’ 항목은 양호·미흡을 체크하지 않고 비고에 사유를 표시함. 수질검사 주기 기준: ${esc(st.year)}년 기준(음용수 ${esc(st.drinking)}, 생활용수 ${esc(st.living)}).</p>
+    ${foot(1)}</div>`;
+  const log=(insp.editLog||[]);
+  const page2=`<div class="paper">
+    <div class="meta"><span>서울시 민방위 급수시설 관리실태 점검</span><span>${esc(facTitle)}</span></div>
+    <h1 class="ttl sq">점검 의견 및 조치사항</h1>
+    <table class="opinion"><tbody>
+      <tr><td class="lab">미흡 내용</td><td class="body">${poorList? esc(poorList): '미흡 항목 없음'}</td></tr>
+      ${naList? `<tr><td class="lab">해당 없음 사유</td><td class="body" style="min-height:12mm">${esc(naList)}</td></tr>`:''}
+      <tr><td class="lab">종합 의견</td><td class="body">${esc(insp.overall||'')}</td></tr>
+      <tr><td class="lab">조치 필요사항</td><td class="body">${esc(insp.actions||'')}${(insp.actions||'').trim()? `\n\n조치기한: ${fmtKDate(insp.actionDue)||'미정'} · 조치 완료 여부: ${insp.actionDone? `완료${insp.actionDoneDate?` (${fmtKDate(insp.actionDoneDate)})`:''}`:'미완료'}`:''}</td></tr>
+      <tr><td class="lab">사진 첨부 현황</td><td class="body" style="min-height:10mm">${cov.map(c=>`${c.cat.short||c.cat.label} ${c.na? '미보유' : c.count? c.count+'장' : (c.reason? '없음('+esc(c.reason)+')' : '없음')}`).join(' · ')}</td></tr>
+    </tbody></table>
+    <div class="sig"><div>점검자 <span>${esc(insp.inspector||'')}</span> (인)</div>${insp.companions?`<div>동행자 <span>${esc(insp.companions)}</span></div>`:''}</div>
+    ${insp.status==='done'? `<p class="guide" style="margin-top:6mm">점검 완료 ${fmtDT(insp.completedAt)}${log.length? ` · 완료 후 수정 ${log.length}회 (최근 ${fmtDT(log[log.length-1].at2||log[log.length-1].at)})`:''}</p>`:'<p class="guide" style="margin-top:6mm">※ 작성 중인 점검입니다.</p>'}
+    ${foot(2)}</div>`;
+  const photoCell=(c)=>{ if(c.na) return `<div class="pc"><div class="nop"><b>${esc(c.cat.naLabel||'미보유')}</b>시설정보 기준</div></div>`; if(!c.cover) return `<div class="pc"><div class="nop"><b>사진 없음</b>${c.reason?esc(c.reason):''}</div></div>`; return `<div class="pc" data-photo="${c.cover.id}"><canvas></canvas></div>`; };
+  const rows=[[cov[0],cov[1]],[cov[2],cov[3]],[cov[4],cov[5]]];
+  const page3=`<div class="paper">
+    <div class="meta"><span>서울시 민방위 급수시설 관리실태 점검</span><span>점검일 ${fmtKDate(insp.date)}</span></div>
+    <h1 class="ttl sq">민방위 비상급수시설 점검사진</h1>
+    <table class="photos"><tbody>
+      <tr><th colspan="2" style="height:10mm">${esc(f.gu||'')} ${esc(f.name||'')} 민방위비상급수시설<small style="display:block;font-weight:400;font-size:9pt">${esc(f.address||'')}</small></th></tr>
+      ${rows.map(([a,b])=>`<tr><td>${photoCell(a)}</td><td>${photoCell(b)}</td></tr><tr><td class="cap">${esc(a.cat.label)}${a.cover&&a.cover.caption?`<small>${esc(a.cover.caption)}</small>`:''}</td><td class="cap">${esc(b.cat.label)}${b.cover&&b.cover.caption?`<small>${esc(b.cover.caption)}</small>`:''}</td></tr>`).join('')}
+    </tbody></table>
+    ${foot(3)}</div>`;
+  const extraHtml=extraPages.map((pg,pi)=>{ const cells=[]; for(let i=0;i<pg.length;i+=2){ const a=pg[i], b=pg[i+1]; const cell=(x)=> x? `<div class="pc" data-photo="${x.p.id}"><canvas></canvas></div>` : `<div class="pc"></div>`; const cap=(x)=> x? `${esc(x.cat.short||x.cat.label)}<small>${esc(x.p.caption||'')} ${fmtDT(x.p.takenAt)}</small>` : ''; cells.push(`<tr><td>${cell(a)}</td><td>${cell(b)}</td></tr><tr><td class="cap">${cap(a)}</td><td class="cap">${cap(b)}</td></tr>`); }
+    return `<div class="paper"><div class="meta"><span>서울시 민방위 급수시설 관리실태 점검</span><span>${esc(facTitle)}</span></div><h1 class="ttl sq">점검사진(추가) ${pi+1}/${extraPages.length}</h1><table class="photos"><tbody><tr><th colspan="2" style="height:10mm">${esc(f.gu||'')} ${esc(f.name||'')} · 추가 사진</th></tr>${cells.join('')}</tbody></table>${foot(4+pi)}</div>`; }).join('');
+  return page1+page2+page3+extraHtml;
+}
+async function paintReportImages(root){
+  const cells=$$('.pc[data-photo]', root||document); const jobs=cells.map(async cell=>{ const p=Store.photos.get(cell.dataset.photo); const canvas=$('canvas',cell); if(!p||!canvas) return; const src=photoSrc(p); if(!src){ cell.innerHTML='<div class="nop"><b>이미지 없음</b>업로드 전</div>'; return; } try{ const img=await loadImg(src); const w=cell.clientWidth||Math.round(84*MM), h=cell.clientHeight||Math.round(60*MM); drawContain(canvas,img,p.rotation||0,w,h,2); }catch(e){ cell.innerHTML='<div class="nop"><b>이미지를 불러올 수 없음</b></div>'; } });
+  await Promise.all(jobs);
+}
+function fitReport(){ const wrap=$('#reportWrap'); if(!wrap) return; const avail=wrap.clientWidth-16; const z=Math.min(1, avail/(210*MM)); wrap.style.zoom = Exporting? 1 : (z<1? z.toFixed(3): 1); }
+function renderReport(route){
+  const insp=Store.inspections.get(route.id); const view=$('#view');
+  if(!insp){ view.innerHTML=`<div class="empty"><b>점검 기록을 찾을 수 없습니다</b></div>`; return; }
+  Store.subscribePhotos(insp.id); if(RT.mode==='cloud' && !Store.photosOf(insp.id).length) Store.fetchPhotos(insp.id);
+  const f=insp.facility||{};
+  view.innerHTML=`
+  <div class="crumbs"><button data-go="home">홈</button><span>›</span><button data-fac="${insp.facilityId}">${esc(f.name||'시설')}</button><span>›</span><button data-insp="${insp.id}">${fmtKDate(insp.date)} 점검</button><span>›</span><span>보고서</span></div>
+  <div class="pagehead"><div><h1 style="font-size:20px">점검 보고서</h1><p class="sub">${esc(f.name||'')} · ${fmtKDate(insp.date)} · ${insp.status==='done'?'점검 완료':'작성 중'}</p></div></div>
+  <div class="report-actions"><button class="btn primary" id="pdfBtn">PDF 저장${RT.standalone?'':'(인쇄용)'}</button>${RT.standalone?`<button class="btn" id="printBtn">인쇄</button>`:''}<button class="btn" id="xlsBtn">엑셀 내려받기</button><button class="btn" id="zipBtn">자료 내보내기(ZIP)</button><button class="btn" data-insp="${insp.id}">점검 내용 수정</button></div>
+  ${insp.status!=='done'? `<div class="alert warn small" style="margin-bottom:10px"><span>작성 중인 점검입니다. 미점검 항목은 ‘미점검’으로 표시됩니다.</span></div>`:''}
+  <div class="alert na small" style="margin-bottom:10px"><span>${RT.standalone?'인쇄 버튼으로 바로 인쇄하거나 PDF로 저장할 수 있습니다.':'인쇄는 저장한 PDF 파일로 하세요(앱 안에서는 인쇄 대화상자를 열 수 없습니다).'} HWPX(한글) 파일 생성은 지원하지 않으며, 보고서 양식은 원본의 제목·항목 순서·체크표·사진대지(2열×3행) 배치를 따릅니다.</span></div>
+  <div id="pdfStatus" class="small muted" style="margin-bottom:8px"></div>
+  <div class="report-wrap" id="reportWrap">${reportPagesHtml(insp)}</div>`;
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  $$('#view [data-fac]').forEach(b=>b.onclick=()=>App.go({name:'facility', id:b.dataset.fac}));
+  $$('#view [data-insp]').forEach(b=>b.onclick=()=>App.go({name:'inspect', id:insp.id, step:insp.status==='done'?5:(insp.lastStep||1)}));
+  $('#pdfBtn').onclick=()=>exportPdf(insp.id); $('#xlsBtn').onclick=()=>exportExcel([insp], `점검결과_${f.name||insp.id}_${insp.date||''}`); $('#zipBtn').onclick=()=>exportPackage({inspectionId:insp.id});
+  const pb=$('#printBtn'); if(pb) pb.onclick=async()=>{ Exporting=true; fitReport(); await paintReportImages($('#reportWrap')); setTimeout(()=>{ window.print(); Exporting=false; fitReport(); },200); };
+  fitReport(); paintReportImages(view);
+}
+window.addEventListener('resize', ()=>fitReport());
+
+async function saveFile(filename, blob){
+  if (RT.downloads){
+    try{ await RT.downloads.save({filename, data:blob}); toast('파일을 저장했습니다: '+filename); return true; }
+    catch(e){ const c=e&&e.code; if(c==='declined') return false; toast(c==='too_large'?'파일이 너무 커서 저장할 수 없습니다. 사진 수를 줄여 보세요.': c==='rate_limited'?'잠시 후 다시 시도해 주세요.':'파일 저장에 실패했습니다('+(c||'')+')',{err:true}); return false; }
+  }
+  if (!RT.standalone){ toast('이 화면에서는 파일 저장이 지원되지 않습니다. 로그인한 뒤 다시 시도하거나 설치형 앱을 사용하세요.',{err:true, ms:6000}); return false; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },2000); toast('파일을 내려받습니다: '+filename); return true;
+}
+async function exportPdf(inspId){
+  const insp=Store.inspections.get(inspId); if(!insp) return; const st=$('#pdfStatus'); const btn=$('#pdfBtn'); if(btn) btn.disabled=true;
+  try{
+    if(st) st.textContent='PDF 라이브러리를 불러오는 중…';
+    await Promise.all([loadScript(CDN.html2canvas), loadScript(CDN.jspdf)]);
+    Exporting=true; fitReport();
+    if(st) st.textContent='사진을 준비하는 중…';
+    try{ await document.fonts.ready; }catch(e){}
+    await paintReportImages($('#reportWrap'));
+    const papers=$$('#reportWrap .paper'); const {jsPDF}=window.jspdf; const pdf=new jsPDF({unit:'mm', format:'a4', orientation:'portrait', compress:true});
+    for (let i=0;i<papers.length;i++){
+      if(st) st.textContent=`페이지 ${i+1}/${papers.length} 변환 중…`;
+      const canvas=await window.html2canvas(papers[i], {scale:2, useCORS:true, allowTaint:false, backgroundColor:'#ffffff', logging:false, scrollX:0, scrollY:-window.scrollY});
+      const data=canvas.toDataURL('image/jpeg', 0.9); if(i>0) pdf.addPage(); pdf.addImage(data,'JPEG',0,0,210,297,undefined,'FAST');
+    }
+    const blob=pdf.output('blob'); const f=insp.facility||{};
+    const name=`점검보고서_${(f.gu||'')}_${(f.name||'시설').replace(/[\\/:*?"<>|]/g,'_')}_${insp.date||''}.pdf`;
+    if(st) st.textContent=`PDF ${papers.length}쪽 생성 완료 (${(blob.size/1024/1024).toFixed(1)}MB)`;
+    window.__lastPdf=blob;
+    await saveFile(name, blob);
+  }catch(e){ console.error(e); if(st) st.textContent='PDF 생성에 실패했습니다: '+(e.message||e); toast('PDF 생성에 실패했습니다',{err:true}); }
+  finally{ Exporting=false; fitReport(); if(btn) btn.disabled=false; }
+}
+
+/* ===================== 엑셀 ===================== */
+async function exportExcel(insps, baseName){
+  if(!insps.length){ toast('내려받을 점검 결과가 없습니다'); return; }
+  try{ await loadScript(CDN.xlsx); }catch(e){ toast('엑셀 라이브러리를 불러오지 못했습니다',{err:true}); return; }
+  if (RT.mode==='cloud' && insps.length<=20){ for(const i of insps){ if(!Store.photosOf(i.id).length) await Store.fetchPhotos(i.id); } }
+  const items=buildItems(Store.settings.standards);
+  const head=['자치구','시설명','주소','시설종류','용수 구분','생산량(톤/일)','비상발전기','정수장치','개방 여부','점검일','점검자','소속','동행자','점검 상태', ...items.map(it=>`${it.sec==='written'?'서면':'현장'}${it.num} ${it.title}`), '양호','미흡','해당 없음','미점검','종합 의견','조치 필요사항','조치기한','조치 완료','조치 완료일','양수 확인시간(초)','점검 완료일시','완료 후 수정 횟수','점검 ID','시설 ID','테스트 시설'];
+  const sorted=insps.slice().sort((a,b)=>(a.facility&&a.facility.gu||'').localeCompare(b.facility&&b.facility.gu||'')||(b.date||'').localeCompare(a.date||''));
+  const rows=sorted.map(i=>{ const f=i.facility||Store.facilities.get(i.facilityId)||{}; const s=inspStats(i); return [f.gu||'', f.name||'', f.address||'', FAC_TYPES[f.type]||'', WATER_USES[f.waterUse]||'', f.capacity!=null?f.capacity:'', f.generator?'유':'무', f.purifier?'유':'무', f.open!==false?'개방':'비개방', i.date||'', i.inspector||'', i.inspectorOrg||'', i.companions||'', i.status==='done'?'점검 완료':'작성 중', ...items.map(it=>RESULT_LABEL[(i.items[it.id]||{}).r||'']), s.good, s.poor, s.na, s.none, i.overall||'', i.actions||'', i.actionDue||'', i.actionDone?'완료':'미완료', i.actionDoneDate||'', i.pump&&i.pump.elapsed||'', i.completedAt?fmtDTS(i.completedAt):'', (i.editLog||[]).length, i.id, i.facilityId, f.isTest?'예':'']; });
+  const poorRows=[['점검일','자치구','시설명','구분','번호','항목','결과','미흡 내용 / 해당 없음 사유']];
+  for(const i of sorted){ const f=i.facility||{}; for(const it of items){ const v=i.items[it.id]||{}; if(v.r==='poor'||v.r==='na') poorRows.push([i.date||'', f.gu||'', f.name||'', it.sec==='written'?'서면점검':'현장점검', it.num, it.title, RESULT_LABEL[v.r], v.note||'']); } }
+  const photoRows=[['점검일','자치구','시설명','사진 구분','대표','설명','촬영일시','촬영일시 출처','회전','저장 상태','사진 ID','점검 ID']];
+  for(const i of sorted){ const f=i.facility||{}; for(const p of Store.photosOf(i.id)){ photoRows.push([i.date||'', f.gu||'', f.name||'', p.category==='none'?'미분류':(CAT_BY_ID[p.category]||{}).label||p.category, p.isCover?'대표':'', p.caption||'', fmtDTS(p.takenAt), p.takenSrc==='camera'?'직접 촬영':p.takenSrc==='exif'?'EXIF':'파일 수정일시', p.rotation||0, p.assetId?'업로드 완료':(p.status||''), p.id, p.inspectionId]); } }
+  const wb=XLSX.utils.book_new();
+  const ws1=XLSX.utils.aoa_to_sheet([head, ...rows]); ws1['!cols']=head.map((h,i)=>({wch: i===2? 30 : (i>=14&&i<27)? 10 : h.length>8? h.length+2 : 12})); ws1['!freeze']={xSplit:2,ySplit:1};
+  XLSX.utils.book_append_sheet(wb, ws1, '점검결과');
+  const ws2=XLSX.utils.aoa_to_sheet(poorRows); ws2['!cols']=[{wch:11},{wch:9},{wch:28},{wch:9},{wch:5},{wch:36},{wch:9},{wch:60}]; XLSX.utils.book_append_sheet(wb, ws2, '미흡내용');
+  const ws3=XLSX.utils.aoa_to_sheet(photoRows); ws3['!cols']=[{wch:11},{wch:9},{wch:28},{wch:16},{wch:5},{wch:30},{wch:20},{wch:12},{wch:5},{wch:12},{wch:22},{wch:22}]; XLSX.utils.book_append_sheet(wb, ws3, '사진목록');
+  const out=XLSX.write(wb, {type:'array', bookType:'xlsx'}); const blob=new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  window.__lastXlsx=blob;
+  await saveFile(`${(baseName||'점검결과').replace(/[\\/:*?"<>|]/g,'_')}_${todayStr()}.xlsx`, blob);
+}
+
+
+/* ===================== 자료 내보내기 / 가져오기 (ZIP) ===================== */
+async function exportPackage(scope={}){
+  try{ await loadScript(CDN.jszip); }catch(e){ toast('압축 라이브러리를 불러오지 못했습니다',{err:true}); return; }
+  let insps=[...Store.inspections.values()];
+  if (scope.inspectionId) insps=insps.filter(i=>i.id===scope.inspectionId);
+  else if (scope.facilityId) insps=insps.filter(i=>i.facilityId===scope.facilityId);
+  else insps=insps.filter(i=>canSeeGu((Store.facilities.get(i.facilityId)||i.facility||{}).gu));
+  const facIds=new Set(insps.map(i=>i.facilityId)); if(scope.facilityId) facIds.add(scope.facilityId);
+  let facs=[...Store.facilities.values()].filter(f=>!f.deleted && (scope.inspectionId||scope.facilityId? facIds.has(f.id) : canSeeGu(f.gu)));
+  if (RT.mode==='cloud'){ for(const i of insps){ if(!Store.photosOf(i.id).length) await Store.fetchPhotos(i.id); } }
+  const photos=[]; for(const i of insps) photos.push(...Store.photosOf(i.id));
+  toast(`자료를 묶는 중… (시설 ${facs.length}, 점검 ${insps.length}, 사진 ${photos.length})`);
+  const zip=new JSZip(); let missing=0;
+  for (const p of photos){ let blob=await IDB.get('blobs',p.id); if(!blob && p.assetId){ try{ const r=await fetch(assetUrl(p.assetId)); if(r.ok) blob=await r.blob(); }catch(e){} } if(blob) zip.file(`photos/${p.id}.jpg`, blob); else missing++; }
+  const data={format:'mbw-inspect-package', version:1, exportedAt:nowIso(), exportedBy:myName(), facilities:facs, inspections:insps, photos:photos.map(p=>{ const q=Object.assign({},p); delete q.status; delete q.err; return q; }), settings:{standards:Store.settings.standards||null}};
+  zip.file('data.json', JSON.stringify(data, null, 1));
+  zip.file('README.txt', '민방위 비상급수시설 점검 앱 자료 묶음입니다.\n앱의 사용자 메뉴 > 자료 가져오기(ZIP)에서 이 파일을 선택하면 시설·점검·사진이 합쳐집니다.\n같은 ID의 기록은 더 최근에 수정된 쪽이 유지됩니다.\n');
+  const blob=await zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}});
+  const base = scope.inspectionId? `점검자료_${((insps[0]||{}).facility||{}).name||''}_${(insps[0]||{}).date||''}` : scope.facilityId? `점검자료_${(Store.facilities.get(scope.facilityId)||{}).name||''}` : '점검자료_전체';
+  if (missing) toast(`사진 ${missing}장은 원본을 찾지 못해 제외했습니다`,{ms:5000});
+  await saveFile(`${base.replace(/[\\/:*?"<>|]/g,'_')}_${todayStr()}.zip`, blob);
+}
+async function importPackage(file){
+  if (readOnly()){ toast('읽기 전용 권한이라 가져올 수 없습니다',{err:true}); return; }
+  try{ await loadScript(CDN.jszip); }catch(e){ toast('압축 라이브러리를 불러오지 못했습니다',{err:true}); return; }
+  let zip, data; try{ zip=await JSZip.loadAsync(file); const f=zip.file('data.json'); if(!f) throw new Error('data.json 없음'); data=JSON.parse(await f.async('string')); if(data.format!=='mbw-inspect-package') throw new Error('형식 불일치'); }catch(e){ toast('이 앱의 자료 묶음(ZIP)이 아닙니다: '+e.message,{err:true}); return; }
+  const newer=(a,b)=> !b || (a.updatedAt||'') > (b.updatedAt||'');
+  let nf=0,ni=0,np=0,skip=0;
+  for (const f of data.facilities||[]){ if(!f||!f.id) continue; const cur=Store.facilities.get(f.id); if(!cur || newer(f,cur)){ await Store.save('facilities/'+f.id, f, {silent:true}); nf++; } else skip++; }
+  for (const i of data.inspections||[]){ if(!i||!i.id) continue; const cur=Store.inspections.get(i.id); if(!cur || newer(i,cur)){ await Store.save('inspections/'+i.id, i, {silent:true}); ni++; } else skip++; }
+  for (const p of data.photos||[]){ if(!p||!p.id) continue; const cur=Store.photos.get(p.id); const zf=zip.file(`photos/${p.id}.jpg`);
+    if (cur && cur.assetId){ if(newer(p,cur)){ const merged=Object.assign({}, cur, {caption:p.caption, rotation:p.rotation, order:p.order, isCover:p.isCover, category:p.category, updatedAt:p.updatedAt}); await Store.save('photos/'+p.id, merged, {silent:true}); } skip++; continue; }
+    const q=Object.assign({}, p); const hasBlob=!!zf;
+    if (hasBlob){ const blob=await zf.async('blob'); const jpg=blob.type? blob : new Blob([blob],{type:'image/jpeg'}); await IDB.put('blobs', jpg, p.id); const old=Store.blobUrls.get(p.id); if(old) URL.revokeObjectURL(old); Store.blobUrls.set(p.id, URL.createObjectURL(jpg)); }
+    if (RT.mode==='cloud'){ if(q.assetId && !hasBlob){ q.status='done'; await Store.save('photos/'+p.id, q, {silent:true}); } else { q.assetId=null; q.status='pending'; await Store.save('photos/'+p.id, q, {silent:true, needsAsset:true}); } }
+    else { q.assetId=null; q.status= hasBlob? 'local':'missing'; await Store.save('photos/'+p.id, q, {silent:true}); }
+    np++;
+  }
+  if (data.settings && data.settings.standards && !Store.settings.standards && isAdmin()) await Store.save('settings/standards', data.settings.standards, {silent:true});
+  Uploads.run(); toast(`가져오기 완료: 시설 ${nf}, 점검 ${ni}, 사진 ${np} (건너뜀 ${skip})`,{ms:6000}); render();
+}
+function pickImportFile(){ let inp=$('#fileInputs input[data-key="import"]'); if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.accept='.zip,application/zip'; inp.dataset.key='import'; $('#fileInputs').appendChild(inp); } inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; inp.value=''; if(f) await importPackage(f); }; inp.click(); }
+
+/* ===================== 부팅 ===================== */
+let pendingRerender=false;
+function isTyping(){ const a=document.activeElement; return !!(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.type!=='checkbox' && a.type!=='file'); }
+Store.on(what=>{
+  if (what==='load'){ scheduleRender(); return; }
+  if (what.startsWith('synced:')){ SyncUI.update(); return; }
+  if (!what.startsWith('change:')) return;
+  const path=what.slice(7); const r=App.route;
+  if (Exporting) return;
+  if (r.name==='inspect'){
+    if (path==='inspections/'+r.id){ const rec=Store.recs.get(path); if(rec && rec.dirty){ const i=Store.inspections.get(r.id); if(i) updateStepsBar(i); return; } if(isTyping()){ pendingRerender=true; return; } scheduleRender(); return; }
+    if (path.startsWith('photos/')){ const p=Store.photos.get(path.slice(7)); if(p && p.inspectionId!==r.id) return; if(isTyping()){ pendingRerender=true; return; } if($('#modalRoot').firstElementChild) return; scheduleRender(); return; }
+    if (path.startsWith('settings/')){ if(!isTyping()) scheduleRender(); }
+    return;
+  }
+  if (r.name==='report'){ if(path==='inspections/'+r.id || path.startsWith('photos/')) scheduleRender(); return; }
+  if (!isTyping()) scheduleRender();
+});
+document.addEventListener('focusout', ()=>{ if(!pendingRerender) return; setTimeout(()=>{ if(pendingRerender && !isTyping()){ pendingRerender=false; scheduleRender(); } },150); });
+
+(async function boot(){
+  $('#brandBtn').onclick=()=>{ Editor.commit(); App.go({name:'home'}); };
+  $('#userBtn').onclick=()=>userPanel();
+  SyncUI.update();
+  await IDB.open(); await Store.loadLocal(); App.restore(); render();
+  await initRuntime();
+  if (RT.mode==='cloud'){ Store.subscribeCloud(); const ub=$('#userBtn'); if(ub && RT.me && RT.me.name) ub.textContent=RT.me.name.length>6? RT.me.name.slice(0,6)+'…' : RT.me.name;
+    for (const p of Store.photos.values()){ if(!p.assetId && p.status==='local'){ const rec=Store.recs.get('photos/'+p.id); if(rec){ p.status='pending'; rec.needsAsset=true; rec.dirty=true; await Store.persist(rec); } } } }
+  else if (RT.signedOut){ const ub=$('#userBtn'); if(ub) ub.textContent='비로그인'; }
+  SyncUI.update(); Store.scheduleFlush(300); Uploads.run(); scheduleRender();
+  window.__app={Store, RT, IDB, App, Uploads, Editor, render, addPhotos, exportPdf, exportExcel, exportPackage, importPackage, buildItems, PHOTO_CATS, ITEM_IDS};
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+window.__MBW_VERSION='2026.10.25-1';
+</script>
+</body>
+</html>
