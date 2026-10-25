@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="급수시설 점검">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>민방위 급수시설 점검</title>
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -1289,7 +1289,7 @@ async function completeInspection(id){
   else go();
 }
 /* ===================== 보고서 ===================== */
-const CDN={ html2canvas:'lib/html2canvas.min.js', jspdf:'lib/jspdf.umd.min.js', xlsx:'lib/xlsx.full.min.js', jszip:'lib/jszip.min.js' };
+const CDN={ html2canvas:'html2canvas.min.js', jspdf:'jspdf.umd.min.js', xlsx:'xlsx.full.min.js', jszip:'jszip.min.js' };
 const loadedScripts={};
 function loadScript(url){ if(loadedScripts[url]) return loadedScripts[url]; loadedScripts[url]=new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=url; s.onload=()=>res(); s.onerror=()=>{ delete loadedScripts[url]; rej(new Error('라이브러리를 불러오지 못했습니다')); }; document.head.appendChild(s); }); return loadedScripts[url]; }
 let Exporting=false;
@@ -1512,7 +1512,7 @@ document.addEventListener('focusout', ()=>{ if(!pendingRerender) return; setTime
 
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
-window.__MBW_VERSION='2026.10.25-1';
+window.__MBW_VERSION='2026.10.25-2';
 </script>
 </body>
 </html>

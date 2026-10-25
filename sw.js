@@ -1,6 +1,6 @@
 // 오프라인 캐시 (앱 셸)
-const CACHE='mbw-inspect-2026.10.25-1';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./lib/html2canvas.min.js','./lib/jspdf.umd.min.js','./lib/xlsx.full.min.js','./lib/jszip.min.js','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-512-maskable.png','./icons/apple-touch-icon.png'];
+const CACHE='mbw-inspect-2026.10.25-2';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./html2canvas.min.js','./jspdf.umd.min.js','./xlsx.full.min.js','./jszip.min.js','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install', e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())); });
 self.addEventListener('activate', e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });
 self.addEventListener('fetch', e=>{
