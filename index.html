@@ -140,7 +140,8 @@ input.invalid,textarea.invalid{border-color:var(--poor);box-shadow:0 0 0 2px var
 
 /* Lists */
 .list{display:grid;gap:8px}
-.listitem{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;cursor:pointer;color:inherit}
+.listitem{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;cursor:pointer;color:inherit;font:inherit}
+.listitem .right .btn.sm{min-height:32px;padding:2px 8px;font-size:13px}
 .listitem:hover{border-color:var(--line-strong)}
 .listitem .main{flex:1;min-width:0}
 .listitem .title{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -165,7 +166,7 @@ input.invalid,textarea.invalid{border-color:var(--poor);box-shadow:0 0 0 2px var
 .steps button.done .n{background:var(--good);color:#fff}
 .steps button.partial .n{background:var(--warn);color:#fff}
 @media (max-width:480px){ .steps button{font-size:11px;padding:6px 2px} }
-@media (max-width:560px){ .appbar .brand{font-size:15px} .appbar .brand small{display:none} .appbar .chip{font-size:12px;padding:3px 8px;max-width:150px} .appbar .chip span:last-child{overflow:hidden;text-overflow:ellipsis} .iconbtn{min-width:40px;padding:6px 8px;font-size:13px} }
+@media (max-width:560px){ .appbar .brand{font-size:15px;padding:6px 2px} .appbar .brand small{display:none} #navBtns:not([hidden])~.brand{display:none} .appbar .chip{font-size:12px;padding:3px 8px;max-width:150px} .appbar .chip span:last-child{overflow:hidden;text-overflow:ellipsis} .iconbtn{min-width:40px;padding:6px 8px;font-size:13px} }
 
 /* Progress */
 .progress{height:10px;background:var(--none-soft);border-radius:999px;overflow:hidden}
@@ -298,6 +299,7 @@ table.tbl th,table.tbl td{border-bottom:1px solid var(--line);padding:8px;text-a
 </style>
 <header class="appbar">
   <div class="appbar-in">
+    <span id="navBtns" class="row" style="gap:6px;flex:none" hidden><button class="iconbtn" id="backBtn" type="button" aria-label="뒤로">‹ 뒤로</button><button class="iconbtn" id="homeBtn" type="button" aria-label="홈">⌂ 홈</button></span>
     <button class="brand" id="brandBtn" type="button" aria-label="홈으로">
       <span>민방위 급수시설 점검<small>서울시 · 자치구 현장점검</small></span>
     </button>
@@ -693,8 +695,10 @@ setInterval(()=>{ if (RT.mode==='cloud' && (Store.pendingCount()||Uploads.countP
 /* ===================== 앱 상태 / 라우팅 ===================== */
 const App = {
   route:{name:'home'}, filters:{q:'', gu:'', type:'', water:'', status:''}, pickMode:false,
-  go(route, opts={}){ this.route=route; try{ sessionStorage.setItem('mbw-route', JSON.stringify(route)); }catch(e){} render(); if(!opts.keepScroll) window.scrollTo(0,0); },
-  restore(){ try{ const r=JSON.parse(sessionStorage.getItem('mbw-route')||'null'); if(r && r.name) this.route=r; }catch(e){} },
+  stack:[], ignorePop:false,
+  go(route, opts={}){ if(!opts.replace && !opts.fromPop && !(this.route && this.route.name===route.name && this.route.id===route.id && this.route.step===route.step)){ this.stack.push(this.route); if(this.stack.length>60) this.stack.shift(); try{ history.pushState({mbw:true}, ''); }catch(e){} } this.route=route; try{ sessionStorage.setItem('mbw-route', JSON.stringify(route)); }catch(e){} render(); if(!opts.keepScroll) window.scrollTo(0,0); },
+  back(){ if (typeof Editor!=='undefined') Editor.commit(); if(this.stack.length){ const r=this.stack.pop(); this.ignorePop=true; setTimeout(()=>{ this.ignorePop=false; },600); try{ history.back(); }catch(e){} this.go(r,{fromPop:true}); } else this.go({name:'home'},{replace:true}); },
+  restore(){ try{ const r=JSON.parse(sessionStorage.getItem('mbw-route')||'null'); if(r && r.name) this.route=r; }catch(e){} try{ history.replaceState({mbw:true}, ''); }catch(e){} },
 };
 function access(){ return Store.settings.access || {defaultAll:true, assignments:{}}; }
 function myGus(){ const a=access(); const mine=a.assignments && a.assignments[myId()]; return mine && Array.isArray(mine.gus) ? mine.gus : null; }
@@ -710,7 +714,7 @@ function facStatusKey(facId){ const li=latestInspection(facId); if(!li) return '
 
 /* ===================== 렌더 진입 ===================== */
 let renderScheduled=false;
-function render(){ renderScheduled=false; const r=App.route; const view=$('#view'); const bb=$('#bottombar'); bb.innerHTML=''; view.className='page'+(['inspect','facilityEdit','report'].includes(r.name)?' narrow':'');
+function render(){ renderScheduled=false; const r=App.route; const view=$('#view'); const bb=$('#bottombar'); bb.innerHTML=''; const nav=$('#navBtns'); if(nav) nav.hidden = r.name==='home'; view.className='page'+(['inspect','facilityEdit','report'].includes(r.name)?' narrow':'');
   try{
     switch(r.name){
       case 'home': view.innerHTML=homeHtml(); bindHome(); break;
@@ -758,8 +762,10 @@ function homeHtml(){
     ${recent.length? `<div class="list">${recent.map(i=>inspListItem(i)).join('')}</div>` : `<div class="empty"><b>아직 점검 기록이 없습니다</b>시설을 등록하고 ‘새 점검 시작’을 누르면 여기에 표시됩니다.</div>`}
   </div>`;
 }
-function inspListItem(i){ const f=Store.facilities.get(i.facilityId)||i.facility||{}; const s=inspStats(i); const st = i.status==='done'? (s.poor?`<span class="tag poor">미흡 ${s.poor}</span>`:`<span class="tag good">점검 완료</span>`) : `<span class="tag warn">작성 중 ${Math.round(s.done/s.total*100)}%</span>`;
-  return `<button class="listitem" data-insp="${i.id}"><div class="main"><div class="title">${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name||'(시설명 없음)')}</div><div class="meta">${esc(f.gu||'')} · ${fmtKDate(i.date)} · ${esc(i.inspector||'점검자 미입력')}</div></div><div class="right">${st}${i.status==='done'&&(i.actions||'').trim()? (i.actionDone?'<span class="tag good">조치 완료</span>':'<span class="tag warn">조치 필요</span>'):''}</div></button>`; }
+function inspListItem(i, opts={}){ const f=Store.facilities.get(i.facilityId)||i.facility||{}; const s=inspStats(i); const st = i.status==='done'? (s.poor?`<span class="tag poor">미흡 ${s.poor}</span>`:`<span class="tag good">점검 완료</span>`) : `<span class="tag warn">작성 중 ${Math.round(s.done/s.total*100)}%</span>`;
+  const manage = opts.manage && !readOnly()? `<span class="row" style="gap:4px"><button class="btn sm ghost" data-edit-insp="${i.id}">수정</button><button class="btn sm ghost" style="color:var(--danger)" data-del-insp="${i.id}">삭제</button></span>`:'';
+  return `<div class="listitem" data-insp="${i.id}" role="button" tabindex="0"><div class="main"><div class="title">${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name||'(시설명 없음)')}</div><div class="meta">${esc(f.gu||'')} · ${fmtKDate(i.date)} · ${esc(i.inspector||'점검자 미입력')}</div></div><div class="right">${st}${i.status==='done'&&(i.actions||'').trim()? (i.actionDone?'<span class="tag good">조치 완료</span>':'<span class="tag warn">조치 필요</span>'):''}${manage}</div></div>`; }
+function bindInspRows(){ $$('#view [data-insp]').forEach(b=>{ const open=()=>openInspection(b.dataset.insp); b.onclick=e=>{ if(e.target.closest('[data-edit-insp],[data-del-insp]')) return; open(); }; b.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } }; }); $$('#view [data-edit-insp]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); App.go({name:'inspect', id:b.dataset.editInsp, step:1}); }); $$('#view [data-del-insp]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); deleteInspection(b.dataset.delInsp); }); }
 function bindHome(){
   $$('#view [data-go]').forEach(b=>b.onclick=()=>{ if(b.dataset.status!==undefined){ App.filters.status=b.dataset.status; } App.go({name:b.dataset.go}); });
   const go=()=>{ App.filters.q=$('#homeSearch').value.trim(); App.go({name:'facilities'}); };
@@ -767,7 +773,7 @@ function bindHome(){
   $('#newInspBtn').onclick=()=>{ App.pickMode=true; App.filters.q=''; App.go({name:'facilities'}); };
   $('#newFacBtn').onclick=()=>App.go({name:'facilityEdit', id:null});
   $('#xlsAllBtn').onclick=()=>exportExcel([...Store.inspections.values()].filter(i=>canSeeGu((Store.facilities.get(i.facilityId)||i.facility||{}).gu)), '민방위급수시설_점검결과_전체');
-  $$('#view [data-insp]').forEach(b=>b.onclick=()=>openInspection(b.dataset.insp));
+  bindInspRows();
 }
 function openInspection(id){ const i=Store.inspections.get(id); if(!i) return; App.go({name:'inspect', id, step: i.status==='done'? 5 : (i.lastStep||1)}); }
 
@@ -793,7 +799,7 @@ function facilitiesHtml(){
     </div>
   </div>
   <div class="list" style="margin-top:14px">
-    ${facs.length? facs.map(x=>`<button class="listitem" data-fac="${x.id}"><div class="main"><div class="title">${x.isTest?'<span class="tag test">테스트</span> ':''}${esc(x.name)}</div><div class="meta">${esc(x.gu)} · ${esc(x.address||'주소 없음')} · ${FAC_TYPES[x.type]||''} · ${WATER_USES[x.waterUse]||''}${x.generator?' · 발전기':''}${x.purifier?' · 정수장치':''}</div></div><div class="right">${facStatusTag(x.id)}<span class="small muted">${Store.inspectionsOf(x.id).length}회</span></div></button>`).join('')
+    ${facs.length? facs.map(x=>`<div class="listitem" data-fac="${x.id}" role="button" tabindex="0"><div class="main"><div class="title">${x.isTest?'<span class="tag test">테스트</span> ':''}${esc(x.name)}</div><div class="meta">${esc(x.gu)} · ${esc(x.address||'주소 없음')} · ${FAC_TYPES[x.type]||''} · ${WATER_USES[x.waterUse]||''}${x.generator?' · 발전기':''}${x.purifier?' · 정수장치':''}</div></div><div class="right">${facStatusTag(x.id)}<span class="small muted">${Store.inspectionsOf(x.id).length}회</span>${App.pickMode||ro?'':`<span class="row" style="gap:4px"><button class="btn sm ghost" data-edit-fac="${x.id}" title="수정">수정</button><button class="btn sm ghost" style="color:var(--danger)" data-del-fac="${x.id}" title="삭제">삭제</button></span>`}</div></div>`).join('')
     : `<div class="empty"><b>조건에 맞는 시설이 없습니다</b>검색어나 필터를 바꾸거나 새 시설을 등록하세요.</div>`}
   </div>`;
 }
@@ -803,7 +809,9 @@ function bindFacilities(){
   $('#facSearch').oninput=apply; ['fGu','fType','fWater','fStatus'].forEach(id=>$('#'+id).onchange=()=>apply.flush());
   $('#addFacBtn').onclick=()=>App.go({name:'facilityEdit', id:null});
   const pc=$('#pickCancel'); if(pc) pc.onclick=()=>{ App.pickMode=false; render(); };
-  $$('#view [data-fac]').forEach(b=>b.onclick=()=>{ if(App.pickMode){ App.pickMode=false; startInspection(b.dataset.fac); } else App.go({name:'facility', id:b.dataset.fac}); });
+  $$('#view [data-fac]').forEach(b=>{ const open=()=>{ if(App.pickMode){ App.pickMode=false; startInspection(b.dataset.fac); } else App.go({name:'facility', id:b.dataset.fac}); }; b.onclick=e=>{ if(e.target.closest('[data-edit-fac],[data-del-fac]')) return; open(); }; b.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } }; });
+  $$('#view [data-edit-fac]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); App.go({name:'facilityEdit', id:b.dataset.editFac}); });
+  $$('#view [data-del-fac]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); deleteFacility(b.dataset.delFac); });
 }
 
 /* ===================== 시설 등록/수정 ===================== */
@@ -836,8 +844,7 @@ function facilityEditHtml(id){
     <div class="field"><label for="f_note">기타 참고사항</label><textarea id="f_note">${esc(f.note||'')}</textarea></div>
     <label class="check"><input type="checkbox" id="f_test" ${f.isTest?'checked':''}> 테스트 시설(예시 데이터)로 표시</label>
     <div class="help">시설정보를 수정해도 이미 작성된 점검보고서의 시설정보는 점검 당시 기록으로 유지됩니다.</div>
-    <div class="row"><button class="btn primary lg" type="submit" style="flex:1">${id?'수정 저장':'등록'}</button><button class="btn lg" type="button" id="facCancel">취소</button>${id && (Store.inspectionsOf(id).length===0 || isAdmin())? `<button class="btn lg danger" type="button" id="facDelete">삭제</button>`:''}</div>
-    ${id && Store.inspectionsOf(id).length>0 && !isAdmin()? `<div class="help">점검 기록이 있는 시설은 관리자만 삭제할 수 있습니다. 잘못 등록한 시설이면 시설명을 수정하거나 관리자에게 삭제를 요청하세요.</div>`:''}
+    <div class="row"><button class="btn primary lg" type="submit" style="flex:1">${id?'수정 저장':'등록'}</button><button class="btn lg" type="button" id="facCancel">취소</button>${id? `<button class="btn lg danger" type="button" id="facDelete">삭제</button>`:''}</div>
   </form>`;
 }
 function bindSeg(root){ $$('[data-seg]', root).forEach(seg=>{ seg.onclick=e=>{ const b=e.target.closest('button'); if(!b) return; $$('button',seg).forEach(x=>x.setAttribute('aria-pressed', String(x===b))); seg.dispatchEvent(new CustomEvent('segchange',{bubbles:true, detail:{name:seg.dataset.seg, value:b.dataset.val}})); }; }); }
@@ -872,10 +879,11 @@ function facilityHtml(id){
   const insps=Store.inspectionsOf(id); const ro=readOnly();
   return `
   <div class="crumbs"><button data-go="home">홈</button><span>›</span><button data-go="facilities">시설 목록</button><span>›</span><span>${esc(f.name)}</span></div>
-  <div class="pagehead"><div><h1>${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name)}</h1><p class="sub">${esc(f.gu)} · ${esc(f.address||'주소 없음')}</p></div><div class="row">${facStatusTag(id)}<button class="btn sm" id="facEditBtn" ${ro?'disabled':''}>시설정보 수정</button>${(!insps.length || isAdmin()) && !ro? `<button class="btn sm danger" id="facDelBtn">삭제</button>`:''}</div></div>
+  <div class="pagehead"><div><h1>${f.isTest?'<span class="tag test">테스트</span> ':''}${esc(f.name)}</h1><p class="sub">${esc(f.gu)} · ${esc(f.address||'주소 없음')}</p></div><div class="row">${facStatusTag(id)}<button class="btn sm" id="facEditBtn" ${ro?'disabled':''}>시설정보 수정</button>${!ro? `<button class="btn sm danger" id="facDelBtn">삭제</button>`:''}</div></div>
   <div class="card"><h2>시설 기본정보</h2>${facInfoRows(f)}</div>
   <div class="card"><div class="row between"><h2 style="margin:0">점검 기록 <span class="count">${insps.length}건</span></h2><div class="row"><button class="btn sm" id="facXls" ${insps.length?'':'disabled'}>엑셀</button><button class="btn sm" id="facZip">ZIP</button><button class="btn primary" id="facNewInsp" ${ro?'disabled':''}>새 점검 시작</button></div></div>
-    <div class="list" style="margin-top:12px">${insps.length? insps.map(i=>inspListItem(i)).join(''): `<div class="empty"><b>점검 기록이 없습니다</b>‘새 점검 시작’을 눌러 첫 점검을 시작하세요.</div>`}</div>
+    <div class="list" style="margin-top:12px">${insps.length? insps.map(i=>inspListItem(i,{manage:true})).join(''): `<div class="empty"><b>점검 기록이 없습니다</b>‘새 점검 시작’을 눌러 첫 점검을 시작하세요.</div>`}</div>
+    <p class="help" style="margin-top:8px">기록을 누르면 열립니다. ‘수정’은 기본정보 단계로, ‘삭제’는 확인 후 사진까지 함께 삭제합니다.</p>
   </div>`;
 }
 function bindFacility(id){
@@ -885,7 +893,7 @@ function bindFacility(id){
   const n=$('#facNewInsp'); if(n) n.onclick=()=>startInspection(id);
   const x=$('#facXls'); if(x) x.onclick=()=>exportExcel(Store.inspectionsOf(id), `점검결과_${(Store.facilities.get(id)||{}).name||id}`);
   const z=$('#facZip'); if(z) z.onclick=()=>exportPackage({facilityId:id});
-  $$('#view [data-insp]').forEach(b=>b.onclick=()=>openInspection(b.dataset.insp));
+  bindInspRows();
 }
 
 /* ===================== 점검 생성 ===================== */
@@ -1087,11 +1095,11 @@ function basicHtml(insp){ const f=insp.facility||{}; const live=Store.facilities
     <div class="help">입력 중인 내용은 자동으로 임시저장됩니다. 종합 의견과 조치 필요사항은 ‘최종 검토’ 단계에서 작성합니다.</div>
   </div>
   ${manageHtml(insp)}`; }
-function canDeleteInspection(insp){ if (readOnly()) return false; return isAdmin() || insp.status!=='done' || insp.createdBy===myId(); }
+function canDeleteInspection(insp){ return !readOnly(); }
 function manageHtml(insp){ const ps=Store.photosOf(insp.id).length;
   return `<div class="card stack" id="manageCard"><h2>기록 관리</h2>
     ${insp.status==='done'? `<div class="row between"><div class="small"><b>완료 취소(작성 중으로 되돌리기)</b><br><span class="muted">결과를 다시 고치고 싶을 때 사용합니다. 되돌린 기록은 수정 이력에 남습니다.</span></div><button class="btn sm" data-act="reopen" ${readOnly()?'disabled':''}>작성 중으로 되돌리기</button></div><hr class="sep">`:''}
-    <div class="row between"><div class="small"><b>이 점검 기록 삭제</b><br><span class="muted">점검표 입력과 사진 ${ps}장이 함께 삭제되며 되돌릴 수 없습니다.${insp.status==='done' && !isAdmin()? ' 완료된 기록은 작성자 본인 또는 관리자만 삭제할 수 있습니다.':''}</span></div><button class="btn sm danger" data-act="delete-insp" ${canDeleteInspection(insp)?'':'disabled'}>기록 삭제</button></div>
+    <div class="row between"><div class="small"><b>이 점검 기록 삭제</b><br><span class="muted">점검표 입력과 사진 ${ps}장이 함께 삭제되며 되돌릴 수 없습니다.</span></div><button class="btn sm danger" data-act="delete-insp" ${canDeleteInspection(insp)?'':'disabled'}>기록 삭제</button></div>
   </div>`; }
 async function deleteInspection(id){ const insp=Store.inspections.get(id); if(!insp) return; const f=insp.facility||{}; const ps=Store.photosOf(id);
   openModal(`<h2>점검 기록을 삭제할까요?</h2><p>${esc(f.name||'')} · ${fmtKDate(insp.date)} · ${insp.status==='done'?'점검 완료':'작성 중'}</p><p class="small muted">점검표 입력 내용과 사진 ${ps.length}장이 함께 삭제됩니다. 삭제한 기록은 복구할 수 없습니다. 보관이 필요하면 먼저 ‘보고서 → 자료 내보내기(ZIP)’로 저장하세요.</p><div class="toolbar"><button class="btn" id="mClose">취소</button><button class="btn danger" id="mDel">삭제</button></div>`, {sticky:true});
@@ -1520,6 +1528,8 @@ document.addEventListener('focusout', ()=>{ if(!pendingRerender) return; setTime
 
 (async function boot(){
   $('#brandBtn').onclick=()=>{ Editor.commit(); App.go({name:'home'}); };
+  $('#homeBtn').onclick=()=>{ Editor.commit(); App.go({name:'home'}); }; $('#backBtn').onclick=()=>App.back();
+  window.addEventListener('popstate', ()=>{ if(App.ignorePop){ App.ignorePop=false; return; } Editor.commit(); if($('#modalRoot').firstElementChild){ closeModal(); try{ history.pushState({mbw:true},''); }catch(e){} return; } if(App.stack.length){ const r=App.stack.pop(); App.go(r,{fromPop:true}); } else { App.go({name:'home'},{replace:true}); } });
   $('#userBtn').onclick=()=>userPanel();
   SyncUI.update();
   await IDB.open(); await Store.loadLocal(); App.restore(); render();
@@ -1534,7 +1544,7 @@ document.addEventListener('focusout', ()=>{ if(!pendingRerender) return; setTime
 
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
-window.__MBW_VERSION='2026.10.25-3';
+window.__MBW_VERSION='2026.10.25-4';
 </script>
 </body>
 </html>
