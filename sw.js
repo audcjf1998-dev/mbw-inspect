@@ -1,5 +1,5 @@
 // 오프라인 캐시 (앱 셸)
-const CACHE='mbw-inspect-2026.10.25-4';
+const CACHE='mbw-inspect-2026.10.26-1';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./html2canvas.min.js','./jspdf.umd.min.js','./xlsx.full.min.js','./jszip.min.js','./icon-192.png','./icon-512.png','./icon-512-maskable.png','./apple-touch-icon.png'];
 self.addEventListener('install', e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())); });
 self.addEventListener('activate', e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });

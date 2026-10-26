@@ -295,18 +295,62 @@ table.tbl th,table.tbl td{border-bottom:1px solid var(--line);padding:8px;text-a
 @media (max-width:860px){ .report-wrap{justify-items:start} }
 .report-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .report-actions .btn{flex:1 1 160px}
-@media print{ @page{size:A4;margin:0} body{background:#fff} body::before,.appbar,.crumbs,.pagehead,.report-actions,.alert,#pdfStatus,.bottombar,.toasts,#modalRoot{display:none!important} .page{padding:0!important;max-width:none!important} .report-wrap{display:block;background:none;padding:0;zoom:1!important;overflow:visible} .paper{box-shadow:none;margin:0;break-after:page;page-break-after:always} .paper:last-child{break-after:auto;page-break-after:auto} }
+
+/* Tabs */
+.tabbar{background:var(--surface);border-bottom:1px solid var(--line)}
+.tabbar-in{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:1080px;margin:0 auto;padding-block:6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.tabbar button{border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);border-radius:10px;min-height:44px;padding:6px 10px;font-weight:700;font-size:14px;line-height:1.25;white-space:normal;cursor:pointer;text-align:center}
+.tabbar button[aria-selected="true"]{background:var(--primary-soft);color:var(--primary);border-color:var(--primary)}
+@media (max-width:560px){ .tabbar button{font-size:12.5px;padding:5px 6px} }
+.steps.six{grid-template-columns:repeat(6,1fr)}
+.steps.six button{font-size:12px;padding:6px 2px}
+@media (max-width:480px){ .steps.six button{font-size:10.5px} }
+/* Signature pad */
+.sigpad{position:relative;border:2px dashed var(--line-strong);border-radius:10px;background:#fff;overflow:hidden}
+.sigpad canvas{display:block;width:100%;height:180px;touch-action:none;cursor:crosshair}
+.sigpad .hint{position:absolute;inset:0;display:grid;place-items:center;color:#9aa5b1;pointer-events:none;font-size:15px}
+.sigbox{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;display:grid;gap:6px;justify-items:center}
+.sigbox img{max-height:120px;max-width:100%}
+.thumb.pdf .noimg{background:var(--poor-soft);color:var(--poor);font-weight:700;gap:4px}
+.thumb.pdf .noimg span{font-weight:500;font-size:11px;color:var(--fg);word-break:break-all}
+/* gw report */
+.paper.gw{padding:8mm 12mm 9mm;font-size:9pt;line-height:1.3}
+.paper .gwt{text-align:center;font-size:15.5pt;font-weight:700;margin:0 0 2mm;letter-spacing:.02em}
+.paper .gwt.sm{font-size:13pt;text-align:left}
+.paper .gwsub{font-size:10.5pt;font-weight:700;margin:2mm 0 1mm}
+.paper .gwsite th{background:#eef0f3;font-weight:700;padding:0.7mm 1.2mm;font-size:8.5pt}
+.paper .gwsite td{padding:0.7mm 1.2mm;font-size:8.5pt;text-align:center}
+.paper .gwchk th{background:#eef0f3;padding:0.7mm}
+.paper .gwchk td{padding:0.6mm 1.4mm;font-size:8.5pt;vertical-align:middle;line-height:1.28}
+.paper .gwchk td.grp{width:18mm;text-align:center;font-weight:700;background:#f7f8fa}
+.paper .gwchk td.it{width:62mm}
+.paper .gwchk td .ref{display:block;font-size:7.5pt;color:#1b4fa0;line-height:1.25}
+.paper .gwchk td.res .opts{display:flex;gap:5mm;flex-wrap:wrap;margin-bottom:.2mm}
+.paper .gwchk td.res .two{display:flex;gap:5mm;flex-wrap:wrap}
+.paper .gwchk td.res .fixes{white-space:pre-wrap;min-height:4mm}
+.paper .gwconf{text-align:center;margin:2.5mm 0 1mm;font-size:9.5pt}
+.paper .gwdate{text-align:center;margin:0 0 2mm;font-size:10pt}
+.paper .gwsig th{background:#eef0f3;padding:0.7mm}
+.paper .gwsig td{padding:0.6mm 1.5mm;height:9mm;text-align:center;font-size:9pt}
+.paper .gwsig td.lab{font-weight:700}
+.paper .gwsig td.sigcell img{max-height:8.5mm;max-width:38mm;vertical-align:middle}
+.paper .gwsig td.sigcell .in{color:#555}
+.paper .gwsig td.sigcell .stale{display:block;font-size:7.5pt;color:#b42318}
+.paper .gwext td{padding:1.2mm 2mm;font-size:9.5pt;vertical-align:top}
+.paper .gwext th{background:#eef0f3;padding:1mm}
+@media print{ @page{size:A4;margin:0} body{background:#fff} body::before,.appbar,.tabbar,.crumbs,.pagehead,.report-actions,.alert,#pdfStatus,.bottombar,.toasts,#modalRoot{display:none!important} .page{padding:0!important;max-width:none!important} .report-wrap{display:block;background:none;padding:0;zoom:1!important;overflow:visible} .paper{box-shadow:none;margin:0;break-after:page;page-break-after:always} .paper:last-child{break-after:auto;page-break-after:auto} }
 </style>
 <header class="appbar">
   <div class="appbar-in">
     <span id="navBtns" class="row" style="gap:6px;flex:none" hidden><button class="iconbtn" id="backBtn" type="button" aria-label="뒤로">‹ 뒤로</button><button class="iconbtn" id="homeBtn" type="button" aria-label="홈">⌂ 홈</button></span>
     <button class="brand" id="brandBtn" type="button" aria-label="홈으로">
-      <span>민방위 급수시설 점검<small>서울시 · 자치구 현장점검</small></span>
+      <span>현장점검 앱<small>서울시 물순환안전국</small></span>
     </button>
     <span class="spacer"></span>
     <span class="chip sync-local" id="syncChip" role="status" aria-live="polite"><span class="dot"></span><span id="syncText">준비 중</span></span>
     <button class="iconbtn" id="userBtn" type="button" title="사용자·설정">사용자</button>
   </div>
+  <nav class="tabbar" id="tabbar" aria-label="점검 업무 선택"><div class="tabbar-in"><button type="button" role="tab" data-kind="mbw" aria-selected="true">민방위 비상급수시설 점검</button><button type="button" role="tab" data-kind="gw" aria-selected="false">대형굴착공사장 유출지하수 관리실태 점검</button></div></nav>
 </header>
 <main id="view" class="page"></main>
 <div id="bottombar"></div>
@@ -485,7 +529,7 @@ function myName(){ return (RT.me && RT.me.name) || Store.localName || ''; }
 /* ===================== 저장소 + 동기화 ===================== */
 const Store = {
   recs:new Map(),           // path -> {path,data,base,dirty,deleted,needsAsset,ver,err,attempts}
-  facilities:new Map(), inspections:new Map(), photos:new Map(), settings:{standards:null, access:null},
+  facilities:new Map(), inspections:new Map(), photos:new Map(), sites:new Map(), gwInspections:new Map(), settings:{standards:null, access:null, gwStandards:null},
   blobUrls:new Map(),       // photoId -> objectURL
   listeners:new Set(), flushing:false, flushTimer:null, backoff:0, lastSavedAt:null, conflicts:[],
   localName:'', unsubs:[], photoSubInspection:null, photoUnsub:null, ready:false,
@@ -494,7 +538,7 @@ const Store = {
   split(path){ const i=path.indexOf('/'); return [path.slice(0,i), path.slice(i+1)]; },
   applyToMaps(path, data){
     const [col,id]=this.split(path);
-    const map = col==='facilities'?this.facilities: col==='inspections'?this.inspections: col==='photos'?this.photos: null;
+    const map = col==='facilities'?this.facilities: col==='inspections'?this.inspections: col==='photos'?this.photos: col==='sites'?this.sites: col==='gwInspections'?this.gwInspections: null;
     if (map){ if(data) map.set(id, data); else map.delete(id); }
     else if (col==='settings'){ this.settings[id]=data; }
   },
@@ -596,6 +640,8 @@ const Store = {
     this.unsubs.push(sub(RT.db.collection('facilities')));
     this.unsubs.push(sub(RT.db.collection('inspections')));
     this.unsubs.push(sub(RT.db.collection('settings')));
+    this.unsubs.push(sub(RT.db.collection('sites')));
+    this.unsubs.push(sub(RT.db.collection('gwInspections')));
   },
   subscribePhotos(inspectionId){
     if (!RT.db || this.photoSubInspection===inspectionId) return;
@@ -612,6 +658,9 @@ const Store = {
     try{ const snap=await RT.db.collection('photos').where('inspectionId','==',inspectionId).get(); for(const d of snap.docs) this.handleServer('photos/'+d.id, d.data()); }catch(e){ console.warn(e); }
   },
   photosOf(inspectionId, cat){ const arr=[...this.photos.values()].filter(p=>p.inspectionId===inspectionId && (!cat || p.category===cat)); arr.sort((a,b)=>(a.order||0)-(b.order||0) || (a.createdAt||'').localeCompare(b.createdAt||'')); return arr; },
+  anyInspection(id){ return this.inspections.get(id) || this.gwInspections.get(id) || null; },
+  inspPath(id){ return this.gwInspections.has(id)? 'gwInspections/'+id : 'inspections/'+id; },
+  gwInspectionsOf(siteId){ return [...this.gwInspections.values()].filter(i=>i.siteId===siteId).sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.createdAt||'').localeCompare(a.createdAt||'')); },
   inspectionsOf(facilityId){ return [...this.inspections.values()].filter(i=>i.facilityId===facilityId).sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (b.createdAt||'').localeCompare(a.createdAt||'')); },
 };
 function merge3(base, local, server){
@@ -650,7 +699,7 @@ const Uploads = {
         if (this.nextTry[p.id] && this.nextTry[p.id]>Date.now()) continue;
         this.uploading.add(p.id); p.status='uploading'; Store.emit('change:'+path); SyncUI.update();
         try{
-          const r=await RT.assets.upload(blob, {type:'image/jpeg'});
+          const r=await RT.assets.upload(blob, {type: p.fileType==='pdf'? 'application/pdf' : 'image/jpeg'});
           RT.assetUrls[r.id]=r.url;
           p.assetId=r.id; p.status='done'; p.err=null; rec.needsAsset=false; delete this.nextTry[p.id]; this.attempts[p.id]=0;
           await Store.save(path, p, {silent:true});
@@ -694,11 +743,13 @@ window.addEventListener('offline', ()=>{ RT.online=false; SyncUI.update(); toast
 setInterval(()=>{ if (RT.mode==='cloud' && (Store.pendingCount()||Uploads.countPending())) { Store.scheduleFlush(0); } }, 20000);
 /* ===================== 앱 상태 / 라우팅 ===================== */
 const App = {
-  route:{name:'home'}, filters:{q:'', gu:'', type:'', water:'', status:''}, pickMode:false,
+  route:{name:'home'}, filters:{q:'', gu:'', type:'', water:'', status:''}, gwFilters:{q:'', gu:'', cstatus:'', status:''}, pickMode:false, kind:'mbw', lastRoute:{mbw:{name:'home'}, gw:{name:'gwHome'}},
+  kindOf(route){ return ['gwHome','sites','siteEdit','site','gwInspect','gwReport'].includes(route.name)? 'gw' : route.name==='settings'? this.kind : 'mbw'; },
+  switchKind(k){ if(k===this.kind) return; if (typeof Editor!=='undefined') Editor.commit(); this.lastRoute[this.kind]=this.route; this.kind=k; const r=this.lastRoute[k]||(k==='gw'?{name:'gwHome'}:{name:'home'}); this.go(r); },
   stack:[], ignorePop:false,
-  go(route, opts={}){ if(!opts.replace && !opts.fromPop && !(this.route && this.route.name===route.name && this.route.id===route.id && this.route.step===route.step)){ this.stack.push(this.route); if(this.stack.length>60) this.stack.shift(); try{ history.pushState({mbw:true}, ''); }catch(e){} } this.route=route; try{ sessionStorage.setItem('mbw-route', JSON.stringify(route)); }catch(e){} render(); if(!opts.keepScroll) window.scrollTo(0,0); },
+  go(route, opts={}){ this.kind=this.kindOf(route); this.lastRoute[this.kind]=route; try{ sessionStorage.setItem('mbw-kind', this.kind); }catch(e){} if(!opts.replace && !opts.fromPop && !(this.route && this.route.name===route.name && this.route.id===route.id && this.route.step===route.step)){ this.stack.push(this.route); if(this.stack.length>60) this.stack.shift(); try{ history.pushState({mbw:true}, ''); }catch(e){} } this.route=route; try{ sessionStorage.setItem('mbw-route', JSON.stringify(route)); }catch(e){} render(); if(!opts.keepScroll) window.scrollTo(0,0); },
   back(){ if (typeof Editor!=='undefined') Editor.commit(); if(this.stack.length){ const r=this.stack.pop(); this.ignorePop=true; setTimeout(()=>{ this.ignorePop=false; },600); try{ history.back(); }catch(e){} this.go(r,{fromPop:true}); } else this.go({name:'home'},{replace:true}); },
-  restore(){ try{ const r=JSON.parse(sessionStorage.getItem('mbw-route')||'null'); if(r && r.name) this.route=r; }catch(e){} try{ history.replaceState({mbw:true}, ''); }catch(e){} },
+  restore(){ try{ const r=JSON.parse(sessionStorage.getItem('mbw-route')||'null'); if(r && r.name) this.route=r; const k=sessionStorage.getItem('mbw-kind'); if(k) this.kind=k; this.kind=this.kindOf(this.route); }catch(e){} try{ history.replaceState({mbw:true}, ''); }catch(e){} },
 };
 function access(){ return Store.settings.access || {defaultAll:true, assignments:{}}; }
 function myGus(){ const a=access(); const mine=a.assignments && a.assignments[myId()]; return mine && Array.isArray(mine.gus) ? mine.gus : null; }
@@ -714,7 +765,7 @@ function facStatusKey(facId){ const li=latestInspection(facId); if(!li) return '
 
 /* ===================== 렌더 진입 ===================== */
 let renderScheduled=false;
-function render(){ renderScheduled=false; const r=App.route; const view=$('#view'); const bb=$('#bottombar'); bb.innerHTML=''; const nav=$('#navBtns'); if(nav) nav.hidden = r.name==='home'; view.className='page'+(['inspect','facilityEdit','report'].includes(r.name)?' narrow':'');
+function render(){ renderScheduled=false; const r=App.route; const view=$('#view'); const bb=$('#bottombar'); bb.innerHTML=''; const nav=$('#navBtns'); if(nav) nav.hidden = (r.name==='home'||r.name==='gwHome'); $$('#tabbar button').forEach(b=>b.setAttribute('aria-selected', String(b.dataset.kind===App.kind))); view.className='page'+(['inspect','facilityEdit','report','gwInspect','siteEdit','gwReport'].includes(r.name)?' narrow':'');
   try{
     switch(r.name){
       case 'home': view.innerHTML=homeHtml(); bindHome(); break;
@@ -724,6 +775,12 @@ function render(){ renderScheduled=false; const r=App.route; const view=$('#view
       case 'inspect': renderInspect(r); break;
       case 'report': renderReport(r); break;
       case 'settings': view.innerHTML=settingsHtml(); bindSettings(); break;
+      case 'gwHome': view.innerHTML=gwHomeHtml(); bindGwHome(); break;
+      case 'sites': view.innerHTML=sitesHtml(); bindSites(); break;
+      case 'siteEdit': view.innerHTML=siteEditHtml(r.id); bindSiteEdit(r.id); break;
+      case 'site': view.innerHTML=siteHtml(r.id); bindSite(r.id); break;
+      case 'gwInspect': renderGwInspect(r); break;
+      case 'gwReport': renderGwReport(r); break;
       default: view.innerHTML=homeHtml(); bindHome();
     }
   }catch(e){ console.error(e); view.innerHTML=`<div class="alert poor"><b>화면을 표시하는 중 오류가 났습니다.</b> ${esc(e.message)}</div><p style="margin-top:10px"><button class="btn" onclick="App.go({name:'home'})">홈으로</button></p>`; }
@@ -932,7 +989,7 @@ function userPanel(){
       <div class="review-row"><div class="t"><b>${esc(myName()||'(이름 없음)')}</b><span>${role}${gus&&gus.length?` · 담당: ${esc(gus.join(', '))}`:''}</span></div>${RT.mode==='cloud' && RT.me && RT.me.avatarUrl? `<img src="${esc(RT.me.avatarUrl)}" alt="" width="36" height="36" style="border-radius:50%">`:''}</div>
       ${RT.mode==='local'? `<div class="field"><label for="localName">점검자 이름(이 기기)</label><input id="localName" type="text" value="${esc(Store.localName)}" placeholder="이름을 입력하면 새 점검의 점검자로 자동 입력됩니다"></div><div class="alert na">${RT.signedOut? '로그인하지 않은 상태입니다. 모든 점검 자료와 사진은 이 기기(브라우저)에만 저장됩니다. 자료를 전달하려면 ‘전체 내보내기(ZIP)’를 쓰고, 같은 브라우저에서 나중에 로그인하면 저장된 자료가 공용 DB로 올라갑니다.' : '설치형 앱은 로그인 정보가 없어 모든 데이터가 이 기기(브라우저)에만 저장됩니다. 자료를 전달하려면 ‘전체 내보내기(ZIP)’를 쓰세요.'}</div>`
         : `<div class="alert ${!RT.db?'warn':'info'}">${!RT.db? '로그인되지 않아 저장과 동기화를 할 수 없습니다.' : RT.canWrite===false? '읽기 전용 권한입니다(Viewer/Commenter). 저장하려면 Contributor 이상이 필요합니다.' : '서울시 계정으로 접속 중입니다. 입력 내용은 자동 저장되어 팀과 공유됩니다.'}</div>`}
-      ${RT.mode==='local'? `<div class="review-row"><div class="t"><b>이 기기에 저장된 기록 · 시설 ${Store.facilities.size} · 점검 ${Store.inspections.size} · 사진 ${Store.photos.size}</b><span>${RT.signedOut?'같은 브라우저에서 로그인하면 자동으로 공용 DB에 올라갑니다.':'ZIP으로 내보내 전달하세요.'}</span></div></div>` : `<div class="review-row"><div class="t"><b>동기화 대기 ${dirty.length}건 · 사진 업로드 대기 ${Uploads.countPending()}장</b><span>${failed.length||upFailed.length? `실패 ${failed.length+upFailed.length}건 — 연결을 확인한 뒤 재시도하세요.` : (Store.lastSavedAt? `마지막 동기화 ${fmtDTS(Store.lastSavedAt)}`:'아직 동기화 기록 없음')}</span></div><button class="btn sm" id="syncNow">지금 동기화</button></div>`}
+      ${RT.mode==='local'? `<div class="review-row"><div class="t"><b>이 기기에 저장된 기록 · 시설 ${Store.facilities.size} · 공사장 ${Store.sites.size} · 점검 ${Store.inspections.size+Store.gwInspections.size} · 사진·서류 ${Store.photos.size}</b><span>${RT.signedOut?'같은 브라우저에서 로그인하면 자동으로 공용 DB에 올라갑니다.':'ZIP으로 내보내 전달하세요.'}</span></div></div>` : `<div class="review-row"><div class="t"><b>동기화 대기 ${dirty.length}건 · 사진 업로드 대기 ${Uploads.countPending()}장</b><span>${failed.length||upFailed.length? `실패 ${failed.length+upFailed.length}건 — 연결을 확인한 뒤 재시도하세요.` : (Store.lastSavedAt? `마지막 동기화 ${fmtDTS(Store.lastSavedAt)}`:'아직 동기화 기록 없음')}</span></div><button class="btn sm" id="syncNow">지금 동기화</button></div>`}
       ${failed.length? `<div class="small muted">실패 항목: ${failed.map(r=>esc(r.path)+'('+esc(r.err)+')').join(', ')}</div>`:''}
       ${upFailed.length? `<div class="small muted">업로드 실패 사진: ${upFailed.length}장 (사진 화면에서 ‘재시도’)</div>`:''}
       ${Store.conflicts.length? `<div class="small muted">충돌 처리 기록: ${Store.conflicts.slice(-3).map(c=>fmtDT(c.at)+' '+esc(c.fields.join(','))).join(' / ')}</div>`:''}
@@ -942,6 +999,7 @@ function userPanel(){
     </div>`);
   $('#mClose').onclick=closeModal; const sn=$('#syncNow'); if(sn) sn.onclick=()=>{ Store.backoff=0; Store.scheduleFlush(0); Uploads.retryAll(); toast('동기화를 시작합니다'); };
   const gs=$('#goSettings'); if(gs) gs.onclick=()=>{ closeModal(); App.go({name:'settings'}); };
+  $$('#tabbar button').forEach(b=>b.onclick=()=>App.switchKind(b.dataset.kind));
   $('#exportAll').onclick=()=>{ closeModal(); exportPackage({}); }; $('#importZip').onclick=()=>{ closeModal(); pickImportFile(); };
   const ln=$('#localName'); if(ln) ln.onchange=async()=>{ Store.localName=ln.value.trim(); await IDB.put('meta', Store.localName, 'localName'); toast('이름을 저장했습니다'); };
 }
@@ -952,7 +1010,7 @@ function settingsHtml(){
   const st=Object.assign({}, DEFAULT_STANDARDS, Store.settings.standards||{}); const ac=access();
   const ids=Object.keys(ac.assignments||{});
   return `
-  <div class="crumbs"><button data-go="home">홈</button><span>›</span><span>관리자 설정</span></div>
+  <div class="crumbs"><button data-go="${App.kind==='gw'?'gwHome':'home'}">홈</button><span>›</span><span>관리자 설정</span></div>
   <div class="pagehead"><h1>관리자 설정</h1></div>
   <div class="card stack"><h2>점검 기준 문구</h2>
     <div class="alert warn small">첨부 양식(2025년 기준)에 적힌 값으로 초기 설정되어 있습니다. 최신 기준으로 확정된 값이 아니므로, 지침을 확인한 뒤 적용연도와 문구를 수정하세요. 수정한 문구는 점검표와 보고서의 안내 문구에 바로 반영됩니다.</div>
@@ -971,9 +1029,10 @@ function settingsHtml(){
     ${RT.mode==='cloud' && RT.user? `<div class="field"><label for="userQ">담당자 검색(조직 내 이름)</label><input id="userQ" type="search" placeholder="이름 입력"><div id="userHits" class="list"></div></div>` : `<div class="help">사용자 검색은 게시된 앱(로그인 환경)에서만 가능합니다.</div>`}
     <div id="assignList" class="list">${ids.length? ids.map(uid=>`<div class="review-row" data-uid="${esc(uid)}"><div class="t"><b class="uname" data-uid="${esc(uid)}">…</b><span>${esc((ac.assignments[uid].gus||[]).join(', ')||'배정 없음')}</span></div><div class="row"><button class="btn sm" data-edit="${esc(uid)}">자치구 변경</button><button class="btn sm danger" data-del="${esc(uid)}">해제</button></div></div>`).join('') : `<div class="help">배정된 담당자가 없습니다.</div>`}</div>
   </div>
+  ${typeof gwSettingsCard==='function'? gwSettingsCard():''}
   <div class="card stack"><h2>테스트 데이터</h2>
     <p class="small muted">예시 데이터는 ‘테스트 시설’로 표시되어 실제 시설과 구분됩니다.</p>
-    <div class="row"><button class="btn" id="seedTest">테스트 시설 추가</button><button class="btn danger" id="purgeTest">테스트 시설·점검 모두 삭제</button></div>
+    <div class="row"><button class="btn" id="seedTest">테스트 시설 추가</button><button class="btn danger" id="purgeTest">테스트 시설·공사장·점검 모두 삭제</button></div>
   </div>
   <div class="card stack"><h2>출력 지원 범위</h2>
     <ul class="small" style="margin:0;padding-left:18px;color:var(--muted)"><li>PDF: 보고서 화면에서 생성·저장(인쇄는 저장한 PDF로)</li><li>엑셀(.xlsx): 점검 결과·미흡 내용·사진 목록</li><li>HWPX: 원본 서식을 그대로 보존한 파일 생성은 현재 지원하지 않습니다. 보고서는 원본 양식의 제목·항목 순서·체크표·사진대지 배치를 따릅니다.</li></ul>
@@ -990,7 +1049,8 @@ function bindSettings(){
   $$('#assignList [data-edit]').forEach(b=>b.onclick=()=>editAssignment(b.dataset.edit, $(`.uname[data-uid="${b.dataset.edit}"]`).textContent));
   $$('#assignList [data-del]').forEach(b=>b.onclick=()=>{ const ac=clone(access()); delete ac.assignments[b.dataset.del]; Store.save('settings/access', ac); render(); });
   resolveNames($('#view'));
-  $('#seedTest').onclick=seedTestData; $('#purgeTest').onclick=()=>{ const b=$('#purgeTest'); if(b.dataset.arm){ purgeTestData(); } else { b.dataset.arm='1'; b.textContent='정말 삭제(확인)'; setTimeout(()=>{ delete b.dataset.arm; b.textContent='테스트 시설·점검 모두 삭제'; },3000); } };
+  if (typeof bindGwSettings==='function') bindGwSettings();
+  $('#seedTest').onclick=seedTestData; $('#purgeTest').onclick=()=>{ const b=$('#purgeTest'); if(b.dataset.arm){ purgeTestData(); } else { b.dataset.arm='1'; b.textContent='정말 삭제(확인)'; setTimeout(()=>{ delete b.dataset.arm; b.textContent='테스트 시설·공사장·점검 모두 삭제'; },3000); } };
 }
 function editAssignment(uid, name){
   const ac=clone(access()); ac.assignments=ac.assignments||{}; const cur=(ac.assignments[uid]&&ac.assignments[uid].gus)||[];
@@ -1019,17 +1079,18 @@ function deleteFacility(id){ const f=Store.facilities.get(id); if(!f) return; co
 async function purgeTestData(){
   const facs=[...Store.facilities.values()].filter(f=>f.isTest);
   for(const f of facs){ for(const i of Store.inspectionsOf(f.id)){ for(const p of Store.photosOf(i.id)) await deletePhoto(p.id, {silent:true}); await Store.remove('inspections/'+i.id); } await Store.remove('facilities/'+f.id); }
-  toast(`테스트 시설 ${facs.length}곳과 관련 점검을 삭제했습니다`); render();
+  const sites=[...Store.sites.values()].filter(x=>x.isTest); for(const st of sites){ for(const i of Store.gwInspectionsOf(st.id)){ for(const p of Store.photosOf(i.id)) await deletePhoto(p.id,{silent:true}); await Store.remove('gwInspections/'+i.id); } await Store.remove('sites/'+st.id); }
+  toast(`테스트 시설 ${facs.length}곳, 테스트 공사장 ${sites.length}곳과 관련 점검을 삭제했습니다`); render();
 }
 /* ===================== 점검 편집기 ===================== */
 const Editor = {
   id:null, changed:new Set(), timer:null, tick:null,
-  cur(){ return Store.inspections.get(this.id); },
+  cur(){ return Store.anyInspection(this.id); },
   touch(field, immediate){ this.changed.add(field); const ss=$('#saveState'); if(ss&&RT.mode==='cloud'){ ss.className='savestate saving'; ss.textContent='저장 중…'; } clearTimeout(this.timer); if(immediate) this.commit(); else this.timer=setTimeout(()=>this.commit(), 500); },
-  async commit(){ clearTimeout(this.timer); const insp=this.cur(); if(!insp) return; const fields=[...this.changed]; this.changed.clear(); if(!fields.length) return; if(insp.status==='done') pushEditLog(insp, fields); await Store.save('inspections/'+insp.id, insp); },
+  async commit(){ clearTimeout(this.timer); const insp=this.cur(); if(!insp) return; const fields=[...this.changed]; this.changed.clear(); if(!fields.length) return; if(insp.status==='done') pushEditLog(insp, fields); await Store.save(Store.inspPath(insp.id), insp); },
 };
 function pushEditLog(insp, fields){ insp.editLog=insp.editLog||[]; const last=insp.editLog[insp.editLog.length-1]; const now=nowIso(); if(last && last.by===myId() && (Date.now()-new Date(last.at).getTime())<10*60*1000){ last.at2=now; last.fields=[...new Set([...(last.fields||[]),...fields])]; } else insp.editLog.push({at:now, by:myId(), fields:[...new Set(fields)]}); if(insp.editLog.length>50) insp.editLog=insp.editLog.slice(-50); }
-function setPath(obj, path, val){ const ks=path.split('.'); let o=obj; for(let i=0;i<ks.length-1;i++){ if(!isObj(o[ks[i]])) o[ks[i]]={}; o=o[ks[i]]; } o[ks[ks.length-1]]=val; }
+function setPath(obj, path, val){ const ks=path.split('.'); let o=obj; for(let i=0;i<ks.length-1;i++){ if(o[ks[i]]==null || typeof o[ks[i]]!=='object') o[ks[i]]= /^\d+$/.test(ks[i+1])? [] : {}; o=o[ks[i]]; } o[ks[ks.length-1]]=val; }
 function getPath(obj, path){ return path.split('.').reduce((o,k)=>o==null?undefined:o[k], obj); }
 const FIELD_LABELS = {status:'점검 상태(완료 취소)', date:'점검일', inspector:'점검자', inspectorOrg:'소속', companions:'동행자', overall:'종합 의견', actions:'조치 필요사항', actionDue:'조치기한', actionDone:'조치 완료 여부', actionDoneDate:'조치 완료일', photoNA:'사진 미보유 표시', photoReason:'사진 누락 사유', pump:'양수 타이머', photos:'사진'};
 function fieldLabel(f){ if(FIELD_LABELS[f]) return FIELD_LABELS[f]; const m=f.match(/^items\.([WF]\d)/); if(m){ const it=buildItems().find(x=>x.id===m[1]); return it? `${it.sec==='written'?'서면':'현장'}${it.num} ${it.title}`: f; } const k=f.split('.')[0]; return FIELD_LABELS[k]||f; }
@@ -1140,6 +1201,7 @@ function photoRowHtml(insp, cat){ const c=CAT_BY_ID[cat]; const ps=Store.photosO
     <div class="thumbs" style="display:flex">${ps.slice(0,6).map(p=>thumbHtml(p,{sm:true})).join('')}</div></div>`; }
 function thumbHtml(p, opts={}){ const src=photoSrc(p); const rot=((p.rotation||0)%360+360)%360; const cls='thumb'+(opts.sm?' sm':'')+(rot?` r${rot}`:'');
   const st = (p.status==='failed'||p.status==='missing')? '<span class="badge fail">실패</span>' : (p.status==='noperm'&&RT.mode==='cloud')? '<span class="badge fail">권한</span>' : ((p.status==='pending'||p.status==='uploading')&&RT.mode==='cloud')? '<span class="badge pend">대기</span>' : '';
+  if (p.fileType==='pdf') return `<button type="button" class="${cls} pdf" data-act="photo-open" data-pid="${p.id}" aria-label="PDF 보기"><div class="noimg"><b>PDF</b>${opts.sm?'':`<span>${esc((p.fileName||'문서').slice(0,28))}</span>`}</div>${st}${!opts.sm&&p.caption?`<span class="cap">${esc(p.caption)}</span>`:''}</button>`;
   return `<button type="button" class="${cls}" data-act="photo-open" data-pid="${p.id}" aria-label="사진 보기">${src?`<img src="${esc(src)}" alt="" loading="lazy">`:'<div class="noimg">이미지 없음</div>'}${p.isCover&&!opts.sm?'<span class="badge cover">대표</span>':''}${st}${!opts.sm&&p.caption?`<span class="cap">${esc(p.caption)}</span>`:''}</button>`; }
 
 /* ---- 4. 사진 ---- */
@@ -1228,53 +1290,56 @@ function refreshTimer(full){ const cur=Editor.cur(); const box=$('#pumpTimer'); 
   else { timerToasted=false; box.outerHTML=timerHtml(cur); } }
 
 /* ---- 사진 선택/추가 ---- */
-function pickFiles(inspectionId, cat, mode, multiple){
+function pickFiles(inspectionId, cat, mode, multiple, accept){
   const key=`${cat}|${mode}|${multiple?'m':'s'}`; let inp=$(`#fileInputs input[data-key="${key}"]`);
-  if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.dataset.key=key; if(mode==='camera') inp.setAttribute('capture','environment'); if(multiple||mode==='album') inp.multiple=true; $('#fileInputs').appendChild(inp); }
+  if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.accept=accept||'image/*'; inp.dataset.key=key; if(mode==='camera') inp.setAttribute('capture','environment'); if(multiple||mode==='album'||mode==='pdf') inp.multiple=true; $('#fileInputs').appendChild(inp); }
   inp.onchange=async()=>{ const files=Array.from(inp.files||[]); inp.value=''; if(!files.length) return; await addPhotos(files, {inspectionId, category:cat, source:mode}); };
   inp.click();
 }
 async function addPhotos(files, ctx){
-  const insp=Store.inspections.get(ctx.inspectionId); if(!insp){ toast('점검 기록을 찾을 수 없습니다',{err:true}); return; }
+  const insp=Store.anyInspection(ctx.inspectionId); if(!insp){ toast('점검 기록을 찾을 수 없습니다',{err:true}); return; }
   const existing=Store.photosOf(insp.id); let added=0;
-  if (files.length>1) toast(`사진 ${files.length}장을 처리하는 중…`);
+  if (files.length>1) toast(`파일 ${files.length}개를 처리하는 중…`);
   for (const f of files){
     const sig=`${f.name}|${f.size}|${f.lastModified}`;
-    if (ctx.source!=='camera' && existing.some(p=>p.fileSig===sig)){ toast(`이미 추가된 사진은 건너뜁니다: ${f.name}`); continue; }
-    let pr; try{ pr=await processImage(f); }catch(e){ toast(`이미지를 처리할 수 없습니다: ${f.name}`,{err:true}); continue; }
-    let takenAt, takenSrc; if (ctx.source==='camera'){ takenAt=nowIso(); takenSrc='camera'; } else { const ex=await readExifDate(f); if(ex){ takenAt=ex; takenSrc='exif'; } else { takenAt=new Date(f.lastModified||Date.now()).toISOString(); takenSrc='file'; } }
-    const id=uuid(); await IDB.put('blobs', pr.blob, id); Store.blobUrls.set(id, URL.createObjectURL(pr.blob));
+    if (ctx.source!=='camera' && existing.some(p=>p.fileSig===sig)){ toast(`이미 추가된 파일은 건너뜁니다: ${f.name}`); continue; }
+    const isPdf = f.type==='application/pdf' || /\.pdf$/i.test(f.name||'');
+    let blob, w=0, h=0;
+    if (isPdf){ if (f.size>20*1024*1024){ toast(`PDF가 20MB를 넘어 첨부할 수 없습니다: ${f.name}`,{err:true}); continue; } blob=f.type==='application/pdf'? f : new Blob([f],{type:'application/pdf'}); }
+    else { let pr; try{ pr=await processImage(f); }catch(e){ toast(`이미지를 처리할 수 없습니다: ${f.name}`,{err:true}); continue; } blob=pr.blob; w=pr.w; h=pr.h; }
+    let takenAt, takenSrc; if (ctx.source==='camera'){ takenAt=nowIso(); takenSrc='camera'; } else if (isPdf){ takenAt=new Date(f.lastModified||Date.now()).toISOString(); takenSrc='file'; } else { const ex=await readExifDate(f); if(ex){ takenAt=ex; takenSrc='exif'; } else { takenAt=new Date(f.lastModified||Date.now()).toISOString(); takenSrc='file'; } }
+    const id=uuid(); await IDB.put('blobs', blob, id); Store.blobUrls.set(id, URL.createObjectURL(blob));
     const order=Store.photosOf(insp.id, ctx.category).length;
-    const p={id, facilityId:insp.facilityId, inspectionId:insp.id, category:ctx.category||'none', assetId:null, status:'pending', caption:'', takenAt, takenSrc, rotation:0, order, isCover: ctx.category!=='none' && order===0, w:pr.w, h:pr.h, sizeBytes:pr.blob.size, fileSig:sig, createdAt:nowIso(), createdBy:myId()};
+    const p={id, kind:insp.kind||'mbw', facilityId:insp.facilityId||null, siteId:insp.siteId||null, inspectionId:insp.id, category:ctx.category||'none', assetId:null, status:'pending', caption:'', takenAt, takenSrc, rotation:0, order, isCover: ctx.category!=='none' && order===0 && !isPdf, w, h, sizeBytes:blob.size, fileSig:sig, fileType: isPdf?'pdf':'image', fileName: f.name||'', createdAt:nowIso(), createdBy:myId()};
     await Store.save('photos/'+id, p, {needsAsset:true}); added++;
   }
-  if (added){ const c=CAT_BY_ID[ctx.category]; toast(`${added}장을 ${c? '‘'+(c.short||c.label)+'’에' : '미분류로'} 추가했습니다`); if(insp.status==='done'){ pushEditLog(insp,['photos']); Store.save('inspections/'+insp.id, insp); } }
+  if (added){ const c=catById(ctx.category); toast(`${added}건을 ${c? '‘'+(c.short||c.label)+'’에' : '미분류로'} 추가했습니다`); if(insp.status==='done'){ pushEditLog(insp,['photos']); Store.save(Store.inspPath(insp.id), insp); } }
   Uploads.run(); render();
 }
-async function deletePhoto(pid, opts={}){ const p=Store.photos.get(pid); if(!p) return; const url=Store.blobUrls.get(pid); if(url){ URL.revokeObjectURL(url); Store.blobUrls.delete(pid); } await IDB.del('blobs',pid); await Store.remove('photos/'+pid); if (p.assetId && RT.assets){ RT.assets.delete(p.assetId).catch(()=>{}); } if(p.isCover){ const rest=Store.photosOf(p.inspectionId,p.category); if(rest[0]){ rest[0].isCover=true; await Store.save('photos/'+rest[0].id, rest[0]); } } if(!opts.silent){ const insp=Store.inspections.get(p.inspectionId); if(insp&&insp.status==='done'){ pushEditLog(insp,['photos']); Store.save('inspections/'+insp.id, insp); } } }
+async function deletePhoto(pid, opts={}){ const p=Store.photos.get(pid); if(!p) return; const url=Store.blobUrls.get(pid); if(url){ URL.revokeObjectURL(url); Store.blobUrls.delete(pid); } await IDB.del('blobs',pid); await Store.remove('photos/'+pid); if (p.assetId && RT.assets){ RT.assets.delete(p.assetId).catch(()=>{}); } if(p.isCover){ const rest=Store.photosOf(p.inspectionId,p.category).filter(q=>q.fileType!=='pdf'); if(rest[0]){ rest[0].isCover=true; await Store.save('photos/'+rest[0].id, rest[0]); } } if(!opts.silent){ const insp=Store.anyInspection(p.inspectionId); if(insp&&insp.status==='done'){ pushEditLog(insp,['photos']); Store.save(Store.inspPath(insp.id), insp); } } }
 
 /* ---- 사진 확대 보기 ---- */
 function openPhoto(pid){
-  const p=Store.photos.get(pid); if(!p) return; const list=Store.photosOf(p.inspectionId, p.category); const idx=list.findIndex(x=>x.id===pid); const rot=((p.rotation||0)%360+360)%360; const c=CAT_BY_ID[p.category];
+  const p=Store.photos.get(pid); if(!p) return; const list=Store.photosOf(p.inspectionId, p.category); const idx=list.findIndex(x=>x.id===pid); const rot=((p.rotation||0)%360+360)%360; const c=catById(p.category); const cats=catsForInsp(Store.anyInspection(p.inspectionId)); const isPdf=p.fileType==='pdf';
   const stText = p.status==='failed'? `업로드 실패(${esc(p.err||'')}) — 재시도하세요` : p.status==='missing'? '원본이 이 기기에 없고 업로드도 되지 않았습니다(다른 기기에서 촬영)' : p.status==='noperm'? '업로드 권한이 없어 이 기기에만 저장됨' : p.status==='uploading'? '업로드 중…' : p.status==='pending'? (RT.mode==='cloud'?'업로드 대기(연결 시 자동 업로드)':'이 기기에 저장됨') : p.status==='local'? '이 기기에 저장됨' : '저장 완료';
   openModal(`
     <div class="row between"><h2>${esc(c?c.label:'미분류')} ${list.length>1?`<span class="small muted">${idx+1}/${list.length}</span>`:''}</h2><button class="btn sm" id="mClose">닫기</button></div>
-    <div class="viewer ${rot?'r'+rot:''}">${photoSrc(p)?`<img src="${esc(photoSrc(p))}" alt="">`:'<div class="noimg" style="color:#fff">이미지를 불러올 수 없습니다</div>'}</div>
-    <div class="small muted">촬영일시 ${fmtDTS(p.takenAt)} <span class="tag ${p.takenSrc==='camera'?'good':p.takenSrc==='exif'?'info':'none'}">${p.takenSrc==='camera'?'직접 촬영':p.takenSrc==='exif'?'사진 EXIF':'파일 수정일시'}</span> · ${stText}</div>
-    <div class="field"><label for="pcap">사진 설명</label><input id="pcap" type="text" value="${esc(p.caption||'')}" placeholder="보고서에 함께 출력됩니다"></div>
+    ${isPdf? `<div class="viewer" style="min-height:120px"><div style="color:#fff;text-align:center;padding:16px"><b style="font-size:22px">PDF</b><br>${esc(p.fileName||'문서.pdf')}<br><span class="small">${(p.sizeBytes/1024/1024).toFixed(2)} MB</span><br>${photoSrc(p)?`<a class="btn sm" style="margin-top:10px;color:#fff;border-color:#fff" href="${esc(photoSrc(p))}" target="_blank" rel="noopener">새 창에서 열기</a>`:''}</div></div>` : `<div class="viewer ${rot?'r'+rot:''}">${photoSrc(p)?`<img src="${esc(photoSrc(p))}" alt="">`:'<div class="noimg" style="color:#fff">이미지를 불러올 수 없습니다</div>'}</div>`}
+    <div class="small muted">${isPdf?'첨부일시':'촬영일시'} ${fmtDTS(p.takenAt)} ${isPdf?'':`<span class="tag ${p.takenSrc==='camera'?'good':p.takenSrc==='exif'?'info':'none'}">${p.takenSrc==='camera'?'직접 촬영':p.takenSrc==='exif'?'사진 EXIF':'파일 수정일시'}</span>`} · ${stText}</div>
+    <div class="field"><label for="pcap">${isPdf?'서류 설명':'사진 설명'}</label><input id="pcap" type="text" value="${esc(p.caption||'')}" placeholder="보고서에 함께 출력됩니다"></div>
     <div class="toolbar">
       <button class="btn" id="pPrev" ${idx<=0?'disabled':''}>◀ 이전</button><button class="btn" id="pNext" ${idx>=list.length-1?'disabled':''}>다음 ▶</button>
-      <button class="btn" id="pRot">↻ 회전</button><button class="btn ${p.isCover?'primary':''}" id="pCover">${p.isCover?'대표사진 ✓':'대표사진으로'}</button>
+      ${isPdf?'':`<button class="btn" id="pRot">↻ 회전</button><button class="btn ${p.isCover?'primary':''}" id="pCover">${p.isCover?'대표사진 ✓':'대표사진으로'}</button>`}
       <button class="btn" id="pUp" ${idx<=0?'disabled':''}>순서 ▲</button><button class="btn" id="pDown" ${idx>=list.length-1?'disabled':''}>순서 ▼</button>
     </div>
-    <div class="row"><label class="small muted" for="pMove">다른 구분으로 이동</label><select id="pMove" style="flex:1;min-width:160px"><option value="none" ${p.category==='none'?'selected':''}>미분류</option>${PHOTO_CATS.map(x=>`<option value="${x.id}" ${x.id===p.category?'selected':''}>${esc(x.short||x.label)}</option>`).join('')}</select>
+    <div class="row"><label class="small muted" for="pMove">다른 구분으로 이동</label><select id="pMove" style="flex:1;min-width:160px"><option value="none" ${p.category==='none'?'selected':''}>미분류</option>${cats.map(x=>`<option value="${x.id}" ${x.id===p.category?'selected':''}>${esc(x.short||x.label)}</option>`).join('')}</select>
       ${p.status==='failed'||p.status==='noperm'? `<button class="btn" id="pRetry">업로드 재시도</button>`:''}<button class="btn danger" id="pDel">삭제</button></div>`, {wide:true});
   const save=debounce(async()=>{ const q=Store.photos.get(pid); if(!q) return; await Store.save('photos/'+pid, q); },400);
   $('#mClose').onclick=()=>{ closeModal(); render(); };
   $('#pcap').oninput=e=>{ p.caption=e.target.value; save(); };
   $('#pPrev').onclick=()=>openPhoto(list[idx-1].id); $('#pNext').onclick=()=>openPhoto(list[idx+1].id);
-  $('#pRot').onclick=async()=>{ p.rotation=(rot+90)%360; await Store.save('photos/'+pid,p); openPhoto(pid); };
-  $('#pCover').onclick=async()=>{ for(const q of list){ if(q.isCover && q.id!==pid){ q.isCover=false; await Store.save('photos/'+q.id,q); } } p.isCover=true; await Store.save('photos/'+pid,p); toast('대표사진으로 지정했습니다'); openPhoto(pid); };
+  const pr=$('#pRot'); if(pr) pr.onclick=async()=>{ p.rotation=(rot+90)%360; await Store.save('photos/'+pid,p); openPhoto(pid); };
+  const pc=$('#pCover'); if(pc) pc.onclick=async()=>{ for(const q of list){ if(q.isCover && q.id!==pid){ q.isCover=false; await Store.save('photos/'+q.id,q); } } p.isCover=true; await Store.save('photos/'+pid,p); toast('대표사진으로 지정했습니다'); openPhoto(pid); };
   const swap=async(j)=>{ const other=list[j]; const a=p.order||idx, b=other.order||j; p.order=j; other.order=idx; list.forEach((q,k)=>{ if(q!==p&&q!==other) q.order=k; }); await Store.save('photos/'+other.id, other); await Store.save('photos/'+pid, p); for(const q of list){ if(q!==p&&q!==other) await Store.save('photos/'+q.id,q,{silent:true}); } openPhoto(pid); };
   $('#pUp').onclick=()=>swap(idx-1); $('#pDown').onclick=()=>swap(idx+1);
   $('#pMove').onchange=async e=>{ const to=e.target.value; if(to===p.category) return; const wasCover=p.isCover; p.category=to; p.order=Store.photosOf(p.inspectionId,to).length; p.isCover = to!=='none' && p.order===0; await Store.save('photos/'+pid,p); if(wasCover){ const rest=Store.photosOf(p.inspectionId, list[0].category).filter(q=>q.id!==pid); if(rest[0]){ rest[0].isCover=true; await Store.save('photos/'+rest[0].id, rest[0]); } } toast('사진 구분을 이동했습니다'); closeModal(); render(); };
@@ -1416,7 +1481,7 @@ async function saveFile(filename, blob){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },2000); toast('파일을 내려받습니다: '+filename); return true;
 }
 async function exportPdf(inspId){
-  const insp=Store.inspections.get(inspId); if(!insp) return; const st=$('#pdfStatus'); const btn=$('#pdfBtn'); if(btn) btn.disabled=true;
+  const insp=Store.anyInspection(inspId); if(!insp) return; const st=$('#pdfStatus'); const btn=$('#pdfBtn'); if(btn) btn.disabled=true;
   try{
     if(st) st.textContent='PDF 라이브러리를 불러오는 중…';
     await Promise.all([loadScript(CDN.html2canvas), loadScript(CDN.jspdf)]);
@@ -1430,8 +1495,8 @@ async function exportPdf(inspId){
       const canvas=await window.html2canvas(papers[i], {scale:2, useCORS:true, allowTaint:false, backgroundColor:'#ffffff', logging:false, scrollX:0, scrollY:-window.scrollY});
       const data=canvas.toDataURL('image/jpeg', 0.9); if(i>0) pdf.addPage(); pdf.addImage(data,'JPEG',0,0,210,297,undefined,'FAST');
     }
-    const blob=pdf.output('blob'); const f=insp.facility||{};
-    const name=`점검보고서_${(f.gu||'')}_${(f.name||'시설').replace(/[\\/:*?"<>|]/g,'_')}_${insp.date||''}.pdf`;
+    const blob=pdf.output('blob'); const f=insp.kind==='gw'? (insp.site||{}) : (insp.facility||{});
+    const name=`${insp.kind==='gw'?'현장점검표':'점검보고서'}_${(f.gu||'')}_${(f.name||'대상').replace(/[\\/:*?"<>|]/g,'_')}_${insp.date||''}.pdf`;
     if(st) st.textContent=`PDF ${papers.length}쪽 생성 완료 (${(blob.size/1024/1024).toFixed(1)}MB)`;
     window.__lastPdf=blob;
     await saveFile(name, blob);
@@ -1466,22 +1531,27 @@ async function exportExcel(insps, baseName){
 /* ===================== 자료 내보내기 / 가져오기 (ZIP) ===================== */
 async function exportPackage(scope={}){
   try{ await loadScript(CDN.jszip); }catch(e){ toast('압축 라이브러리를 불러오지 못했습니다',{err:true}); return; }
-  let insps=[...Store.inspections.values()];
-  if (scope.inspectionId) insps=insps.filter(i=>i.id===scope.inspectionId);
-  else if (scope.facilityId) insps=insps.filter(i=>i.facilityId===scope.facilityId);
-  else insps=insps.filter(i=>canSeeGu((Store.facilities.get(i.facilityId)||i.facility||{}).gu));
+  const single = scope.inspectionId||scope.facilityId||scope.siteId;
+  let insps=[...Store.inspections.values()]; let ginsps=[...Store.gwInspections.values()];
+  if (scope.inspectionId){ insps=insps.filter(i=>i.id===scope.inspectionId); ginsps=ginsps.filter(i=>i.id===scope.inspectionId); }
+  else if (scope.facilityId){ insps=insps.filter(i=>i.facilityId===scope.facilityId); ginsps=[]; }
+  else if (scope.siteId){ insps=[]; ginsps=ginsps.filter(i=>i.siteId===scope.siteId); }
+  else { insps=insps.filter(i=>canSeeGu((Store.facilities.get(i.facilityId)||i.facility||{}).gu)); ginsps=ginsps.filter(i=>canSeeGu((Store.sites.get(i.siteId)||i.site||{}).gu)); }
   const facIds=new Set(insps.map(i=>i.facilityId)); if(scope.facilityId) facIds.add(scope.facilityId);
-  let facs=[...Store.facilities.values()].filter(f=>!f.deleted && (scope.inspectionId||scope.facilityId? facIds.has(f.id) : canSeeGu(f.gu)));
-  if (RT.mode==='cloud'){ for(const i of insps){ if(!Store.photosOf(i.id).length) await Store.fetchPhotos(i.id); } }
-  const photos=[]; for(const i of insps) photos.push(...Store.photosOf(i.id));
-  toast(`자료를 묶는 중… (시설 ${facs.length}, 점검 ${insps.length}, 사진 ${photos.length})`);
+  const siteIds=new Set(ginsps.map(i=>i.siteId)); if(scope.siteId) siteIds.add(scope.siteId);
+  let facs=[...Store.facilities.values()].filter(f=>!f.deleted && (single? facIds.has(f.id) : canSeeGu(f.gu)));
+  let sites=[...Store.sites.values()].filter(f=>!f.deleted && (single? siteIds.has(f.id) : canSeeGu(f.gu)));
+  const all=[...insps, ...ginsps];
+  if (RT.mode==='cloud'){ for(const i of all){ if(!Store.photosOf(i.id).length) await Store.fetchPhotos(i.id); } }
+  const photos=[]; for(const i of all) photos.push(...Store.photosOf(i.id));
+  toast(`자료를 묶는 중… (시설 ${facs.length}, 공사장 ${sites.length}, 점검 ${all.length}, 사진·서류 ${photos.length})`);
   const zip=new JSZip(); let missing=0;
-  for (const p of photos){ let blob=await IDB.get('blobs',p.id); if(!blob && p.assetId){ try{ const r=await fetch(assetUrl(p.assetId)); if(r.ok) blob=await r.blob(); }catch(e){} } if(blob) zip.file(`photos/${p.id}.jpg`, blob); else missing++; }
-  const data={format:'mbw-inspect-package', version:1, exportedAt:nowIso(), exportedBy:myName(), facilities:facs, inspections:insps, photos:photos.map(p=>{ const q=Object.assign({},p); delete q.status; delete q.err; return q; }), settings:{standards:Store.settings.standards||null}};
+  for (const p of photos){ let blob=await IDB.get('blobs',p.id); if(!blob && p.assetId){ try{ const r=await fetch(assetUrl(p.assetId)); if(r.ok) blob=await r.blob(); }catch(e){} } if(blob) zip.file(`photos/${p.id}.${p.fileType==='pdf'?'pdf':'jpg'}`, blob); else missing++; }
+  const data={format:'mbw-inspect-package', version:2, exportedAt:nowIso(), exportedBy:myName(), facilities:facs, inspections:insps, sites, gwInspections:ginsps, photos:photos.map(p=>{ const q=Object.assign({},p); delete q.status; delete q.err; return q; }), settings:{standards:Store.settings.standards||null, gwStandards:Store.settings.gwStandards||null}};
   zip.file('data.json', JSON.stringify(data, null, 1));
   zip.file('README.txt', '민방위 비상급수시설 점검 앱 자료 묶음입니다.\n앱의 사용자 메뉴 > 자료 가져오기(ZIP)에서 이 파일을 선택하면 시설·점검·사진이 합쳐집니다.\n같은 ID의 기록은 더 최근에 수정된 쪽이 유지됩니다.\n');
   const blob=await zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}});
-  const base = scope.inspectionId? `점검자료_${((insps[0]||{}).facility||{}).name||''}_${(insps[0]||{}).date||''}` : scope.facilityId? `점검자료_${(Store.facilities.get(scope.facilityId)||{}).name||''}` : '점검자료_전체';
+  const first=all[0]||{}; const base = scope.inspectionId? `점검자료_${((first.facility||first.site)||{}).name||''}_${first.date||''}` : scope.facilityId? `점검자료_${(Store.facilities.get(scope.facilityId)||{}).name||''}` : scope.siteId? `점검자료_${(Store.sites.get(scope.siteId)||{}).name||''}` : '점검자료_전체';
   if (missing) toast(`사진 ${missing}장은 원본을 찾지 못해 제외했습니다`,{ms:5000});
   await saveFile(`${base.replace(/[\\/:*?"<>|]/g,'_')}_${todayStr()}.zip`, blob);
 }
@@ -1493,16 +1563,19 @@ async function importPackage(file){
   let nf=0,ni=0,np=0,skip=0;
   for (const f of data.facilities||[]){ if(!f||!f.id) continue; const cur=Store.facilities.get(f.id); if(!cur || newer(f,cur)){ await Store.save('facilities/'+f.id, f, {silent:true}); nf++; } else skip++; }
   for (const i of data.inspections||[]){ if(!i||!i.id) continue; const cur=Store.inspections.get(i.id); if(!cur || newer(i,cur)){ await Store.save('inspections/'+i.id, i, {silent:true}); ni++; } else skip++; }
-  for (const p of data.photos||[]){ if(!p||!p.id) continue; const cur=Store.photos.get(p.id); const zf=zip.file(`photos/${p.id}.jpg`);
+  for (const f of data.sites||[]){ if(!f||!f.id) continue; const cur=Store.sites.get(f.id); if(!cur || newer(f,cur)){ await Store.save('sites/'+f.id, f, {silent:true}); nf++; } else skip++; }
+  for (const i of data.gwInspections||[]){ if(!i||!i.id) continue; const cur=Store.gwInspections.get(i.id); if(!cur || newer(i,cur)){ await Store.save('gwInspections/'+i.id, i, {silent:true}); ni++; } else skip++; }
+  for (const p of data.photos||[]){ if(!p||!p.id) continue; const cur=Store.photos.get(p.id); const zf=zip.file(`photos/${p.id}.${p.fileType==='pdf'?'pdf':'jpg'}`);
     if (cur && cur.assetId){ if(newer(p,cur)){ const merged=Object.assign({}, cur, {caption:p.caption, rotation:p.rotation, order:p.order, isCover:p.isCover, category:p.category, updatedAt:p.updatedAt}); await Store.save('photos/'+p.id, merged, {silent:true}); } skip++; continue; }
     const q=Object.assign({}, p); const hasBlob=!!zf;
-    if (hasBlob){ const blob=await zf.async('blob'); const jpg=blob.type? blob : new Blob([blob],{type:'image/jpeg'}); await IDB.put('blobs', jpg, p.id); const old=Store.blobUrls.get(p.id); if(old) URL.revokeObjectURL(old); Store.blobUrls.set(p.id, URL.createObjectURL(jpg)); }
+    if (hasBlob){ const blob=await zf.async('blob'); const jpg=new Blob([blob],{type: p.fileType==='pdf'?'application/pdf':'image/jpeg'}); await IDB.put('blobs', jpg, p.id); const old=Store.blobUrls.get(p.id); if(old) URL.revokeObjectURL(old); Store.blobUrls.set(p.id, URL.createObjectURL(jpg)); }
     if (RT.mode==='cloud'){ if(q.assetId && !hasBlob){ q.status='done'; await Store.save('photos/'+p.id, q, {silent:true}); } else { q.assetId=null; q.status='pending'; await Store.save('photos/'+p.id, q, {silent:true, needsAsset:true}); } }
     else { q.assetId=null; q.status= hasBlob? 'local':'missing'; await Store.save('photos/'+p.id, q, {silent:true}); }
     np++;
   }
   if (data.settings && data.settings.standards && !Store.settings.standards && isAdmin()) await Store.save('settings/standards', data.settings.standards, {silent:true});
-  Uploads.run(); toast(`가져오기 완료: 시설 ${nf}, 점검 ${ni}, 사진 ${np} (건너뜀 ${skip})`,{ms:6000}); render();
+  if (data.settings && data.settings.gwStandards && !Store.settings.gwStandards && isAdmin()) await Store.save('settings/gwStandards', data.settings.gwStandards, {silent:true});
+  Uploads.run(); toast(`가져오기 완료: 시설·공사장 ${nf}, 점검 ${ni}, 사진·서류 ${np} (건너뜀 ${skip})`,{ms:6000}); render();
 }
 function pickImportFile(){ let inp=$('#fileInputs input[data-key="import"]'); if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.accept='.zip,application/zip'; inp.dataset.key='import'; $('#fileInputs').appendChild(inp); } inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; inp.value=''; if(f) await importPackage(f); }; inp.click(); }
 
@@ -1515,21 +1588,22 @@ Store.on(what=>{
   if (!what.startsWith('change:')) return;
   const path=what.slice(7); const r=App.route;
   if (Exporting) return;
-  if (r.name==='inspect'){
-    if (path==='inspections/'+r.id){ const rec=Store.recs.get(path); if(rec && rec.dirty){ const i=Store.inspections.get(r.id); if(i) updateStepsBar(i); return; } if(isTyping()){ pendingRerender=true; return; } scheduleRender(); return; }
+  if (r.name==='inspect' || r.name==='gwInspect'){
+    if (path===Store.inspPath(r.id)){ const rec=Store.recs.get(path); if(rec && rec.dirty){ const i=Store.inspections.get(r.id); if(i) updateStepsBar(i); return; } if(isTyping()){ pendingRerender=true; return; } scheduleRender(); return; }
     if (path.startsWith('photos/')){ const p=Store.photos.get(path.slice(7)); if(p && p.inspectionId!==r.id) return; if(isTyping()){ pendingRerender=true; return; } if($('#modalRoot').firstElementChild) return; scheduleRender(); return; }
     if (path.startsWith('settings/')){ if(!isTyping()) scheduleRender(); }
     return;
   }
-  if (r.name==='report'){ if(path==='inspections/'+r.id || path.startsWith('photos/')) scheduleRender(); return; }
+  if (r.name==='report' || r.name==='gwReport'){ if(path===Store.inspPath(r.id) || path.startsWith('photos/')) scheduleRender(); return; }
   if (!isTyping()) scheduleRender();
 });
 document.addEventListener('focusout', ()=>{ if(!pendingRerender) return; setTimeout(()=>{ if(pendingRerender && !isTyping()){ pendingRerender=false; scheduleRender(); } },150); });
 
 (async function boot(){
-  $('#brandBtn').onclick=()=>{ Editor.commit(); App.go({name:'home'}); };
-  $('#homeBtn').onclick=()=>{ Editor.commit(); App.go({name:'home'}); }; $('#backBtn').onclick=()=>App.back();
-  window.addEventListener('popstate', ()=>{ if(App.ignorePop){ App.ignorePop=false; return; } Editor.commit(); if($('#modalRoot').firstElementChild){ closeModal(); try{ history.pushState({mbw:true},''); }catch(e){} return; } if(App.stack.length){ const r=App.stack.pop(); App.go(r,{fromPop:true}); } else { App.go({name:'home'},{replace:true}); } });
+  $('#brandBtn').onclick=()=>{ Editor.commit(); App.go(App.kind==='gw'?{name:'gwHome'}:{name:'home'}); };
+  $('#homeBtn').onclick=()=>{ Editor.commit(); App.go(App.kind==='gw'?{name:'gwHome'}:{name:'home'}); }; $('#backBtn').onclick=()=>App.back();
+  $$('#tabbar button').forEach(b=>b.onclick=()=>App.switchKind(b.dataset.kind));
+  window.addEventListener('popstate', ()=>{ if(App.ignorePop){ App.ignorePop=false; return; } Editor.commit(); if($('#modalRoot').firstElementChild){ closeModal(); try{ history.pushState({mbw:true},''); }catch(e){} return; } if(App.stack.length){ const r=App.stack.pop(); App.go(r,{fromPop:true}); } else { App.go(App.kind==='gw'?{name:'gwHome'}:{name:'home'},{replace:true}); } });
   $('#userBtn').onclick=()=>userPanel();
   SyncUI.update();
   await IDB.open(); await Store.loadLocal(); App.restore(); render();
@@ -1540,11 +1614,486 @@ document.addEventListener('focusout', ()=>{ if(!pendingRerender) return; setTime
   SyncUI.update(); Store.scheduleFlush(300); Uploads.run(); scheduleRender();
   window.__app={Store, RT, IDB, App, Uploads, Editor, render, addPhotos, exportPdf, exportExcel, exportPackage, importPackage, buildItems, PHOTO_CATS, ITEM_IDS};
 })();
+/* ===================== 대형굴착공사장 유출지하수 관리실태 점검 (gw) ===================== */
+const GW_STATUS={pre:'착공 전', ongoing:'착공', done:'준공'};
+const GW_OWNER={public:'공공', private:'민간'};
+const GW_DEFAULT_REF={
+  ref2:'「市 하수도 사용 조례」 제21조 관련', ref3:'「市 하수도 사용 조례」 제26조 관련', ref4:'「市 하수도 사용 조례」 제26조 관련',
+  ref7:'「지하수법」 제9조의4 관련', ref8:'「지하수법」 제9조의2 관련', help8:'21층 이상 또는 연면적 10만㎡ 이상일 때 (지하철역사 300톤, 건축물 30톤)', ref9:'「지하수법」 제9조의2 관련 (지하층 공사 완료 후)',
+  email:'groundwater@seoul.go.kr', notice:'법령·신고 기준 문구는 첨부 양식(2026년 하반기 점검계획)의 참고정보입니다. 신고 대상·위법 여부는 점검자가 확인하며, 앱이 자동으로 판정하지 않습니다.'
+};
+function gwRef(){ return Object.assign({}, GW_DEFAULT_REF, Store.settings.gwStandards||{}); }
+const GW_PHOTO_CATS=[
+  {id:'gw_sign', label:'현장 안내표지판 및 공사장 전경', short:'표지판·전경'},
+  {id:'gw_occur', label:'유출지하수 발생 현황', short:'유출 현황'},
+  {id:'gw_sewer', label:'공공하수도 사용개시신고 관련 서류', short:'하수도 신고서류', docs:true},
+  {id:'gw_meter', label:'유량계측기', short:'유량계측기'},
+  {id:'gw_seal', label:'유량계측기 봉인 상태', short:'봉인 상태'},
+  {id:'gw_sump', label:'집수정', short:'집수정'},
+  {id:'gw_pump', label:'펌프 및 배수관로', short:'펌프·배수관로'},
+  {id:'gw_level', label:'지하수위 계측설비 및 계측자료', short:'지하수위 계측', docs:true},
+  {id:'gw_report', label:'굴착행위·발생현황·이용계획 신고 관련 서류', short:'지하수 신고서류', docs:true},
+  {id:'gw_fix', label:'현장시정 사항 및 기타', short:'현장시정·기타'},
+];
+const GW_CAT_BY_ID=Object.fromEntries(GW_PHOTO_CATS.map(c=>[c.id,c]));
+function catById(id){ return CAT_BY_ID[id]||GW_CAT_BY_ID[id]||null; }
+function catsForInsp(insp){ return insp && insp.kind==='gw'? GW_PHOTO_CATS : PHOTO_CATS; }
+const GW_ITEMS=[
+  {id:'g1', sec:'유출지하수 점검사항', num:'①', title:'유출지하수 발생 여부', opts:{yes:'발생', no:'미발생'}, photo:'gw_occur', help:'발생 시 발생량은 정수(톤/일)로 적습니다. ‘소량’ 같은 문자는 입력할 수 없습니다. 예: 5톤/일'},
+  {id:'g2', sec:'유출지하수 점검사항', num:'②', title:'공공하수도 사용개시신고', opts:{yes:'신고', no:'미신고', na:'해당없음'}, refKey:'ref2', photo:'gw_sewer'},
+  {id:'g3', sec:'유출지하수 점검사항', num:'③', title:'유량계측기 설치 여부', opts:{yes:'설치', no:'미설치', na:'해당없음'}, refKey:'ref3', photo:'gw_meter'},
+  {id:'g4', sec:'유출지하수 점검사항', num:'④', title:'유량계측기 봉인 여부', opts:{yes:'봉인', no:'미봉인', na:'해당없음'}, refKey:'ref4', photo:'gw_seal'},
+  {id:'g5', sec:'유출지하수 점검사항', num:'⑤', title:'집수정 및 배수설비', photo:'gw_sump', photo2:'gw_pump'},
+  {id:'g6', sec:'기타사항', num:'⑥', title:'지하수위 계측 여부 및 계측기간', opts:{yes:'계측', no:'미계측', end:'계측종료'}, photo:'gw_level'},
+  {id:'g7', sec:'기타사항', num:'⑦', title:'지하수에 영향을 미치는 굴착행위 신고 여부', opts:{yes:'신고', no:'미신고', na:'해당없음'}, refKey:'ref7', photo:'gw_report'},
+  {id:'g8', sec:'기타사항', num:'⑧', title:'지하수 유출 발생현황 신고', opts:{yes:'신고', no:'미신고', na:'해당없음'}, refKey:'ref8', helpKey:'help8', photo:'gw_report'},
+  {id:'g9', sec:'기타사항', num:'⑨', title:'유출지하수 이용계획 신고', opts:{yes:'신고', no:'미신고', na:'해당없음'}, refKey:'ref9', photo:'gw_report'},
+  {id:'g10', sec:'기타사항', num:'⑩', title:'기타 지도사항', photo:'gw_fix'},
+];
+const GW_ITEM_BY_ID=Object.fromEntries(GW_ITEMS.map(i=>[i.id,i]));
+const GW_SIGNERS=[{key:'i1',label:'점검자 1'},{key:'i2',label:'점검자 2'},{key:'c',label:'확인자(공사관계자)'}];
+const GW_FIELD_LABELS={date:'점검일', inspector:'점검자', inspectorOrg:'소속', status:'점검 상태(완료 취소)', signers:'서명', photos:'사진', site:'공사장 정보'};
+function gwFieldLabel(f){ if(GW_FIELD_LABELS[f]) return GW_FIELD_LABELS[f]; const m=f.match(/^items\.(g\d+)/); if(m && GW_ITEM_BY_ID[m[1]]) return GW_ITEM_BY_ID[m[1]].num+' '+GW_ITEM_BY_ID[m[1]].title; const m2=f.match(/^signers\.(\w+)/); if(m2){ const s=GW_SIGNERS.find(x=>x.key===m2[1]); return '서명 · '+(s?s.label:m2[1]); } return GW_FIELD_LABELS[f.split('.')[0]]||f; }
+function num(v){ const n=Number(v); return isFinite(n)? n : 0; }
+function fmtNum(v, d=2){ if(v===''||v==null||!isFinite(Number(v))) return ''; const n=Number(v); return n.toLocaleString('ko-KR',{maximumFractionDigits:d}); }
+function sumpVolume(s){ const w=num(s.w), l=num(s.l), h=num(s.h); if(!(w>0&&l>0&&h>0)) return 0; return Math.round(w*l*h*1000)/1000; }
+function gwHash(insp){ const s=JSON.stringify({items:insp.items, site:stripMeta(insp.site||{}), date:insp.date}); let h=5381; for(let i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(16); }
+function sigState(insp, key){ const s=(insp.signers||{})[key]; if(!s||!s.image) return 'none'; return s.hash===gwHash(insp)? 'ok' : 'stale'; }
+
+/* ---- 공사장 ---- */
+function visibleSites(){ return [...Store.sites.values()].filter(s=>!s.deleted && canSeeGu(s.gu)); }
+function gwLatest(siteId){ return Store.gwInspectionsOf(siteId)[0]||null; }
+function gwValidate(insp){ const miss=[]; const it=insp.items||{};
+  if(!insp.date) miss.push({label:'점검일', step:1}); if(!(insp.inspector||'').trim()) miss.push({label:'점검자', step:1});
+  const g1=it.g1||{}; if(!g1.sel) miss.push({label:'① 유출지하수 발생 여부', step:2, focus:'g1'}); else if(g1.sel==='yes' && !/^\d+$/.test(String(g1.amount||''))) miss.push({label:'① 발생량(정수, 톤/일)', step:2, focus:'g1'});
+  for (const id of ['g2','g3','g4']){ const v=it[id]||{}; const d=GW_ITEM_BY_ID[id]; if(!v.sel) miss.push({label:`${d.num} ${d.title}`, step:2, focus:id}); else if(v.sel==='na' && !(v.naReason||'').trim()) miss.push({label:`${d.num} 해당없음 사유`, step:2, focus:id}); }
+  const g6=it.g6||{}; if(!g6.sel) miss.push({label:'⑥ 지하수위 계측 여부', step:3, focus:'g6'}); else { if(g6.sel!=='no' && !g6.start) miss.push({label:'⑥ 계측기간 시작일', step:3, focus:'g6'}); if(g6.sel==='end' && !g6.end) miss.push({label:'⑥ 계측기간 종료일', step:3, focus:'g6'}); if(g6.sel!=='no' && g6.start && g6.end && g6.end<g6.start) miss.push({label:'⑥ 계측기간(종료일이 시작일보다 빠름)', step:3, focus:'g6'}); }
+  for (const id of ['g7','g8','g9']){ const v=it[id]||{}; const d=GW_ITEM_BY_ID[id]; if(!v.sel) miss.push({label:`${d.num} ${d.title}`, step:3, focus:id}); else if(v.sel==='na' && !(v.naReason||'').trim()) miss.push({label:`${d.num} 해당없음 사유`, step:3, focus:id}); }
+  return miss; }
+function gwProgress(insp){ const keys=['g1','g2','g3','g4','g6','g7','g8','g9']; let done=0; for(const k of keys){ if((insp.items[k]||{}).sel) done++; } return {done, total:keys.length}; }
+function gwStatusTag(siteId){ const li=gwLatest(siteId); if(!li) return '<span class="tag none">미점검</span>'; if(li.status==='done'){ const occ=(li.items.g1||{}).sel==='yes'; return occ? '<span class="tag warn">완료 · 유출 발생</span>' : '<span class="tag good">점검 완료</span>'; } return '<span class="tag warn">작성 중</span>'; }
+function gwStatusKey(siteId){ const li=gwLatest(siteId); if(!li) return 'none'; return li.status==='done'? 'done':'draft'; }
+function newSite(){ return {id:uuid(), targetNo:'', gu:(myGus()&&myGus()[0])||'', name:'', location:'', contractor:'', contractorPerson:'', contractorPhone:'', supervisor:'', supervisorPerson:'', supervisorPhone:'', status:'ongoing', owner:'private', floorsAbove:'', floorsBelow:'', depth:'', area:'', startDate:'', endDate:'', note:'', isTest:false, createdAt:nowIso(), createdBy:myId()}; }
+function newGwInspectionDoc(site){
+  const items={ g1:{sel:'',amount:'',note:''}, g2:{sel:'',naReason:'',note:''}, g3:{sel:'',types:[],calc:'',naReason:'',note:''}, g4:{sel:'',naReason:'',note:''}, g5:{sumps:[{w:'',l:'',h:''}],pumps:[{hp:''}],pipe:'',desc:''}, g6:{sel:'',start:'',end:'',notice:''}, g7:{sel:'',naReason:'',note:''}, g8:{sel:'',naReason:'',note:''}, g9:{sel:'',naReason:'',note:''}, g10:{manual:'',fixes:'',opinion:''} };
+  const signers={}; for(const s of GW_SIGNERS) signers[s.key]={org:'',dept:'',name:'',image:null,type:null,at:null,hash:null};
+  return {id:uuid(), kind:'gw', siteId:site.id, site:clone(site), date:todayStr(), inspector:myName(), inspectorOrg:'', status:'draft', items, signers, lastStep:1, editLog:[], createdAt:nowIso(), createdBy:myId(), rev:0};
+}
+
+/* ---- gw 홈 ---- */
+function gwHomeHtml(){
+  const sites=visibleSites(); const ids=new Set(sites.map(s=>s.id)); const year=new Date().getFullYear();
+  const insps=[...Store.gwInspections.values()].filter(i=>ids.has(i.siteId));
+  const doneYear=insps.filter(i=>i.status==='done'&&(i.date||'').startsWith(String(year))).length;
+  const occur=new Set(); const unsigned=[]; for(const s of sites){ const li=gwLatest(s.id); if(li&&li.status==='done'){ if((li.items.g1||{}).sel==='yes') occur.add(s.id); if(GW_SIGNERS.some(x=>sigState(li,x.key)!=='ok')) unsigned.push(li.id); } }
+  const recent=insps.sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,6); const ro=readOnly(); const testCount=sites.filter(s=>s.isTest).length;
+  return `
+  <div class="pagehead"><div><h1>유출지하수 현장점검</h1><p class="sub">대형굴착공사장 유출지하수 관리실태 점검 · ${year}년</p></div>
+    <div class="row">${isAdmin()?`<button class="btn sm" data-go="settings">관리자 설정</button>`:''}<button class="btn sm" id="gwXlsAll">엑셀 내려받기</button></div></div>
+  ${noAccessAtAll()? `<div class="alert warn" style="margin-bottom:14px"><b>배정된 자치구가 없습니다.</b> 관리자에게 담당 자치구 배정을 요청하세요.</div>`:''}
+  ${ro? `<div class="alert info" style="margin-bottom:14px">읽기 전용 권한입니다. 저장하려면 관리자에게 Contributor(기여자) 이상 권한을 요청하세요.</div>`:''}
+  <div class="card">
+    <div class="searchbar"><input type="search" id="gwSearch" placeholder="공사명 또는 위치 검색" value="${esc(App.gwFilters.q)}" aria-label="공사장 검색"><button class="btn primary" id="gwSearchBtn">검색</button></div>
+    <div class="row" style="margin-top:12px"><button class="btn primary lg" id="gwNewInsp" style="flex:1 1 200px" ${ro?'disabled':''}>새 점검 시작</button><button class="btn lg" data-go="sites" style="flex:1 1 140px">공사장 목록</button><button class="btn lg" id="gwNewSite" style="flex:1 1 140px" ${ro?'disabled':''}>공사장 등록</button></div>
+  </div>
+  <div class="stats" style="margin-top:14px">
+    <button class="stat" data-go="sites" data-status=""><span class="lbl">전체 공사장</span><span class="val">${sites.length}${testCount?`<small>테스트 ${testCount} 포함</small>`:''}</span></button>
+    <button class="stat good" data-go="sites" data-status="done"><span class="lbl">점검 완료 (${year})</span><span class="val">${doneYear}</span></button>
+    <button class="stat warn" data-go="sites" data-status="occur"><span class="lbl">유출지하수 발생</span><span class="val">${occur.size}</span></button>
+    <button class="stat poor" data-go="sites" data-status="unsigned"><span class="lbl">서명 미완료·재확인</span><span class="val">${unsigned.length}</span></button>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>최근 점검 <span class="count">${insps.length}건</span></h2>
+    ${recent.length? `<div class="list">${recent.map(i=>gwInspListItem(i)).join('')}` : `<div class="empty"><b>아직 점검 기록이 없습니다</b>공사장을 등록하고 ‘새 점검 시작’을 누르면 여기에 표시됩니다.</div>`}
+  </div></div>`;
+}
+function gwInspListItem(i, opts={}){ const s=Store.sites.get(i.siteId)||i.site||{}; const pr=gwProgress(i); const occ=(i.items.g1||{}).sel==='yes';
+  const st = i.status==='done'? (occ? '<span class="tag warn">유출 발생</span>':'<span class="tag good">점검 완료</span>') : `<span class="tag warn">작성 중 ${Math.round(pr.done/pr.total*100)}%</span>`;
+  const sig = i.status==='done'? (GW_SIGNERS.every(x=>sigState(i,x.key)==='ok')? '<span class="tag good">서명 완료</span>' : GW_SIGNERS.some(x=>sigState(i,x.key)==='stale')? '<span class="tag poor">재확인 필요</span>':'<span class="tag none">서명 없음</span>') : '';
+  const manage = opts.manage && !readOnly()? `<span class="row" style="gap:4px"><button class="btn sm ghost" data-edit-ginsp="${i.id}">수정</button><button class="btn sm ghost" style="color:var(--danger)" data-del-ginsp="${i.id}">삭제</button></span>`:'';
+  return `<div class="listitem" data-ginsp="${i.id}" role="button" tabindex="0"><div class="main"><div class="title">${s.isTest?'<span class="tag test">테스트</span> ':''}${s.targetNo?`<span class="tag info">${esc(s.targetNo)}번</span> `:''}${esc(s.name||'(공사명 없음)')}</div><div class="meta">${esc(s.gu||'')} · ${fmtKDate(i.date)} · ${esc(i.inspector||'점검자 미입력')}</div></div><div class="right">${st}${sig}${manage}</div></div>`; }
+function bindGwInspRows(){ $$('#view [data-ginsp]').forEach(b=>{ const open=()=>openGwInspection(b.dataset.ginsp); b.onclick=e=>{ if(e.target.closest('[data-edit-ginsp],[data-del-ginsp]')) return; open(); }; b.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } }; }); $$('#view [data-edit-ginsp]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); App.go({name:'gwInspect', id:b.dataset.editGinsp, step:1}); }); $$('#view [data-del-ginsp]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); deleteGwInspection(b.dataset.delGinsp); }); }
+function openGwInspection(id){ const i=Store.gwInspections.get(id); if(!i) return; App.go({name:'gwInspect', id, step: i.status==='done'? 6 : (i.lastStep||1)}); }
+function bindGwHome(){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>{ if(b.dataset.status!==undefined) App.gwFilters.status=b.dataset.status; App.go({name:b.dataset.go}); });
+  const go=()=>{ App.gwFilters.q=$('#gwSearch').value.trim(); App.go({name:'sites'}); }; $('#gwSearchBtn').onclick=go; $('#gwSearch').onkeydown=e=>{ if(e.key==='Enter') go(); };
+  $('#gwNewInsp').onclick=()=>{ App.pickMode=true; App.gwFilters.q=''; App.go({name:'sites'}); };
+  $('#gwNewSite').onclick=()=>App.go({name:'siteEdit', id:null});
+  $('#gwXlsAll').onclick=()=>exportGwExcel([...Store.gwInspections.values()].filter(i=>canSeeGu((Store.sites.get(i.siteId)||i.site||{}).gu)), '유출지하수_점검결과_전체');
+  bindGwInspRows();
+}
+
+/* ---- 공사장 목록 ---- */
+function sitesHtml(){
+  const f=App.gwFilters; let sites=visibleSites(); const q=(f.q||'').toLowerCase();
+  if(q) sites=sites.filter(s=>(s.name||'').toLowerCase().includes(q)||(s.location||'').toLowerCase().includes(q)||(s.targetNo||'').toLowerCase().includes(q));
+  if(f.gu) sites=sites.filter(s=>s.gu===f.gu); if(f.cstatus) sites=sites.filter(s=>s.status===f.cstatus);
+  if(f.status){ sites=sites.filter(s=>{ const li=gwLatest(s.id); if(f.status==='occur') return li&&li.status==='done'&&(li.items.g1||{}).sel==='yes'; if(f.status==='unsigned') return li&&li.status==='done'&&GW_SIGNERS.some(x=>sigState(li,x.key)!=='ok'); return gwStatusKey(s.id)===f.status; }); }
+  sites.sort((a,b)=>(a.gu||'').localeCompare(b.gu)||(a.targetNo||'').localeCompare(b.targetNo, 'ko', {numeric:true})||(a.name||'').localeCompare(b.name)); const ro=readOnly();
+  return `
+  <div class="crumbs"><button data-go="gwHome">홈</button><span>›</span><span>공사장 목록</span></div>
+  <div class="pagehead"><div><h1>${App.pickMode?'점검할 공사장 선택':'공사장 목록'}</h1><p class="sub">${App.pickMode?'공사장을 누르면 새 점검이 시작됩니다.':`${sites.length}개 공사장`}</p></div>
+    <div class="row">${App.pickMode?`<button class="btn sm" id="pickCancel">선택 취소</button>`:''}<button class="btn primary" id="addSiteBtn" ${ro?'disabled':''}>공사장 등록</button></div></div>
+  <div class="card">
+    <div class="searchbar"><input type="search" id="siteSearch" placeholder="공사명, 위치, 점검대상 번호" value="${esc(f.q||'')}" aria-label="공사장 검색"></div>
+    <div class="filters">
+      <select id="sfGu" aria-label="자치구"><option value="">자치구 전체</option>${GU_LIST.map(g=>`<option ${f.gu===g?'selected':''}>${g}</option>`).join('')}</select>
+      <select id="sfC" aria-label="공사 현황"><option value="">공사 현황 전체</option>${Object.entries(GW_STATUS).map(([k,v])=>`<option value="${k}" ${f.cstatus===k?'selected':''}>${v}</option>`).join('')}</select>
+      <select id="sfS" aria-label="점검 상태"><option value="">점검 상태 전체</option><option value="none" ${f.status==='none'?'selected':''}>미점검</option><option value="draft" ${f.status==='draft'?'selected':''}>작성 중</option><option value="done" ${f.status==='done'?'selected':''}>점검 완료</option><option value="occur" ${f.status==='occur'?'selected':''}>유출지하수 발생</option><option value="unsigned" ${f.status==='unsigned'?'selected':''}>서명 미완료·재확인</option></select>
+    </div></div>
+  <div class="list" style="margin-top:14px">${sites.length? sites.map(s=>`<div class="listitem" data-site="${s.id}" role="button" tabindex="0"><div class="main"><div class="title">${s.isTest?'<span class="tag test">테스트</span> ':''}${s.targetNo?`<span class="tag info">${esc(s.targetNo)}번</span> `:''}${esc(s.name)}</div><div class="meta">${esc(s.gu)} · ${esc(s.location||'위치 없음')} · ${GW_STATUS[s.status]||''} · ${GW_OWNER[s.owner]||''}${s.depth?` · 굴착 ${esc(s.depth)}m`:''}</div></div><div class="right">${gwStatusTag(s.id)}<span class="small muted">${Store.gwInspectionsOf(s.id).length}회</span>${App.pickMode||ro?'':`<span class="row" style="gap:4px"><button class="btn sm ghost" data-edit-site="${s.id}">수정</button><button class="btn sm ghost" style="color:var(--danger)" data-del-site="${s.id}">삭제</button></span>`}</div></div>`).join('') : `<div class="empty"><b>조건에 맞는 공사장이 없습니다</b>검색어나 필터를 바꾸거나 새 공사장을 등록하세요.</div>`}</div>`;
+}
+function bindSites(){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  const apply=debounce(()=>{ App.gwFilters.q=$('#siteSearch').value.trim(); App.gwFilters.gu=$('#sfGu').value; App.gwFilters.cstatus=$('#sfC').value; App.gwFilters.status=$('#sfS').value; const pos=window.scrollY; render(); window.scrollTo(0,pos); const inp=$('#siteSearch'); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); },250);
+  $('#siteSearch').oninput=apply; ['sfGu','sfC','sfS'].forEach(id=>$('#'+id).onchange=()=>apply.flush());
+  $('#addSiteBtn').onclick=()=>App.go({name:'siteEdit', id:null}); const pc=$('#pickCancel'); if(pc) pc.onclick=()=>{ App.pickMode=false; render(); };
+  $$('#view [data-site]').forEach(b=>{ const open=()=>{ if(App.pickMode){ App.pickMode=false; startGwInspection(b.dataset.site); } else App.go({name:'site', id:b.dataset.site}); }; b.onclick=e=>{ if(e.target.closest('[data-edit-site],[data-del-site]')) return; open(); }; b.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } }; });
+  $$('#view [data-edit-site]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); App.go({name:'siteEdit', id:b.dataset.editSite}); });
+  $$('#view [data-del-site]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); deleteSite(b.dataset.delSite); });
+}
+
+/* ---- 공사장 등록/수정 ---- */
+function siteEditHtml(id){ const s = id? (Store.sites.get(id)||newSite()) : newSite();
+  const seg=(name,opts,val)=>`<div class="seg" data-seg="${name}">${Object.entries(opts).map(([k,v])=>`<button type="button" data-val="${k}" aria-pressed="${val===k}">${v}</button>`).join('')}</div>`;
+  return `
+  <div class="crumbs"><button data-go="gwHome">홈</button><span>›</span><button data-go="sites">공사장 목록</button><span>›</span><span>${id?'공사장 수정':'공사장 등록'}</span></div>
+  <div class="pagehead"><h1>${id?'공사장 정보 수정':'새 공사장 등록'}</h1></div>
+  <form id="siteForm" class="card stack" autocomplete="off">
+    <div class="grid3">
+      <div class="field"><label for="s_no">점검대상 번호</label><input id="s_no" type="text" inputmode="numeric" value="${esc(s.targetNo||'')}" placeholder="예: 12"></div>
+      <div class="field"><label for="s_gu">자치구 <span class="req">*</span></label><select id="s_gu" required><option value="">선택</option>${GU_LIST.map(g=>`<option ${s.gu===g?'selected':''}>${g}</option>`).join('')}</select></div>
+      <div class="field"><label>공사 현황</label>${seg('status', GW_STATUS, s.status||'ongoing')}</div>
+    </div>
+    <div class="field"><label for="s_name">공사명 <span class="req">*</span></label><input id="s_name" type="text" required value="${esc(s.name||'')}" placeholder="예: ○○동 ○○번지 ○○빌딩 신축공사"></div>
+    <div class="field"><label for="s_loc">위치</label><input id="s_loc" type="text" value="${esc(s.location||'')}" placeholder="예: ○○동 ○○번지"></div>
+    <div class="grid3">
+      <div class="field"><label for="s_con">시공사명</label><input id="s_con" type="text" value="${esc(s.contractor||'')}"></div>
+      <div class="field"><label for="s_conp">시공사 담당자 성명</label><input id="s_conp" type="text" value="${esc(s.contractorPerson||'')}"></div>
+      <div class="field"><label for="s_cont">시공사 연락처</label><input id="s_cont" type="tel" value="${esc(s.contractorPhone||'')}" placeholder="010-0000-0000"></div>
+      <div class="field"><label for="s_sup">감리사명</label><input id="s_sup" type="text" value="${esc(s.supervisor||'')}"></div>
+      <div class="field"><label for="s_supp">감리사 담당자 성명</label><input id="s_supp" type="text" value="${esc(s.supervisorPerson||'')}"></div>
+      <div class="field"><label for="s_supt">감리사 연락처</label><input id="s_supt" type="tel" value="${esc(s.supervisorPhone||'')}"></div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>소유 주체</label>${seg('owner', GW_OWNER, s.owner||'private')}</div>
+      <div class="field"><label for="s_fa">지상 층수</label><input id="s_fa" type="number" inputmode="numeric" min="0" value="${esc(s.floorsAbove??'')}"></div>
+      <div class="field"><label for="s_fb">지하 층수</label><input id="s_fb" type="number" inputmode="numeric" min="0" value="${esc(s.floorsBelow??'')}"></div>
+      <div class="field"><label for="s_dep">굴착깊이 (m)</label><input id="s_dep" type="number" inputmode="decimal" step="0.1" min="0" value="${esc(s.depth??'')}"></div>
+      <div class="field"><label for="s_area">연면적 (㎡)</label><input id="s_area" type="number" inputmode="decimal" step="0.1" min="0" value="${esc(s.area??'')}"></div>
+      <div class="field"><label for="s_start">착공일자</label><input id="s_start" type="date" value="${esc(s.startDate||'')}"></div>
+      <div class="field"><label for="s_end">준공 또는 준공예정일자</label><input id="s_end" type="date" value="${esc(s.endDate||'')}"></div>
+    </div>
+    <div class="field"><label for="s_note">기타 참고사항</label><textarea id="s_note">${esc(s.note||'')}</textarea></div>
+    <label class="check"><input type="checkbox" id="s_test" ${s.isTest?'checked':''}> 테스트 공사장(예시 데이터)으로 표시</label>
+    <div class="help">공사장 정보를 수정해도 이미 작성된 점검표의 공사장 정보는 점검 당시 기록으로 유지됩니다. 점검일은 점검 기록마다 따로 입력합니다.</div>
+    <div class="row"><button class="btn primary lg" type="submit" style="flex:1">${id?'수정 저장':'등록'}</button><button class="btn lg" type="button" id="siteCancel">취소</button>${id? `<button class="btn lg danger" type="button" id="siteDelete">삭제</button>`:''}</div>
+  </form>`; }
+function bindSiteEdit(id){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  const form=$('#siteForm'); bindSeg(form); $('#siteCancel').onclick=()=>App.go(id?{name:'site',id}:{name:'sites'});
+  const del=$('#siteDelete'); if(del) del.onclick=()=>deleteSite(id);
+  form.onsubmit=async e=>{ e.preventDefault(); if(readOnly()){ toast('읽기 전용 권한이라 저장할 수 없습니다',{err:true}); return; }
+    const gu=$('#s_gu').value, name=$('#s_name').value.trim(); if(!gu||!name){ toast('자치구와 공사명은 필수입니다',{err:true}); return; }
+    const prev=id? Store.sites.get(id): null; const v=sel=>$(sel).value.trim();
+    const site=Object.assign({}, prev||newSite(), {id:id||uuid(), targetNo:v('#s_no'), gu, name, location:v('#s_loc'), contractor:v('#s_con'), contractorPerson:v('#s_conp'), contractorPhone:v('#s_cont'), supervisor:v('#s_sup'), supervisorPerson:v('#s_supp'), supervisorPhone:v('#s_supt'), status:segVal(form,'status'), owner:segVal(form,'owner'), floorsAbove:v('#s_fa'), floorsBelow:v('#s_fb'), depth:v('#s_dep'), area:v('#s_area'), startDate:$('#s_start').value, endDate:$('#s_end').value, note:v('#s_note'), isTest:$('#s_test').checked, createdAt:(prev&&prev.createdAt)||nowIso(), createdBy:(prev&&prev.createdBy)||myId()});
+    await Store.save('sites/'+site.id, site); toast(id?'공사장 정보를 수정했습니다':'공사장을 등록했습니다'); App.go({name:'site', id:site.id}); };
+}
+function siteInfoRows(s){ return `<div class="grid2 small" style="gap:6px 14px">
+  <div><span class="muted">점검대상 번호</span> · ${esc(s.targetNo||'-')}</div><div><span class="muted">자치구</span> · ${esc(s.gu||'-')}</div>
+  <div style="grid-column:1/-1"><span class="muted">위치</span> · ${esc(s.location||'-')}</div>
+  <div><span class="muted">시공사</span> · ${esc(s.contractor||'-')} ${s.contractorPerson?`(${esc(s.contractorPerson)}${s.contractorPhone?' · '+esc(s.contractorPhone):''})`:''}</div>
+  <div><span class="muted">감리사</span> · ${esc(s.supervisor||'-')} ${s.supervisorPerson?`(${esc(s.supervisorPerson)}${s.supervisorPhone?' · '+esc(s.supervisorPhone):''})`:''}</div>
+  <div><span class="muted">공사 현황</span> · ${GW_STATUS[s.status]||'-'} &nbsp; <span class="muted">소유 주체</span> · ${GW_OWNER[s.owner]||'-'}</div>
+  <div><span class="muted">층수</span> · 지상 ${esc(s.floorsAbove||'-')}층 / 지하 ${esc(s.floorsBelow||'-')}층</div>
+  <div><span class="muted">굴착깊이</span> · ${s.depth!==''&&s.depth!=null? esc(s.depth)+' m':'-'} &nbsp; <span class="muted">연면적</span> · ${s.area!==''&&s.area!=null? fmtNum(s.area)+' ㎡':'-'}</div>
+  <div><span class="muted">착공</span> · ${fmtKDate(s.startDate)||'-'} &nbsp; <span class="muted">준공(예정)</span> · ${fmtKDate(s.endDate)||'-'}</div>
+  ${s.note?`<div style="grid-column:1/-1"><span class="muted">참고</span> · ${esc(s.note)}</div>`:''}</div>`; }
+function siteHtml(id){ const s=Store.sites.get(id); if(!s) return `<div class="empty"><b>공사장을 찾을 수 없습니다</b><button class="btn" data-go="sites">공사장 목록</button></div>`; const insps=Store.gwInspectionsOf(id); const ro=readOnly();
+  return `
+  <div class="crumbs"><button data-go="gwHome">홈</button><span>›</span><button data-go="sites">공사장 목록</button><span>›</span><span>${esc(s.name)}</span></div>
+  <div class="pagehead"><div><h1>${s.isTest?'<span class="tag test">테스트</span> ':''}${s.targetNo?`<span class="tag info">${esc(s.targetNo)}번</span> `:''}${esc(s.name)}</h1><p class="sub">${esc(s.gu)} · ${esc(s.location||'위치 없음')}</p></div><div class="row">${gwStatusTag(id)}<button class="btn sm" id="siteEditBtn" ${ro?'disabled':''}>정보 수정</button>${!ro?`<button class="btn sm danger" id="siteDelBtn">삭제</button>`:''}</div></div>
+  <div class="card"><h2>공사장 기본정보</h2>${siteInfoRows(s)}</div>
+  <div class="card"><div class="row between"><h2 style="margin:0">점검 기록 <span class="count">${insps.length}건</span></h2><div class="row"><button class="btn sm" id="siteXls" ${insps.length?'':'disabled'}>엑셀</button><button class="btn sm" id="siteZip">ZIP</button><button class="btn primary" id="siteNewInsp" ${ro?'disabled':''}>새 점검 시작</button></div></div>
+    <div class="list" style="margin-top:12px">${insps.length? insps.map(i=>gwInspListItem(i,{manage:true})).join(''): `<div class="empty"><b>점검 기록이 없습니다</b>‘새 점검 시작’을 눌러 첫 점검을 시작하세요.</div>`}</div>
+    <p class="help" style="margin-top:8px">기록을 누르면 열립니다. 같은 공사장의 과거 점검은 날짜별로 여기에 쌓입니다.</p></div>`; }
+function bindSite(id){
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go}));
+  const e=$('#siteEditBtn'); if(e) e.onclick=()=>App.go({name:'siteEdit', id}); const d=$('#siteDelBtn'); if(d) d.onclick=()=>deleteSite(id);
+  const n=$('#siteNewInsp'); if(n) n.onclick=()=>startGwInspection(id);
+  const x=$('#siteXls'); if(x) x.onclick=()=>exportGwExcel(Store.gwInspectionsOf(id), `유출지하수_점검결과_${(Store.sites.get(id)||{}).name||id}`);
+  const z=$('#siteZip'); if(z) z.onclick=()=>exportPackage({siteId:id});
+  bindGwInspRows();
+}
+function startGwInspection(siteId){ const site=Store.sites.get(siteId); if(!site) return; if(readOnly()){ toast('읽기 전용 권한이라 점검을 시작할 수 없습니다',{err:true}); return; }
+  const drafts=Store.gwInspectionsOf(siteId).filter(i=>i.status==='draft');
+  const create=async()=>{ const insp=newGwInspectionDoc(site); await Store.save('gwInspections/'+insp.id, insp); App.go({name:'gwInspect', id:insp.id, step:1}); };
+  if(drafts.length){ openModal(`<h2>작성 중인 점검이 있습니다</h2><p class="muted">${esc(site.name)} · ${fmtKDate(drafts[0].date)} 점검이 작성 중입니다.</p><div class="toolbar"><button class="btn primary" id="mContinue">이어서 작성</button><button class="btn" id="mNew">새로 시작</button><button class="btn ghost" id="mClose">취소</button></div>`); $('#mContinue').onclick=()=>{ closeModal(); App.go({name:'gwInspect', id:drafts[0].id, step:drafts[0].lastStep||1}); }; $('#mNew').onclick=()=>{ closeModal(); create(); }; $('#mClose').onclick=closeModal; }
+  else create(); }
+function deleteSite(id){ const s=Store.sites.get(id); if(!s) return; const insps=Store.gwInspectionsOf(id); let photos=0; for(const i of insps) photos+=Store.photosOf(i.id).length;
+  openModal(`<h2>공사장을 삭제할까요?</h2><p>${esc(s.name)} · ${esc(s.gu)}</p>${insps.length? `<div class="alert poor small"><span>이 공사장의 점검 기록 ${insps.length}건과 사진·서류 ${photos}건도 함께 삭제됩니다. 복구할 수 없습니다. 보관이 필요하면 먼저 ‘ZIP’으로 내보내세요.</span></div>`:'<p class="small muted">점검 기록이 없는 공사장입니다.</p>'}<div class="toolbar"><button class="btn" id="mClose">취소</button><button class="btn danger" id="mDel">${insps.length?'기록 포함 삭제':'삭제'}</button></div>`, {sticky:true});
+  $('#mClose').onclick=closeModal; $('#mDel').onclick=async()=>{ $('#mDel').disabled=true; for(const i of insps){ for(const p of Store.photosOf(i.id)) await deletePhoto(p.id,{silent:true}); await Store.remove('gwInspections/'+i.id); } await Store.remove('sites/'+id); closeModal(); toast('공사장을 삭제했습니다'); App.go({name:'sites'}); }; }
+async function deleteGwInspection(id){ const insp=Store.gwInspections.get(id); if(!insp) return; const s=insp.site||{}; const ps=Store.photosOf(id);
+  openModal(`<h2>점검 기록을 삭제할까요?</h2><p>${esc(s.name||'')} · ${fmtKDate(insp.date)} · ${insp.status==='done'?'점검 완료':'작성 중'}</p><p class="small muted">점검표 입력, 서명, 사진·서류 ${ps.length}건이 함께 삭제됩니다. 복구할 수 없습니다.</p><div class="toolbar"><button class="btn" id="mClose">취소</button><button class="btn danger" id="mDel">삭제</button></div>`, {sticky:true});
+  $('#mClose').onclick=closeModal; $('#mDel').onclick=async()=>{ $('#mDel').disabled=true; for(const p of ps) await deletePhoto(p.id,{silent:true}); await Store.remove('gwInspections/'+id); closeModal(); toast('점검 기록을 삭제했습니다'); App.go({name:'site', id:insp.siteId}); }; }
+function reopenGwInspection(id){ const insp=Store.gwInspections.get(id); if(!insp||insp.status!=='done') return; insp.status='draft'; insp.reopenedAt=nowIso(); insp.reopenedBy=myId(); insp.lastStep=1; pushEditLog(insp,['status']); Store.save('gwInspections/'+insp.id, insp); toast('작성 중 상태로 되돌렸습니다.'); App.go({name:'gwInspect', id, step:1}); }
+
+/* ---- 점검 편집기 ---- */
+const GW_STEPS=['기본정보','유출지하수','기타사항','사진·서류','서명','최종 검토'];
+function gwStepState(insp, n){ const it=insp.items; const has=k=>!!(it[k]||{}).sel;
+  if(n===1) return (insp.date&&insp.inspector)?'done':'partial';
+  if(n===2){ const a=['g1','g2','g3','g4'].map(has); return a.every(Boolean)?'done': a.some(Boolean)?'partial':''; }
+  if(n===3){ const a=['g6','g7','g8','g9'].map(has); return a.every(Boolean)?'done': a.some(Boolean)?'partial':''; }
+  if(n===4) return Store.photosOf(insp.id).length? 'done':'';
+  if(n===5){ const st=GW_SIGNERS.map(s=>sigState(insp,s.key)); return st.every(x=>x==='ok')?'done': st.some(x=>x!=='none')?'partial':''; }
+  if(n===6) return insp.status==='done'?'done':''; return ''; }
+function renderGwInspect(route){ const insp=Store.gwInspections.get(route.id); const view=$('#view');
+  if(!insp){ view.innerHTML=`<div class="empty"><b>점검 기록을 찾을 수 없습니다</b><button class="btn" onclick="App.go({name:'gwHome'})">홈으로</button></div>`; return; }
+  Editor.id=insp.id; Store.subscribePhotos(insp.id);
+  const step=Math.min(6,Math.max(1,route.step||1)); if(insp.lastStep!==step && insp.status!=='done'){ insp.lastStep=step; Store.save('gwInspections/'+insp.id, insp, {silent:true}); }
+  const s=insp.site||{}; const pr=gwProgress(insp); const ro=readOnly();
+  view.innerHTML=`
+  <div class="crumbs"><button data-go="gwHome">홈</button><span>›</span><button data-site="${insp.siteId}">${esc(s.name||'공사장')}</button><span>›</span><span>${fmtKDate(insp.date)} 점검</span></div>
+  <div class="pagehead" style="margin-bottom:10px"><div><h1 style="font-size:20px">${s.isTest?'<span class="tag test">테스트</span> ':''}${s.targetNo?`<span class="tag info">${esc(s.targetNo)}번</span> `:''}${esc(s.name||'')}</h1><p class="sub">${esc(s.gu||'')} · ${esc(s.location||'')}</p></div>
+    <div class="row">${insp.status==='done'? `<span class="tag good" style="font-size:13px;padding:4px 10px">점검 완료</span>`:`<span class="tag warn" style="font-size:13px;padding:4px 10px">작성 중</span>`}<button class="btn sm" id="toReport">보고서</button></div></div>
+  ${insp.status==='done'? `<div class="alert info small" style="margin-bottom:10px">점검 완료된 기록입니다. 내용을 수정하면 수정일시와 수정자가 기록되고, 서명이 있는 경우 ‘재확인 필요’로 표시됩니다.</div>`:''}
+  ${ro? `<div class="alert warn small" style="margin-bottom:10px">읽기 전용 권한입니다. 입력 내용은 저장되지 않습니다.</div>`:''}
+  <div class="progress" aria-label="점검 진행률"><i style="width:${Math.round(pr.done/pr.total*100)}%"></i></div>
+  <div class="steps six" style="margin-top:10px">${GW_STEPS.map((n,i)=>`<button type="button" data-step="${i+1}" class="${gwStepState(insp,i+1)}" ${step===i+1?'aria-current="step"':''}><span class="n">${i+1}</span>${n}</button>`).join('')}</div>
+  <div id="stepBody">${gwStepHtml(insp, step)}</div>`;
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go})); $$('#view [data-site]').forEach(b=>b.onclick=()=>App.go({name:'site', id:b.dataset.site}));
+  $$('#view [data-step]').forEach(b=>b.onclick=()=>{ Editor.commit(); App.go({name:'gwInspect', id:insp.id, step:+b.dataset.step}); });
+  $('#toReport').onclick=()=>{ Editor.commit(); App.go({name:'gwReport', id:insp.id}); };
+  bindGwStep(insp, step); renderGwBottomBar(insp, step);
+  if(route.focusItem){ const el=$('#gitem-'+route.focusItem); if(el){ el.scrollIntoView({block:'center'}); } route.focusItem=null; }
+}
+function renderGwBottomBar(insp, step){ const done=insp.status==='done';
+  $('#bottombar').innerHTML=`<div class="bottombar"><div class="bottombar-in"><button class="btn" id="prevStep" ${step===1?'disabled':''}>이전</button><div class="savestate" id="saveState">저장됨</div>${step<6? `<button class="btn primary" id="nextStep">다음</button>` : done? `<button class="btn primary" id="viewReport">보고서 보기</button>` : `<button class="btn primary" id="completeBtn">점검 완료</button>`}</div></div>`;
+  $('#prevStep').onclick=()=>{ Editor.commit(); App.go({name:'gwInspect', id:insp.id, step:step-1}); }; const nx=$('#nextStep'); if(nx) nx.onclick=()=>{ Editor.commit(); App.go({name:'gwInspect', id:insp.id, step:step+1}); };
+  const vr=$('#viewReport'); if(vr) vr.onclick=()=>{ Editor.commit(); App.go({name:'gwReport', id:insp.id}); }; const cb=$('#completeBtn'); if(cb) cb.onclick=()=>completeGwInspection(insp.id); SyncUI.update(); }
+function gwStepHtml(insp, step){ switch(step){ case 1: return gwBasicHtml(insp); case 2: return gwItemsHtml(insp, '유출지하수 점검사항'); case 3: return gwItemsHtml(insp, '기타사항'); case 4: return gwPhotosHtml(insp); case 5: return gwSignHtml(insp); case 6: return gwReviewHtml(insp); } return ''; }
+function gwBasicHtml(insp){ const s=insp.site||{}; const live=Store.sites.get(insp.siteId); const changed= live && !deepEq(stripMeta(live), stripMeta(s)); const ps=Store.photosOf(insp.id).length;
+  return `<div class="card"><h2>점검 대상 공사장 <span class="count">점검 당시 기록</span></h2>${siteInfoRows(s)}${changed? `<div class="alert warn small" style="margin-top:10px"><span>공사장 정보가 바뀌었습니다. 이 점검에 최신 정보를 반영하려면 누르세요(서명이 있으면 재확인이 필요해집니다).</span><button class="btn sm" data-act="refresh-site">최신 정보 반영</button></div>`:''}
+    <div class="row" style="margin-top:10px"><button class="btn sm" data-site-edit="${insp.siteId}">공사장 정보 수정</button></div></div>
+  <div class="card stack"><h2>점검 기본정보</h2><div class="grid2">
+    <div class="field"><label for="g_date">점검일 <span class="req">*</span></label><input id="g_date" type="date" data-field="date" value="${esc(insp.date||'')}"></div>
+    <div class="field"><label for="g_insp">점검자 <span class="req">*</span></label><input id="g_insp" type="text" data-field="inspector" value="${esc(insp.inspector||'')}" placeholder="이름"></div>
+    <div class="field"><label for="g_org">소속</label><input id="g_org" type="text" data-field="inspectorOrg" value="${esc(insp.inspectorOrg||'')}" placeholder="예: 서울시 물순환안전국 / ○○구 ○○과"></div></div>
+    <div class="help">보고서 하단 서명란의 점검자·확인자 소속·부서·성명은 ‘5 서명’ 단계에서 따로 적습니다. 입력은 자동 저장됩니다.</div></div>
+  ${gwPhotoRowHtml(insp,'gw_sign')}
+  <div class="card stack" id="manageCard"><h2>기록 관리</h2>
+    ${insp.status==='done'? `<div class="row between"><div class="small"><b>완료 취소(작성 중으로 되돌리기)</b><br><span class="muted">결과를 다시 고치고 싶을 때 사용합니다.</span></div><button class="btn sm" data-act="greopen" ${readOnly()?'disabled':''}>작성 중으로 되돌리기</button></div><hr class="sep">`:''}
+    <div class="row between"><div class="small"><b>이 점검 기록 삭제</b><br><span class="muted">입력 내용, 서명, 사진·서류 ${ps}건이 함께 삭제되며 되돌릴 수 없습니다.</span></div><button class="btn sm danger" data-act="gdelete" ${readOnly()?'disabled':''}>기록 삭제</button></div></div>`; }
+function gwPhotoRowHtml(insp, cat, title){ const c=GW_CAT_BY_ID[cat]; const ps=Store.photosOf(insp.id, cat);
+  return `<div class="card"><div class="photorow"><span class="small muted" style="flex:1 1 100%">${title? esc(title)+' → ':'관련 사진 → '}<b>${esc(c.label)}</b> ${ps.length?`(${ps.length}건)`:''}</span>
+    <button class="btn sm" data-act="photo-camera" data-cat="${cat}">📷 촬영</button><button class="btn sm" data-act="photo-album" data-cat="${cat}">앨범</button>${c.docs?`<button class="btn sm" data-act="photo-pdf" data-cat="${cat}">PDF 첨부</button>`:''}
+    <div class="thumbs" style="display:flex">${ps.slice(0,8).map(p=>thumbHtml(p,{sm:true})).join('')}</div></div></div>`; }
+function gwChoice(id, v, opts){ const cls=k=> id==='g1'? (k==='yes'?'poor':'good') : (k==='yes'?'good':k==='no'?'poor':'na'); return `<div class="seg" role="group">${Object.entries(opts).map(([k,l])=>`<button type="button" class="${cls(k)}" data-act="gsel" data-val="${k}" aria-pressed="${v.sel===k}">${l}</button>`).join('')}</div>`; }
+function gwItemHtml(insp, it){ const v=insp.items[it.id]; const ref=gwRef(); const refTxt=it.refKey? ref[it.refKey]:''; const help=it.helpKey? ref[it.helpKey]: it.help||'';
+  const stateCls = v.sel==='yes'? (it.id==='g1'?'poor':'good') : v.sel==='no'? (it.id==='g1'?'good':'poor') : v.sel? 'na' : '';
+  const stateLabel = v.sel? (it.opts||{})[v.sel] : '미입력';
+  let body='';
+  if (it.id==='g1'){ body=`${gwChoice(it.id,v,it.opts)}${v.sel==='yes'? `<div class="field"><label>발생량 (톤/일, 정수) <span class="req">*필수</span></label><input type="number" inputmode="numeric" step="1" min="0" pattern="\\d*" data-field="items.g1.amount" value="${esc(v.amount||'')}" class="${/^\d+$/.test(String(v.amount||''))?'':'invalid'}" placeholder="예: 5"></div>`:''}<div class="field"><label>비고 (지도·조치 내용 등)</label><input type="text" data-field="items.g1.note" value="${esc(v.note||'')}" placeholder="선택 입력"></div>`; }
+  else if (['g2','g4','g7','g8','g9'].includes(it.id)){ body=`${gwChoice(it.id,v,it.opts)}${v.sel==='na'? `<div class="field"><label>해당없음 사유 <span class="req">*필수</span></label><input type="text" data-field="items.${it.id}.naReason" value="${esc(v.naReason||'')}" class="${(v.naReason||'').trim()?'':'invalid'}" placeholder="보고서 ‘해당없음 사유’란에 출력"></div>`:''}${v.sel==='no'? `<div class="field"><label>미신고·미봉인 관련 설명 및 지도·조치 내용</label><textarea data-field="items.${it.id}.note" placeholder="예: 신고 안내 후 ○월 ○일까지 신고 예정">${esc(v.note||'')}</textarea></div>`: v.sel==='yes'? `<div class="field"><label>비고</label><input type="text" data-field="items.${it.id}.note" value="${esc(v.note||'')}" placeholder="선택 입력"></div>`:''}`; }
+  else if (it.id==='g3'){ body=`${gwChoice(it.id,v,it.opts)}${v.sel==='yes'? `<div class="field"><label>계측기 종류 (복수 선택)</label><div class="seg">${['유량계','시간계','전력계'].map(t=>`<button type="button" data-act="gtype" data-val="${t}" aria-pressed="${(v.types||[]).includes(t)}">${t}</button>`).join('')}</div></div>`:''}${v.sel==='no'? `<div class="field"><label>계측기 미설치 시 산출방법</label><input type="text" data-field="items.g3.calc" value="${esc(v.calc||'')}" placeholder="예: 펌프 용량×가동시간"></div><div class="field"><label>관련 설명 및 지도·조치 내용</label><textarea data-field="items.g3.note">${esc(v.note||'')}</textarea></div>`:''}${v.sel==='na'? `<div class="field"><label>해당없음 사유 <span class="req">*필수</span></label><input type="text" data-field="items.g3.naReason" value="${esc(v.naReason||'')}" class="${(v.naReason||'').trim()?'':'invalid'}"></div>`:''}${v.sel==='yes'? `<div class="field"><label>비고</label><input type="text" data-field="items.g3.note" value="${esc(v.note||'')}" placeholder="선택 입력"></div>`:''}`; }
+  else if (it.id==='g5'){ const sumps=v.sumps||[]; const pumps=v.pumps||[]; const total=sumps.reduce((a,s)=>a+sumpVolume(s),0);
+    body=`<div class="field"><label>집수정 규모 (가로 × 세로 × 높이, m) — 용적은 자동 계산</label>
+      <div class="stack" id="sumpList">${sumps.map((s,i)=>`<div class="row sumprow" data-i="${i}"><input type="number" inputmode="decimal" step="0.01" min="0" data-field="items.g5.sumps.${i}.w" value="${esc(s.w)}" placeholder="가로" style="flex:1;min-width:70px"><span>×</span><input type="number" inputmode="decimal" step="0.01" min="0" data-field="items.g5.sumps.${i}.l" value="${esc(s.l)}" placeholder="세로" style="flex:1;min-width:70px"><span>×</span><input type="number" inputmode="decimal" step="0.01" min="0" data-field="items.g5.sumps.${i}.h" value="${esc(s.h)}" placeholder="높이" style="flex:1;min-width:70px"><span class="tag info vol" data-i="${i}" style="font-size:13px">${fmtNum(sumpVolume(s),3)} ㎥</span>${sumps.length>1?`<button class="btn sm ghost" data-act="sump-del" data-i="${i}" aria-label="집수정 삭제">✕</button>`:''}</div>`).join('')}</div>
+      <div class="row" style="margin-top:6px"><button class="btn sm" data-act="sump-add">+ 집수정 추가</button><span class="small muted">합계 <b id="sumpTotal">${fmtNum(total,3)}</b> ㎥</span></div></div>
+    <div class="field"><label>펌프 용량 (HP)</label><div class="stack" id="pumpList">${pumps.map((p,i)=>`<div class="row" data-i="${i}"><input type="number" inputmode="decimal" step="0.1" min="0" data-field="items.g5.pumps.${i}.hp" value="${esc(p.hp)}" placeholder="HP" style="flex:1;min-width:90px"><span class="small muted">HP</span>${pumps.length>1?`<button class="btn sm ghost" data-act="pump-del" data-i="${i}" aria-label="펌프 삭제">✕</button>`:''}</div>`).join('')}</div><div class="row" style="margin-top:6px"><button class="btn sm" data-act="pump-add">+ 펌프 추가</button></div></div>
+    <div class="grid2"><div class="field"><label>배수관로 직경 (㎜)</label><input type="number" inputmode="numeric" min="0" data-field="items.g5.pipe" value="${esc(v.pipe||'')}"></div><div class="field"><label>추가 설명</label><input type="text" data-field="items.g5.desc" value="${esc(v.desc||'')}"></div></div>`; }
+  else if (it.id==='g6'){ body=`${gwChoice(it.id,v,it.opts)}${v.sel && v.sel!=='no'? `<div class="grid2"><div class="field"><label>계측기간 시작일 <span class="req">*</span></label><input type="date" data-field="items.g6.start" value="${esc(v.start||'')}" class="${v.start?'':'invalid'}"></div><div class="field"><label>계측기간 종료일 ${v.sel==='end'?'<span class="req">*</span>':'<span class="muted small">(계측 중이면 비워 둠)</span>'}</label><input type="date" data-field="items.g6.end" value="${esc(v.end||'')}" class="${v.sel==='end'&&!v.end?'invalid':''}"></div></div>`:''}
+    <div class="field"><label>지하수위 및 지반침하 계측자료 제출 안내 <span class="small muted">(${esc(ref.email)})</span></label><div class="seg"><button type="button" class="good" data-act="gnotice" data-val="yes" aria-pressed="${v.notice==='yes'}">예 (안내함)</button><button type="button" data-act="gnotice" data-val="no" aria-pressed="${v.notice==='no'}">아니오</button></div><div class="help">안내 여부만 기록합니다. 이메일이 자동으로 발송되지는 않습니다.</div></div>`; }
+  else if (it.id==='g10'){ body=`<div class="field"><label>「공사장 지하수 관리 매뉴얼」 안내문 배부</label><div class="seg"><button type="button" class="good" data-act="gmanual" data-val="yes" aria-pressed="${v.manual==='yes'}">예</button><button type="button" data-act="gmanual" data-val="no" aria-pressed="${v.manual==='no'}">아니오</button></div></div>
+    <div class="field"><label>현장시정 사항</label><textarea data-field="items.g10.fixes" placeholder="현장에서 시정을 요구한 사항을 줄바꿈으로 구분해 적습니다">${esc(v.fixes||'')}</textarea></div>
+    <div class="field"><label>추가 의견</label><textarea data-field="items.g10.opinion">${esc(v.opinion||'')}</textarea></div>`; }
+  const hasState = it.opts? `<span class="state tag ${stateCls||'none'}">${esc(stateLabel)}</span>`:'';
+  return `<section class="item ${stateCls}" data-gitem="${it.id}" id="gitem-${it.id}">
+    <div class="ihead"><span class="num">${it.num}</span><div class="t"><h3>${esc(it.title)}</h3>${refTxt?`<p class="note">※ ${esc(refTxt)}</p>`:''}${help?`<p class="note">※ ${esc(help)}</p>`:''}</div>${hasState}</div>
+    ${body}
+    ${it.photo? gwPhotoInline(insp, it.photo) : ''}${it.photo2? gwPhotoInline(insp, it.photo2):''}
+  </section>`; }
+function gwPhotoInline(insp, cat){ const c=GW_CAT_BY_ID[cat]; const ps=Store.photosOf(insp.id, cat);
+  return `<div class="photorow"><span class="small muted" style="flex:1 1 100%">관련 사진 → <b>${esc(c.short||c.label)}</b> ${ps.length?`(${ps.length}건)`:''}</span><button class="btn sm" data-act="photo-camera" data-cat="${cat}">📷 촬영</button><button class="btn sm" data-act="photo-album" data-cat="${cat}">앨범</button>${c.docs?`<button class="btn sm" data-act="photo-pdf" data-cat="${cat}">PDF</button>`:''}<div class="thumbs" style="display:flex">${ps.slice(0,6).map(p=>thumbHtml(p,{sm:true})).join('')}</div></div>`; }
+function gwItemsHtml(insp, sec){ const ref=gwRef(); return `<div class="alert na small" style="margin-bottom:12px"><span>${esc(ref.notice)} 항목은 처음에 아무것도 선택되지 않은 상태이며, ‘미발생’을 골라도 다른 항목은 자동 처리되지 않습니다.</span></div><h2 style="font-size:17px;margin-bottom:10px">[${sec}]</h2><div class="stack">${GW_ITEMS.filter(i=>i.sec===sec).map(it=>gwItemHtml(insp,it)).join('')}</div>`; }
+
+/* ---- 사진·서류 ---- */
+function gwPhotosHtml(insp){ return `<div class="alert na small" style="margin-bottom:12px"><span>사진은 보조 기록입니다. 모든 구분에 사진이 없어도 점검을 완료할 수 있습니다. 서류 구분에는 PDF도 첨부할 수 있습니다.</span></div><div class="stack">${GW_PHOTO_CATS.map((c,idx)=>{ const ps=Store.photosOf(insp.id,c.id); return `<section class="pcat" id="pcat-${c.id}"><div class="phead"><h3>${idx+1}. ${esc(c.label)}</h3><span class="n">${ps.length}건</span></div><div class="pbtns"><button class="btn primary" data-act="photo-camera" data-cat="${c.id}">📷 사진 촬영</button><button class="btn" data-act="photo-album" data-cat="${c.id}">앨범에서 선택</button>${c.docs?`<button class="btn" data-act="photo-pdf" data-cat="${c.id}">PDF 첨부</button>`:''}</div>${ps.length?`<div class="thumbs">${ps.map(p=>thumbHtml(p)).join('')}</div>`:''}</section>`; }).join('')}</div>`; }
+
+/* ---- 서명 ---- */
+function gwSignHtml(insp){ const h=gwHash(insp);
+  return `<div class="card"><p>위 점검대상에 대해 점검자 및 확인자(공사관계자)는 위와 같이 점검사항을 확인하였습니다.</p><p class="small muted" style="margin-top:6px">화면에 손가락으로 서명하거나 서명·날인 이미지를 첨부합니다. 서명은 현재 점검 내용과 연결되어 저장되며, 서명 후 내용을 고치면 ‘재확인 필요’로 표시됩니다.</p></div>
+  <div class="stack">${GW_SIGNERS.map(sg=>{ const s=insp.signers[sg.key]||{}; const st=sigState(insp,sg.key);
+    return `<section class="card stack" id="sig-${sg.key}"><div class="row between"><h2 style="margin:0">${esc(sg.label)}</h2>${st==='ok'?'<span class="tag good">서명 완료</span>':st==='stale'?'<span class="tag poor">재확인 필요 · 서명 후 내용 수정됨</span>':'<span class="tag none">미서명</span>'}</div>
+      <div class="grid3"><div class="field"><label>소속</label><input type="text" data-field="signers.${sg.key}.org" value="${esc(s.org||'')}"></div><div class="field"><label>부서</label><input type="text" data-field="signers.${sg.key}.dept" value="${esc(s.dept||'')}"></div><div class="field"><label>성명</label><input type="text" data-field="signers.${sg.key}.name" value="${esc(s.name||'')}"></div></div>
+      ${s.image? `<div class="sigbox has"><img src="${s.image}" alt="서명"><div class="small muted">${s.type==='image'?'첨부 이미지':'화면 서명'} · ${fmtDT(s.at)}</div></div><div class="toolbar"><button class="btn" data-act="sig-redo" data-key="${sg.key}">다시 서명</button>${st==='stale'?`<button class="btn primary" data-act="sig-reconfirm" data-key="${sg.key}">현재 내용으로 재확인</button>`:''}<button class="btn danger" data-act="sig-clear" data-key="${sg.key}">서명 삭제</button></div>`
+      : `<div class="sigpad"><canvas id="sigc-${sg.key}" height="180" aria-label="서명 영역"></canvas><div class="hint">여기에 서명하세요</div></div><div class="toolbar"><button class="btn" data-act="sig-erase" data-key="${sg.key}">지우기</button><button class="btn primary" data-act="sig-save" data-key="${sg.key}">서명 저장</button><button class="btn" data-act="sig-upload" data-key="${sg.key}">서명·날인 이미지 첨부</button></div>`}
+    </section>`; }).join('')}</div>`; }
+const SigPads={};
+function initSigPads(){ for(const sg of GW_SIGNERS){ const c=$('#sigc-'+sg.key); if(!c) continue; const dpr=Math.min(3, window.devicePixelRatio||1); const w=c.clientWidth||320; c.width=Math.round(w*dpr); c.height=Math.round(180*dpr); const ctx=c.getContext('2d'); ctx.scale(dpr,dpr); ctx.lineWidth=2.6; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#111'; const pad={c,ctx,dirty:false,last:null}; SigPads[sg.key]=pad;
+  const pos=e=>{ const r=c.getBoundingClientRect(); return {x:(e.clientX-r.left), y:(e.clientY-r.top)}; };
+  c.onpointerdown=e=>{ e.preventDefault(); c.setPointerCapture(e.pointerId); pad.last=pos(e); pad.drawing=true; ctx.beginPath(); ctx.moveTo(pad.last.x,pad.last.y); ctx.lineTo(pad.last.x+0.1,pad.last.y+0.1); ctx.stroke(); pad.dirty=true; const hint=c.parentElement.querySelector('.hint'); if(hint) hint.hidden=true; };
+  c.onpointermove=e=>{ if(!pad.drawing) return; e.preventDefault(); const p=pos(e); ctx.beginPath(); ctx.moveTo(pad.last.x,pad.last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); pad.last=p; };
+  c.onpointerup=c.onpointercancel=c.onpointerleave=e=>{ pad.drawing=false; }; } }
+function sigErase(key){ const pad=SigPads[key]; if(!pad) return; pad.ctx.save(); pad.ctx.setTransform(1,0,0,1,0,0); pad.ctx.clearRect(0,0,pad.c.width,pad.c.height); pad.ctx.restore(); pad.dirty=false; const hint=pad.c.parentElement.querySelector('.hint'); if(hint) hint.hidden=false; }
+function sigDataUrl(key){ const pad=SigPads[key]; if(!pad||!pad.dirty) return null; const out=document.createElement('canvas'); const scale=600/pad.c.width; out.width=600; out.height=Math.round(pad.c.height*scale); const ctx=out.getContext('2d'); ctx.drawImage(pad.c,0,0,out.width,out.height); return out.toDataURL('image/png'); }
+async function sigFromFile(file){ const pr=await processImage(file, 700); const bmp=await createImageBitmap(pr.blob); const c=document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height; c.getContext('2d').drawImage(bmp,0,0); return c.toDataURL('image/jpeg',0.85); }
+function setSignature(insp, key, image, type){ const s=insp.signers[key]; s.image=image; s.type=type; s.at=image? nowIso():null; s.hash=image? gwHash(insp):null; Editor.touch('signers.'+key, true); }
+
+/* ---- 최종 검토 ---- */
+function gwReviewHtml(insp){ const s=insp.site||{}; const miss=gwValidate(insp); const it=insp.items; const ref=gwRef(); const pr=gwProgress(insp);
+  const lab=(id)=>{ const d=GW_ITEM_BY_ID[id]; const v=it[id]||{}; return v.sel? (d.opts[v.sel]||v.sel):'<span class="tag none">미입력</span>'; };
+  const rows=[['① 유출지하수 발생 여부', `${lab('g1')}${(it.g1||{}).sel==='yes'?` · ${esc(it.g1.amount)} 톤/일`:''}${(it.g1||{}).note?` · ${esc(it.g1.note)}`:''}`],
+    ['② 공공하수도 사용개시신고', `${lab('g2')}${(it.g2||{}).naReason?` · 사유: ${esc(it.g2.naReason)}`:''}${(it.g2||{}).note?` · ${esc(it.g2.note)}`:''}`],
+    ['③ 유량계측기 설치 여부', `${lab('g3')}${(it.g3.types||[]).length?` · ${esc(it.g3.types.join(', '))}`:''}${it.g3.calc?` · 산출방법: ${esc(it.g3.calc)}`:''}${it.g3.naReason?` · 사유: ${esc(it.g3.naReason)}`:''}${it.g3.note?` · ${esc(it.g3.note)}`:''}`],
+    ['④ 유량계측기 봉인 여부', `${lab('g4')}${it.g4.naReason?` · 사유: ${esc(it.g4.naReason)}`:''}${it.g4.note?` · ${esc(it.g4.note)}`:''}`],
+    ['⑤ 집수정 및 배수설비', `집수정 ${(it.g5.sumps||[]).map(x=>`${x.w||'-'}×${x.l||'-'}×${x.h||'-'} = ${fmtNum(sumpVolume(x),3)}㎥`).join(', ')} · 펌프 ${(it.g5.pumps||[]).map(p=>(p.hp||'-')+'HP').join(', ')} · 배수관로 ${esc(it.g5.pipe||'-')}㎜${it.g5.desc?` · ${esc(it.g5.desc)}`:''}`],
+    ['⑥ 지하수위 계측', `${lab('g6')}${it.g6.start?` · ${fmtKDate(it.g6.start)} ~ ${it.g6.end? fmtKDate(it.g6.end):'계측 중'}`:''} · 제출 안내 ${it.g6.notice==='yes'?'예':it.g6.notice==='no'?'아니오':'<span class="tag none">미기록</span>'}`],
+    ['⑦ 굴착행위 신고', `${lab('g7')}${it.g7.naReason?` · 사유: ${esc(it.g7.naReason)}`:''}${it.g7.note?` · ${esc(it.g7.note)}`:''}`],
+    ['⑧ 유출 발생현황 신고', `${lab('g8')}${it.g8.naReason?` · 사유: ${esc(it.g8.naReason)}`:''}${it.g8.note?` · ${esc(it.g8.note)}`:''}`],
+    ['⑨ 이용계획 신고', `${lab('g9')}${it.g9.naReason?` · 사유: ${esc(it.g9.naReason)}`:''}${it.g9.note?` · ${esc(it.g9.note)}`:''}`],
+    ['⑩ 기타 지도사항', `매뉴얼 배부 ${it.g10.manual==='yes'?'예':it.g10.manual==='no'?'아니오':'<span class="tag none">미기록</span>'}${it.g10.fixes?`<br>현장시정: ${esc(it.g10.fixes).replace(/\n/g,'<br>')}`:''}${it.g10.opinion?`<br>추가 의견: ${esc(it.g10.opinion)}`:''}`]];
+  const cov=GW_PHOTO_CATS.map(c=>({c, n:Store.photosOf(insp.id,c.id).length}));
+  return `<div class="card"><h2>공사장 기본정보</h2>${siteInfoRows(s)}<hr class="sep"><div class="small">점검일 <b>${fmtKDate(insp.date)||'<span class="tag poor">미입력</span>'}</b> · 점검자 <b>${esc(insp.inspector)||'<span class="tag poor">미입력</span>'}</b>${insp.inspectorOrg?` (${esc(insp.inspectorOrg)})`:''} <button class="btn sm ghost" data-jump="1">수정</button></div></div>
+  <div class="card"><h2>진행률 <span class="count">${pr.done}/${pr.total} 선택 항목</span></h2><div class="progress"><i style="width:${Math.round(pr.done/pr.total*100)}%"></i></div></div>
+  ${miss.length? `<div class="card"><h2 style="color:var(--poor)">완료 전 입력 필요 <span class="count">${miss.length}건</span></h2><div class="review-list">${miss.map(m=>`<div class="review-row"><div class="t"><b>${esc(m.label)}</b></div><button class="btn sm" data-jump="${m.step}" data-focus="${m.focus||''}">이동</button></div>`).join('')}</div></div>` : `<div class="alert good" style="margin-top:14px"><b>필수 입력이 모두 끝났습니다.</b></div>`}
+  <div class="card"><h2>항목별 점검 결과</h2><div class="review-list">${rows.map(([a,b],i)=>`<div class="review-row"><div class="t"><b>${a}</b><span>${b}</span></div><button class="btn sm" data-jump="${i<5?2:3}" data-focus="g${i+1}">수정</button></div>`).join('')}</div></div>
+  <div class="card"><h2>첨부 사진·서류</h2><div class="counts">${cov.map(x=>`<span class="tag ${x.n?'good':'none'}">${esc(x.c.short||x.c.label)} ${x.n}</span>`).join('')}</div><div class="row" style="margin-top:8px"><button class="btn sm" data-jump="4">사진·서류 관리</button></div></div>
+  <div class="card"><h2>서명 여부</h2><div class="review-list">${GW_SIGNERS.map(sg=>{ const st=sigState(insp,sg.key); const x=insp.signers[sg.key]||{}; return `<div class="review-row"><div class="t"><b>${esc(sg.label)} ${st==='ok'?'<span class="tag good">서명 완료</span>':st==='stale'?'<span class="tag poor">재확인 필요</span>':'<span class="tag none">미서명</span>'}</b><span>${[x.org,x.dept,x.name].filter(Boolean).map(esc).join(' · ')||'소속·부서·성명 미입력'}</span></div><button class="btn sm" data-jump="5">서명</button></div>`; }).join('')}</div></div>
+  ${insp.status==='done'? `<div class="card"><div class="row between"><h2 style="margin:0">완료·수정 이력</h2><button class="btn sm" data-act="greopen" ${readOnly()?'disabled':''}>작성 중으로 되돌리기</button></div><p class="small" style="margin-top:8px">점검 완료 ${fmtDT(insp.completedAt)} · <span class="uname" data-uid="${esc(insp.completedBy||'')}">…</span></p>${(insp.editLog||[]).length? `<div class="scrollx"><table class="tbl"><thead><tr><th>수정일시</th><th>수정자</th><th>수정 항목</th></tr></thead><tbody>${insp.editLog.slice().reverse().map(e=>`<tr><td class="mono">${fmtDT(e.at)}</td><td><span class="uname" data-uid="${esc(e.by)}">…</span></td><td>${(e.fields||[]).map(gwFieldLabel).map(esc).join(', ')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted small">완료 후 수정 기록이 없습니다.</p>'}</div>`:''}`; }
+
+/* ---- 이벤트 ---- */
+function bindGwStep(insp, step){ const body=$('#stepBody'); if(!body) return;
+  body.addEventListener('input', e=>{ const el=e.target; const f=el.dataset.field; if(!f) return; const cur=Editor.cur(); if(!cur) return; let v=el.type==='checkbox'? el.checked : el.value;
+    setPath(cur,f,v); if(f==='items.g1.amount'){ el.classList.toggle('invalid', !/^\d+$/.test(String(v))); } else if(el.classList.contains('invalid') && String(v).trim()) el.classList.remove('invalid'); Editor.touch(f, el.type==='date');
+    if (f.startsWith('items.g5.sumps.')){ const i=+f.split('.')[3]; const s=cur.items.g5.sumps[i]; const tag=$(`.vol[data-i="${i}"]`, body); if(tag) tag.textContent=fmtNum(sumpVolume(s),3)+' ㎥'; const tot=$('#sumpTotal'); if(tot) tot.textContent=fmtNum(cur.items.g5.sumps.reduce((a,x)=>a+sumpVolume(x),0),3); }
+  });
+  body.addEventListener('click', async e=>{ const b=e.target.closest('[data-act],[data-jump],[data-site-edit]'); if(!b) return; const cur=Editor.cur(); if(!cur) return;
+    if (b.dataset.jump){ Editor.commit(); App.go({name:'gwInspect', id:cur.id, step:+b.dataset.jump, focusItem:b.dataset.focus||null}); return; }
+    if (b.dataset.siteEdit){ Editor.commit(); App.go({name:'siteEdit', id:b.dataset.siteEdit}); return; }
+    const act=b.dataset.act; const rerenderItem=(id)=>{ const sec=$('#gitem-'+id); if(sec){ sec.outerHTML=gwItemHtml(cur, GW_ITEM_BY_ID[id]); } $$('#view [data-step]').forEach(x=>{ x.className=gwStepState(cur,+x.dataset.step); }); const pr=gwProgress(cur); const p=$('#view .progress>i'); if(p) p.style.width=Math.round(pr.done/pr.total*100)+'%'; };
+    if (readOnly() && ['gsel','gtype','gnotice','gmanual','sump-add','sump-del','pump-add','pump-del','sig-save','sig-upload','sig-clear','sig-reconfirm','refresh-site','greopen','gdelete','photo-camera','photo-album','photo-pdf'].includes(act)){ toast('읽기 전용 권한입니다',{err:true}); return; }
+    if (act==='gsel'){ const id=b.closest('[data-gitem]').dataset.gitem; const v=cur.items[id]; v.sel = v.sel===b.dataset.val? '' : b.dataset.val; Editor.touch('items.'+id, true); rerenderItem(id); const inp=$(`#gitem-${id} input.invalid, #gitem-${id} textarea`); if(inp) inp.focus(); return; }
+    if (act==='gtype'){ const v=cur.items.g3; v.types=v.types||[]; const t=b.dataset.val; if(v.types.includes(t)) v.types=v.types.filter(x=>x!==t); else v.types.push(t); Editor.touch('items.g3', true); rerenderItem('g3'); return; }
+    if (act==='gnotice'){ cur.items.g6.notice = cur.items.g6.notice===b.dataset.val? '' : b.dataset.val; Editor.touch('items.g6', true); rerenderItem('g6'); return; }
+    if (act==='gmanual'){ cur.items.g10.manual = cur.items.g10.manual===b.dataset.val? '' : b.dataset.val; Editor.touch('items.g10', true); rerenderItem('g10'); return; }
+    if (act==='sump-add'){ cur.items.g5.sumps.push({w:'',l:'',h:''}); Editor.touch('items.g5', true); rerenderItem('g5'); return; }
+    if (act==='sump-del'){ cur.items.g5.sumps.splice(+b.dataset.i,1); Editor.touch('items.g5', true); rerenderItem('g5'); return; }
+    if (act==='pump-add'){ cur.items.g5.pumps.push({hp:''}); Editor.touch('items.g5', true); rerenderItem('g5'); return; }
+    if (act==='pump-del'){ cur.items.g5.pumps.splice(+b.dataset.i,1); Editor.touch('items.g5', true); rerenderItem('g5'); return; }
+    if (act==='photo-camera'||act==='photo-album'){ pickFiles(cur.id, b.dataset.cat, act==='photo-camera'?'camera':'album'); return; }
+    if (act==='photo-pdf'){ pickFiles(cur.id, b.dataset.cat, 'pdf', true, 'application/pdf,.pdf'); return; }
+    if (act==='photo-open'){ openPhoto(b.dataset.pid); return; }
+    if (act==='sig-erase'){ sigErase(b.dataset.key); return; }
+    if (act==='sig-save'){ const d=sigDataUrl(b.dataset.key); if(!d){ toast('서명을 먼저 그려 주세요',{err:true}); return; } setSignature(cur, b.dataset.key, d, 'drawn'); toast('서명을 저장했습니다'); render(); return; }
+    if (act==='sig-upload'){ const key=b.dataset.key; let inp=$('#fileInputs input[data-key="sigimg"]'); if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.dataset.key='sigimg'; $('#fileInputs').appendChild(inp); } inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; inp.value=''; if(!f) return; try{ const d=await sigFromFile(f); setSignature(cur, key, d, 'image'); toast('서명·날인 이미지를 첨부했습니다'); render(); }catch(err){ toast('이미지를 처리할 수 없습니다',{err:true}); } }; inp.click(); return; }
+    if (act==='sig-redo'||act==='sig-clear'){ setSignature(cur, b.dataset.key, null, null); toast(act==='sig-clear'?'서명을 삭제했습니다':'다시 서명하세요'); render(); return; }
+    if (act==='sig-reconfirm'){ const s=cur.signers[b.dataset.key]; s.hash=gwHash(cur); s.at=nowIso(); Editor.touch('signers.'+b.dataset.key, true); toast('현재 내용으로 재확인했습니다'); render(); return; }
+    if (act==='refresh-site'){ const live=Store.sites.get(cur.siteId); if(live){ cur.site=clone(live); Editor.touch('site', true); toast('최신 공사장 정보를 반영했습니다'); render(); } return; }
+    if (act==='greopen'){ reopenGwInspection(cur.id); return; }
+    if (act==='gdelete'){ deleteGwInspection(cur.id); return; }
+  });
+  if (step===5) initSigPads();
+  resolveNames(body);
+}
+async function completeGwInspection(id){ const insp=Store.gwInspections.get(id); if(!insp) return; await Editor.commit(); const miss=gwValidate(insp);
+  if (miss.length){ toast('완료할 수 없습니다: '+miss.slice(0,3).map(m=>m.label).join(', ')+(miss.length>3?` 외 ${miss.length-3}건`:''),{err:true}); App.go({name:'gwInspect', id, step:6}); return; }
+  if (readOnly()){ toast('읽기 전용 권한이라 완료 처리할 수 없습니다',{err:true}); return; }
+  const unsigned=GW_SIGNERS.filter(sg=>sigState(insp,sg.key)!=='ok');
+  const go=async()=>{ insp.status='done'; insp.completedAt=nowIso(); insp.completedBy=myId(); insp.lastStep=6; await Store.save('gwInspections/'+insp.id, insp); toast('점검을 완료했습니다. 보고서를 확인하세요.'); App.go({name:'gwReport', id:insp.id}); };
+  if (unsigned.length){ openModal(`<h2>서명이 없거나 재확인이 필요합니다</h2><p>${esc(unsigned.map(x=>x.label).join(', '))}</p><p class="small muted">그대로 완료하면 보고서의 서명란이 비어 있거나 ‘재확인 필요’로 표시됩니다.</p><div class="toolbar"><button class="btn" id="mBack">서명하러 가기</button><button class="btn primary" id="mGo">그대로 완료</button></div>`); $('#mBack').onclick=()=>{ closeModal(); App.go({name:'gwInspect', id, step:5}); }; $('#mGo').onclick=()=>{ closeModal(); go(); }; }
+  else go(); }
+
+/* ---- 보고서 ---- */
+function gwReportPagesHtml(insp){ const s=insp.site||{}; const it=insp.items; const ref=gwRef(); const d=insp.date? new Date(insp.date+'T00:00:00'): null; const year=d? d.getFullYear(): new Date().getFullYear();
+  const sel=(id,k)=>chk((it[id]||{}).sel===k); const na=(id)=>(it[id]||{}).naReason||''; const sumps=it.g5.sumps||[]; const pumps=it.g5.pumps||[]; const s0=sumps[0]||{w:'',l:'',h:''}; const totalVol=sumps.reduce((a,x)=>a+sumpVolume(x),0);
+  const sigRow=(sg,lbl)=>{ const x=insp.signers[sg]||{}; const st=sigState(insp,sg); return `<tr><td class="lab">${lbl}</td><td>${esc(x.org||'')}</td><td>${esc(x.dept||'')}</td><td>${esc(x.name||'')}</td><td class="sigcell">${x.image?`<img src="${x.image}" alt="서명">${st==='stale'?'<span class="stale">재확인 필요</span>':''}`:'<span class="in">(인)</span>'}</td></tr>`; };
+  const page1=`<div class="paper gw">
+    <h1 class="gwt">대형 굴착공사장 유출지하수 관리실태 현장점검표</h1>
+    <div class="gwsub">□ 점검대상 : <b>${esc(s.targetNo||'　　')}</b> 번${s.isTest?' <span style="font-size:8pt">(테스트)</span>':''}</div>
+    <table class="gwsite"><tbody>
+      <tr><th rowspan="2" style="width:30%">공 사 명</th><th rowspan="2" style="width:22%">위 치</th><th>시공사명</th><th>담당자성명</th><th>감리사명</th><th>담당자성명</th></tr>
+      <tr><th colspan="2">연락처</th><th colspan="2">연락처</th></tr>
+      <tr><td rowspan="2">${esc(s.name||'')}</td><td rowspan="2">${esc(s.location||'')}</td><td>${esc(s.contractor||'')}</td><td>${esc(s.contractorPerson||'')}</td><td>${esc(s.supervisor||'')}</td><td>${esc(s.supervisorPerson||'')}</td></tr>
+      <tr><td colspan="2">${esc(s.contractorPhone||'')}</td><td colspan="2">${esc(s.supervisorPhone||'')}</td></tr>
+      <tr><th>공 사 현 황</th><th>소 유 주 체</th><th colspan="2">층 수</th><th>굴 착 깊 이 / 연 면 적</th><th>착 공 / 준공(예정)</th></tr>
+      <tr><td>${chk(s.status==='pre')} 착공 전 &nbsp;${chk(s.status==='ongoing')} 착공 &nbsp;${chk(s.status==='done')} 준공</td><td>${chk(s.owner==='public')} 공공 &nbsp;${chk(s.owner==='private')} 민간</td><td colspan="2">지상 ${esc(s.floorsAbove||'　')}층 / 지하 ${esc(s.floorsBelow||'　')}층</td><td>${s.depth!==''&&s.depth!=null? esc(s.depth):'　'} m / ${s.area!==''&&s.area!=null? fmtNum(s.area):'　'} ㎡</td><td>${fmtKDate(s.startDate)||'　'} / ${fmtKDate(s.endDate)||'　'}</td></tr>
+    </tbody></table>
+    <div class="gwsub">□ 점검사항</div>
+    <table class="gwchk"><thead><tr><th colspan="2">점 검 항 목</th><th>점 검 결 과</th></tr></thead><tbody>
+      <tr><td class="grp" rowspan="5">유출지하수<br>점검사항</td><td class="it">- 유출지하수 발생 여부<span class="ref">※ 발생 시, 발생량은 정수로 표기</span></td><td class="res"><div class="opts"><span>${sel('g1','yes')} 발생</span><span>${sel('g1','no')} 미발생</span></div><div>※ 발생량(단위: 톤/일) : ${(it.g1||{}).sel==='yes'? esc(it.g1.amount):''}</div></td></tr>
+      <tr><td class="it">- 공공하수도 사용개시신고<span class="ref">※ ${esc(ref.ref2)}</span></td><td class="res"><div class="opts"><span>${sel('g2','yes')} 신고</span><span>${sel('g2','no')} 미신고</span><span>${sel('g2','na')} 해당없음</span></div><div>※ 해당없음 사유 : ${esc(na('g2'))}</div></td></tr>
+      <tr><td class="it">- 유량계측기 설치 여부<span class="ref">※ ${esc(ref.ref3)}</span></td><td class="res"><div class="opts"><span>${sel('g3','yes')} 설치</span><span>${sel('g3','no')} 미설치</span><span>${sel('g3','na')} 해당없음</span></div><div>※ 계측기 종류 : ${['유량계','시간계','전력계'].map(t=>`${chk((it.g3.types||[]).includes(t))}${t}`).join(' &nbsp;')}</div><div>※ 계측기 미설치 시 산출방법 : ${esc(it.g3.calc||'')}${na('g3')?` &nbsp; ※ 해당없음 사유 : ${esc(na('g3'))}`:''}</div></td></tr>
+      <tr><td class="it">- 유량계측기 봉인 여부<span class="ref">※ ${esc(ref.ref4)}</span></td><td class="res"><div class="opts"><span>${sel('g4','yes')} 봉인</span><span>${sel('g4','no')} 미봉인</span><span>${sel('g4','na')} 해당없음</span></div>${na('g4')?`<div>※ 해당없음 사유 : ${esc(na('g4'))}</div>`:''}</td></tr>
+      <tr><td class="it">- 집수정 및 배수설비</td><td class="res"><div>※ 집수정 규모(가로×세로×높이) = ${s0.w||'　'} × ${s0.l||'　'} × ${s0.h||'　'} = ${sumpVolume(s0)?fmtNum(sumpVolume(s0),3):'　　'} ㎥${sumps.length>1?` <span class="ref">(외 ${sumps.length-1}개, 합계 ${fmtNum(totalVol,3)}㎥ · 별첨)</span>`:''}</div><div class="two"><span>펌프 : ${pumps.map(p=>p.hp).filter(x=>x!==''&&x!=null).join(', ')||'　　'} HP</span><span>배수관로(직경) : ${esc(it.g5.pipe||'　　')} ㎜</span></div></td></tr>
+      <tr><td class="grp" rowspan="5">기타사항</td><td class="it">- 지하수위 계측 여부 및 계측기간<br>- 지하수위 및 지반침하 자료 제출안내<span class="ref">※ ${esc(ref.email)}</span></td><td class="res"><div class="opts"><span>${sel('g6','yes')} 계측</span><span>${sel('g6','no')} 미계측</span><span>${sel('g6','end')} 계측종료</span></div><div class="two"><span>※ 계측기간 : ${it.g6.start? fmtKDate(it.g6.start)+' ~ '+(it.g6.end? fmtKDate(it.g6.end):'계측 중'):''}</span><span>※ 계측자료 제출 안내 ${chk(it.g6.notice==='yes')} 예 ${chk(it.g6.notice==='no')} 아니오</span></div></td></tr>
+      <tr><td class="it">- 지하수에 영향을 미치는 굴착행위 신고 여부<span class="ref">※ ${esc(ref.ref7)}</span></td><td class="res"><div class="opts"><span>${sel('g7','yes')} 신고</span><span>${sel('g7','no')} 미신고</span><span>${sel('g7','na')} 해당없음</span></div><div>※ 해당없음 사유 : ${esc(na('g7'))}</div></td></tr>
+      <tr><td class="it">- 지하수 유출 발생현황 신고<span class="ref">※ ${esc(ref.ref8)}<br>(${esc(ref.help8)})</span></td><td class="res"><div class="opts"><span>${sel('g8','yes')} 신고</span><span>${sel('g8','no')} 미신고</span><span>${sel('g8','na')} 해당없음</span></div><div>※ 해당없음 사유 : ${esc(na('g8'))}</div></td></tr>
+      <tr><td class="it">- 유출지하수 이용계획 신고<span class="ref">※ ${esc(ref.ref9)}</span></td><td class="res"><div class="opts"><span>${sel('g9','yes')} 신고</span><span>${sel('g9','no')} 미신고</span><span>${sel('g9','na')} 해당없음</span></div><div>※ 해당없음 사유 : ${esc(na('g9'))}</div></td></tr>
+      <tr><td class="it">- 기타 지도사항</td><td class="res"><div>「공사장 지하수 관리 매뉴얼」 안내문 배부 &nbsp; ${chk(it.g10.manual==='yes')} 예 ${chk(it.g10.manual==='no')} 아니오</div><div class="fixes">- 현장시정 사항: ${esc(it.g10.fixes||'').replace(/\n/g,'<br>')}</div></td></tr>
+    </tbody></table>
+    <p class="gwconf">위 점검대상에 대해 점검자 및 확인자(공사관계자)는 위와 같이 점검사항을 확인하였습니다.</p>
+    <p class="gwdate">${year}년 ${d? (d.getMonth()+1):'　'}월 ${d? d.getDate():'　'}일</p>
+    <table class="gwsig"><thead><tr><th style="width:18%">구 분</th><th style="width:22%">소속</th><th style="width:18%">부서</th><th style="width:16%">성명</th><th>서명 / 날인</th></tr></thead><tbody>${sigRow('i1','점 검 자')}${sigRow('i2','점 검 자')}${sigRow('c','확 인 자')}</tbody></table>
+    <div class="foot"><span>대형 굴착공사장 유출지하수 관리실태 현장점검표 · ${esc(s.name||'')}</span><span>1</span></div></div>`;
+  // 별첨: 앱 추가 기록
+  const extras=[]; const add=(k,v)=>{ if(v && String(v).trim()) extras.push([k,v]); };
+  add('① 비고', it.g1.note); add('② 설명·지도·조치', it.g2.note); add('③ 설명·지도·조치', it.g3.note); add('④ 설명·지도·조치', it.g4.note); add('⑦ 설명·지도·조치', it.g7.note); add('⑧ 설명·지도·조치', it.g8.note); add('⑨ 설명·지도·조치', it.g9.note);
+  if (sumps.length>1 || pumps.length>1) add('⑤ 집수정·펌프 목록', sumps.map((x,i)=>`집수정 ${i+1}: ${x.w||'-'}×${x.l||'-'}×${x.h||'-'} m = ${fmtNum(sumpVolume(x),3)} ㎥`).join('\n')+`\n합계 ${fmtNum(totalVol,3)} ㎥\n`+pumps.map((p,i)=>`펌프 ${i+1}: ${p.hp||'-'} HP`).join('\n'));
+  add('⑤ 추가 설명', it.g5.desc); add('⑩ 추가 의견', it.g10.opinion); add('점검자 소속', insp.inspectorOrg? `${insp.inspector} (${insp.inspectorOrg})`:'');
+  const stale=GW_SIGNERS.filter(sg=>sigState(insp,sg.key)==='stale'); if(stale.length) add('서명 상태', stale.map(x=>x.label).join(', ')+' — 서명 후 점검 내용이 수정되어 재확인이 필요합니다.');
+  const pdfs=Store.photosOf(insp.id).filter(p=>p.fileType==='pdf'); const photos=Store.photosOf(insp.id).filter(p=>p.fileType!=='pdf');
+  const pages=[page1]; let pn=2;
+  if (extras.length || pdfs.length){ pages.push(`<div class="paper gw"><h1 class="gwt sm">별첨 1. 앱 추가 기록 (비고)</h1><div class="gwsub">${esc(s.name||'')} · 점검일 ${fmtKDate(insp.date)}</div><table class="gwext"><thead><tr><th style="width:32mm">항목</th><th>내용</th></tr></thead><tbody>${extras.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v).replace(/\n/g,'<br>')}</td></tr>`).join('')}${pdfs.length?`<tr><td>첨부 PDF 서류</td><td>${pdfs.map(p=>`${esc((GW_CAT_BY_ID[p.category]||{}).short||p.category)} · ${esc(p.fileName||'문서.pdf')}${p.caption?` (${esc(p.caption)})`:''}`).join('<br>')}<br><span class="ref">PDF 원본은 앱의 사진·서류 화면 또는 ZIP 내보내기에서 확인합니다.</span></td></tr>`:''}</tbody></table><p class="ref" style="margin-top:3mm">※ 이 별첨은 원본 점검표에 없는 앱 추가 기록입니다.</p><div class="foot"><span>대형 굴착공사장 유출지하수 관리실태 현장점검표 · ${esc(s.name||'')}</span><span>${pn}</span></div></div>`); pn++; }
+  const pcell=(p)=> p? `<div class="pc" data-photo="${p.id}"><canvas></canvas></div>` : '<div class="pc"></div>'; const pcap=(p)=> p? `${esc((GW_CAT_BY_ID[p.category]||{}).short||'미분류')}<small>${esc(p.caption||'')} ${fmtDT(p.takenAt)}</small>` : '';
+  for (let i=0;i<photos.length;i+=6){ const pg=photos.slice(i,i+6); const cells=[]; for(let j=0;j<pg.length;j+=2){ cells.push(`<tr><td>${pcell(pg[j])}</td><td>${pcell(pg[j+1])}</td></tr><tr><td class="cap">${pcap(pg[j])}</td><td class="cap">${pcap(pg[j+1])}</td></tr>`); }
+    pages.push(`<div class="paper"><div class="meta"><span>대형 굴착공사장 유출지하수 관리실태 현장점검표</span><span>점검일 ${fmtKDate(insp.date)}</span></div><h1 class="ttl sq">별첨 2. 점검사진 ${Math.floor(i/6)+1}/${Math.ceil(photos.length/6)}</h1><table class="photos"><tbody><tr><th colspan="2" style="height:10mm">${esc(s.targetNo?s.targetNo+'번 · ':'')}${esc(s.name||'')}<small style="display:block;font-weight:400;font-size:9pt">${esc(s.location||'')}</small></th></tr>${cells.join('')}</tbody></table><div class="foot"><span>${esc(s.name||'')}</span><span>${pn}</span></div></div>`); pn++; }
+  return pages.join(''); }
+function renderGwReport(route){ const insp=Store.gwInspections.get(route.id); const view=$('#view'); if(!insp){ view.innerHTML=`<div class="empty"><b>점검 기록을 찾을 수 없습니다</b></div>`; return; }
+  Store.subscribePhotos(insp.id); if(RT.mode==='cloud' && !Store.photosOf(insp.id).length) Store.fetchPhotos(insp.id); const s=insp.site||{};
+  view.innerHTML=`<div class="crumbs"><button data-go="gwHome">홈</button><span>›</span><button data-site="${insp.siteId}">${esc(s.name||'공사장')}</button><span>›</span><button data-ginsp-open="${insp.id}">${fmtKDate(insp.date)} 점검</button><span>›</span><span>보고서</span></div>
+  <div class="pagehead"><div><h1 style="font-size:20px">현장점검표 보고서</h1><p class="sub">${esc(s.name||'')} · ${fmtKDate(insp.date)} · ${insp.status==='done'?'점검 완료':'작성 중'}</p></div></div>
+  <div class="report-actions"><button class="btn primary" id="pdfBtn">PDF 저장${RT.standalone?'':'(인쇄용)'}</button>${RT.standalone?`<button class="btn" id="printBtn">인쇄</button>`:''}<button class="btn" id="xlsBtn">엑셀 내려받기</button><button class="btn" id="zipBtn">자료 내보내기(ZIP)</button><button class="btn" data-ginsp-open="${insp.id}">점검 내용 수정</button></div>
+  ${insp.status!=='done'? `<div class="alert warn small" style="margin-bottom:10px"><span>작성 중인 점검입니다.</span></div>`:''}
+  <div class="alert na small" style="margin-bottom:10px"><span>1쪽은 첨부 양식(붙임3 현장점검표)의 서식을 따릅니다. 앱에서 추가한 기록(지도·조치 내용, 복수 집수정, 첨부 서류 등)은 별첨 1, 사진은 별첨 2로 붙습니다.</span></div>
+  <div id="pdfStatus" class="small muted" style="margin-bottom:8px"></div>
+  <div class="report-wrap" id="reportWrap">${gwReportPagesHtml(insp)}</div>`;
+  $$('#view [data-go]').forEach(b=>b.onclick=()=>App.go({name:b.dataset.go})); $$('#view [data-site]').forEach(b=>b.onclick=()=>App.go({name:'site', id:b.dataset.site})); $$('#view [data-ginsp-open]').forEach(b=>b.onclick=()=>App.go({name:'gwInspect', id:insp.id, step:insp.status==='done'?6:(insp.lastStep||1)}));
+  $('#pdfBtn').onclick=()=>exportPdf(insp.id); $('#xlsBtn').onclick=()=>exportGwExcel([insp], `유출지하수_점검결과_${s.name||insp.id}_${insp.date||''}`); $('#zipBtn').onclick=()=>exportPackage({inspectionId:insp.id});
+  const pb=$('#printBtn'); if(pb) pb.onclick=async()=>{ Exporting=true; fitReport(); await paintReportImages($('#reportWrap')); setTimeout(()=>{ window.print(); Exporting=false; fitReport(); },200); };
+  fitReport(); paintReportImages(view); }
+
+/* ---- 엑셀 ---- */
+async function exportGwExcel(insps, baseName){ if(!insps.length){ toast('내려받을 점검 결과가 없습니다'); return; } try{ await loadScript(CDN.xlsx); }catch(e){ toast('엑셀 라이브러리를 불러오지 못했습니다',{err:true}); return; }
+  if (RT.mode==='cloud' && insps.length<=20){ for(const i of insps){ if(!Store.photosOf(i.id).length) await Store.fetchPhotos(i.id); } }
+  const L=(id,k)=>{ const d=GW_ITEM_BY_ID[id]; return k? (d.opts[k]||k):''; };
+  const head=['점검대상 번호','자치구','공사명','위치','시공사','시공사 담당자','시공사 연락처','감리사','감리사 담당자','감리사 연락처','공사 현황','소유 주체','지상 층수','지하 층수','굴착깊이(m)','연면적(㎡)','착공일자','준공(예정)일자','점검일','점검자','소속','점검 상태','① 발생 여부','① 발생량(톤/일)','① 비고','② 사용개시신고','② 해당없음 사유','② 지도·조치','③ 계측기 설치','③ 계측기 종류','③ 산출방법','③ 해당없음 사유','③ 지도·조치','④ 봉인','④ 해당없음 사유','④ 지도·조치','⑤ 집수정(가로×세로×높이=㎥)','⑤ 집수정 용적 합계(㎥)','⑤ 펌프(HP)','⑤ 배수관로(㎜)','⑤ 추가 설명','⑥ 지하수위 계측','⑥ 계측 시작일','⑥ 계측 종료일','⑥ 제출 안내','⑦ 굴착행위 신고','⑦ 해당없음 사유','⑦ 지도·조치','⑧ 발생현황 신고','⑧ 해당없음 사유','⑧ 지도·조치','⑨ 이용계획 신고','⑨ 해당없음 사유','⑨ 지도·조치','⑩ 매뉴얼 배부','⑩ 현장시정 사항','⑩ 추가 의견','점검자1 서명','점검자2 서명','확인자 서명','재확인 필요','사진·서류 수','점검 완료일시','점검 ID','공사장 ID','테스트'];
+  const sorted=insps.slice().sort((a,b)=>((a.site||{}).gu||'').localeCompare((b.site||{}).gu||'')||(b.date||'').localeCompare(a.date||''));
+  const sigTxt=(i,k)=>{ const st=sigState(i,k); const x=i.signers[k]||{}; return st==='none'? '': `${x.name||''}${st==='stale'?'(재확인 필요)':''}`; };
+  const rows=sorted.map(i=>{ const s=i.site||{}; const it=i.items; const sumps=it.g5.sumps||[]; return [s.targetNo||'', s.gu||'', s.name||'', s.location||'', s.contractor||'', s.contractorPerson||'', s.contractorPhone||'', s.supervisor||'', s.supervisorPerson||'', s.supervisorPhone||'', GW_STATUS[s.status]||'', GW_OWNER[s.owner]||'', s.floorsAbove||'', s.floorsBelow||'', s.depth||'', s.area||'', s.startDate||'', s.endDate||'', i.date||'', i.inspector||'', i.inspectorOrg||'', i.status==='done'?'점검 완료':'작성 중', L('g1',it.g1.sel), it.g1.sel==='yes'? Number(it.g1.amount):'', it.g1.note||'', L('g2',it.g2.sel), it.g2.naReason||'', it.g2.note||'', L('g3',it.g3.sel), (it.g3.types||[]).join(', '), it.g3.calc||'', it.g3.naReason||'', it.g3.note||'', L('g4',it.g4.sel), it.g4.naReason||'', it.g4.note||'', sumps.map(x=>`${x.w||'-'}×${x.l||'-'}×${x.h||'-'}=${fmtNum(sumpVolume(x),3)}`).join('; '), Math.round(sumps.reduce((a,x)=>a+sumpVolume(x),0)*1000)/1000, (it.g5.pumps||[]).map(p=>p.hp).filter(x=>x!==''&&x!=null).join(', '), it.g5.pipe||'', it.g5.desc||'', L('g6',it.g6.sel), it.g6.start||'', it.g6.end||'', it.g6.notice==='yes'?'예':it.g6.notice==='no'?'아니오':'', L('g7',it.g7.sel), it.g7.naReason||'', it.g7.note||'', L('g8',it.g8.sel), it.g8.naReason||'', it.g8.note||'', L('g9',it.g9.sel), it.g9.naReason||'', it.g9.note||'', it.g10.manual==='yes'?'예':it.g10.manual==='no'?'아니오':'', it.g10.fixes||'', it.g10.opinion||'', sigTxt(i,'i1'), sigTxt(i,'i2'), sigTxt(i,'c'), GW_SIGNERS.some(sg=>sigState(i,sg.key)==='stale')?'예':'', Store.photosOf(i.id).length, i.completedAt? fmtDTS(i.completedAt):'', i.id, i.siteId, s.isTest?'예':'']; });
+  const photoRows=[['점검일','공사명','구분','종류','대표','설명','촬영일시','파일명','사진 ID','점검 ID']]; for(const i of sorted){ const s=i.site||{}; for(const p of Store.photosOf(i.id)) photoRows.push([i.date||'', s.name||'', (GW_CAT_BY_ID[p.category]||{}).label||p.category, p.fileType==='pdf'?'PDF':'사진', p.isCover?'대표':'', p.caption||'', fmtDTS(p.takenAt), p.fileName||'', p.id, p.inspectionId]); }
+  const wb=XLSX.utils.book_new(); const ws1=XLSX.utils.aoa_to_sheet([head,...rows]); ws1['!cols']=head.map(h=>({wch: Math.min(40, Math.max(10, h.length+2))})); ws1['!freeze']={xSplit:3,ySplit:1}; XLSX.utils.book_append_sheet(wb, ws1, '유출지하수 점검결과');
+  const ws2=XLSX.utils.aoa_to_sheet(photoRows); ws2['!cols']=[{wch:11},{wch:28},{wch:26},{wch:6},{wch:5},{wch:30},{wch:20},{wch:24},{wch:22},{wch:22}]; XLSX.utils.book_append_sheet(wb, ws2, '사진·서류');
+  const out=XLSX.write(wb,{type:'array',bookType:'xlsx'}); const blob=new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}); window.__lastXlsx=blob;
+  await saveFile(`${(baseName||'유출지하수_점검결과').replace(/[\\/:*?"<>|]/g,'_')}_${todayStr()}.xlsx`, blob); }
+
+/* ---- 관리자 설정 카드 ---- */
+function gwSettingsCard(){ const r=gwRef(); const f=(k,l)=>`<div class="field"><label for="gw_${k}">${l}</label><input id="gw_${k}" type="text" value="${esc(r[k])}"></div>`;
+  return `<div class="card stack"><h2>유출지하수 점검 · 법령·신고 기준 참고 문구</h2><div class="alert warn small">첨부 양식의 참고정보입니다. 점검표와 보고서에 ‘※ 참고’로 표시되며, 신고 대상·위법 여부를 자동으로 판정하는 데 쓰이지 않습니다. 법령 개정 시 여기서 수정하세요.</div>
+    <div class="grid2">${f('ref2','② 공공하수도 사용개시신고')}${f('ref3','③ 유량계측기 설치')}${f('ref4','④ 유량계측기 봉인')}${f('ref7','⑦ 굴착행위 신고')}${f('ref8','⑧ 유출 발생현황 신고')}${f('help8','⑧ 규모·발생량 기준(도움말)')}${f('ref9','⑨ 이용계획 신고')}${f('email','⑥ 계측자료 제출 안내 주소')}</div>
+    <div class="field"><label for="gw_notice">점검자에게 보이는 안내 문구</label><textarea id="gw_notice">${esc(r.notice)}</textarea></div>
+    <div class="row"><button class="btn primary" id="saveGwStd">참고 문구 저장</button><button class="btn" id="resetGwStd">양식 기본값으로</button><button class="btn" id="seedGwTest">테스트 공사장 추가</button></div></div>`; }
+function bindGwSettings(){ const sv=$('#saveGwStd'); if(!sv) return; sv.onclick=()=>{ const o={}; for(const k of ['ref2','ref3','ref4','ref7','ref8','help8','ref9','email']) o[k]=$('#gw_'+k).value.trim(); o.notice=$('#gw_notice').value.trim(); Store.save('settings/gwStandards', o); toast('참고 문구를 저장했습니다'); };
+  $('#resetGwStd').onclick=()=>{ Store.save('settings/gwStandards', Object.assign({}, GW_DEFAULT_REF)); toast('양식 기본값으로 되돌렸습니다'); render(); };
+  $('#seedGwTest').onclick=seedGwTestData; }
+async function seedGwTestData(){ const s=Object.assign(newSite(), {id:'test-site-'+uuid().slice(0,8), targetNo:'99', gu:'강남구', name:'[테스트] ○○동 ○○번지 ○○빌딩 신축공사', location:'서울특별시 강남구 ○○동 ○○번지', contractor:'㈜○○건설', contractorPerson:'홍길동', contractorPhone:'010-0000-0000', supervisor:'㈜○○엔지니어링', supervisorPerson:'김감리', supervisorPhone:'010-0000-0001', status:'ongoing', owner:'private', floorsAbove:'25', floorsBelow:'6', depth:'28.5', area:'52000', startDate:'2026-03-02', endDate:'2028-02-28', note:'예시 데이터입니다.', isTest:true});
+  await Store.save('sites/'+s.id, s); const i=newGwInspectionDoc(s); i.date=fmtDate(new Date(Date.now()-3*86400000)); i.inspector='테스트 점검자'; i.inspectorOrg='서울시 물순환안전국';
+  Object.assign(i.items, { g1:{sel:'yes',amount:'12',note:''}, g2:{sel:'yes',naReason:'',note:''}, g3:{sel:'yes',types:['유량계'],calc:'',naReason:'',note:''}, g4:{sel:'no',naReason:'',note:'봉인 미실시 확인, 자치구 통보 예정'}, g5:{sumps:[{w:'2',l:'1.5',h:'1.2'}],pumps:[{hp:'5'}],pipe:'150',desc:''}, g6:{sel:'yes',start:'2026-04-01',end:'',notice:'yes'}, g7:{sel:'yes',naReason:'',note:''}, g8:{sel:'na',naReason:'연면적 10만㎡ 미만, 발생량 기준 미만',note:''}, g9:{sel:'na',naReason:'지하층 공사 진행 중',note:''}, g10:{manual:'yes',fixes:'유량계측기 봉인 조치 요청\n집수정 주변 정리',opinion:''} });
+  i.status='done'; i.completedAt=nowIso(); i.completedBy=myId(); i.lastStep=6; await Store.save('gwInspections/'+i.id, i); toast('테스트 공사장 1곳과 완료된 점검 1건을 추가했습니다'); render(); }
 </script>
 
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
-window.__MBW_VERSION='2026.10.25-4';
+window.__MBW_VERSION='2026.10.26-1';
 </script>
 </body>
 </html>
